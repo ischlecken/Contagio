@@ -58,6 +58,12 @@
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>de.brendamour</groupId>
+                <artifactId>jpasskit</artifactId>
+                <version>0.1.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

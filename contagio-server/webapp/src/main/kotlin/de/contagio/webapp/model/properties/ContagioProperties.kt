@@ -12,7 +12,8 @@ data class MmcontrolBenutzerportalRestapiProperties(
 @ConstructorBinding
 @ConfigurationProperties(prefix = "contagio")
 data class ContagioProperties(
-    val useMinifiedResources: Boolean,
+    val teamIdentifier: String,
+    val passTypeId: String,
 
     val bpRestapi: MmcontrolBenutzerportalRestapiProperties
 )

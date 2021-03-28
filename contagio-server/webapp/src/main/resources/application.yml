@@ -29,7 +29,8 @@ spring:
       database: contagio
 
 contagio:
-  useMinifiedResources: true
+  teamIdentifier: 4V27BGKSLA
+  passTypeId: "pass.de.contagio.stt"
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"

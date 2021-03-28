@@ -11,4 +11,4 @@ spring:
       uri: "mongodb://dvm1:27017"
 
 contagio:
-  useMinifiedResources: false
+
