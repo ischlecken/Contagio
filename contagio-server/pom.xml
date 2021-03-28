@@ -143,10 +143,10 @@
     </build>
 
     <scm>
-        <connection>scm:git:https://bitbucket.goduf.de/scm/~stt/stt-angulardev.git</connection>
-        <developerConnection>scm:git:https://bitbucket.goduf.de/scm/~stt/stt-angulardev.git</developerConnection>
+        <connection>scm:git:https://github.com/ischlecken/Contagio.git</connection>
+        <developerConnection>scm:git:git@github.com:ischlecken/Contagio.git</developerConnection>
         <tag>master</tag>
-        <url>https://bitbucket.goduf.de/scm/~stt/stt-angulardev.git</url>
+        <url>https://github.com/ischlecken/Contagio.git</url>
     </scm>
 
     <modules>
