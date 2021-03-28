@@ -1,6 +1,5 @@
 package de.contagio.webapp.restcontroller
 
-import de.brendamour.jpasskit.PKPass
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.usecase.CreatePass
 import de.contagio.core.util.UIDGenerator
@@ -8,6 +7,7 @@ import de.contagio.webapp.model.CreatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -35,18 +35,47 @@ open class PassController(
     }
 
     @PostMapping
-    open fun createPass(@RequestBody createPassRequest: CreatePassRequest): ResponseEntity<PKPass> {
-        val passInfo = PassInfo(serialNumber = uidGenerator.generate(), userId = createPassRequest.userId)
+    open fun createPass(@RequestBody createPassRequest: CreatePassRequest): ResponseEntity<ByteArray> {
+        var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
 
-        if (passInfoRepository.save(passInfo) != null)
-            return ResponseEntity.ok(
-                CreatePass(
-                    teamIdentifier = contagioProperties.teamIdentifier,
-                    passTypeIdentifier = contagioProperties.passTypeId,
-                    authenticationToken = "0123456789abcdef"
-                ).build(passInfo)
+        createPassPayload(createPassRequest.userId)?.let {
+            result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
+        }
+
+        return result
+    }
+
+    @GetMapping("/create")
+    open fun createPass(@RequestParam userId: String): ResponseEntity<ByteArray> {
+        var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+
+        createPassPayload(userId)?.let {
+            result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
+        }
+
+        return result
+    }
+
+    private fun createPassPayload(userId: String): ByteArray? {
+        var result: ByteArray? = null
+        val passInfo = PassInfo(serialNumber = uidGenerator.generate(), userId = userId)
+
+        if (passInfoRepository.save(passInfo) != null) {
+            val createPass = CreatePass(
+                teamIdentifier = contagioProperties.teamIdentifier,
+                passTypeIdentifier = contagioProperties.passTypeId,
+                authenticationToken = "0123456789abcdef"
             )
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+            result = createPass.buildSignedPassPayload(
+                contagioProperties.passResourcesDir,
+                contagioProperties.keyName,
+                contagioProperties.privateKeyPassword,
+                contagioProperties.templateName,
+                createPass.build(passInfo)
+            )
+        }
+
+        return result
     }
 }

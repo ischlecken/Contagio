@@ -13,6 +13,8 @@ LABEL description="The Contagio Server"
 
 COPY --from=0 webapp/target/contagio-server.jar /opt/contagio-server/contagio-server.jar
 COPY ./docker-entrypoint.sh /opt/contagio-server/docker-entrypoint.sh
+COPY ./passresources/certs /opt/contagio-server
+COPY ./passresources/templates /opt/contagio-server
 RUN mkdir /opt/contagio-server/logs && chmod +x /opt/contagio-server/docker-entrypoint.sh
 
 WORKDIR /opt/contagio-server

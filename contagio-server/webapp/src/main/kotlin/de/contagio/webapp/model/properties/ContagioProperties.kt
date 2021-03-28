@@ -14,6 +14,10 @@ data class MmcontrolBenutzerportalRestapiProperties(
 data class ContagioProperties(
     val teamIdentifier: String,
     val passTypeId: String,
+    val keyName: String,
+    val privateKeyPassword: String,
+    val templateName: String,
+    val passResourcesDir: String,
 
     val bpRestapi: MmcontrolBenutzerportalRestapiProperties
 )

@@ -44,7 +44,7 @@ class CreatePass(
         member.value = "myvalue" // some value
 
         generic.primaryFields = listOf(member)
-        
+
         val member1 = PKField()
         member1.key = "UserId"
         member1.value = passInfo.userId
@@ -61,10 +61,16 @@ class CreatePass(
         return pass
     }
 
-    fun buildSignedPassPayload(pass: PKPass): ByteArray? {
-        val appleWWDRCA = "passbook/AppleWWDRCA.pem" // this is apple's developer relation cert
-        val privateKeyPath = "./privateKey.p12" // the private key you exported from keychain
-        val privateKeyPassword = "password" // the password you used to export
+    fun buildSignedPassPayload(
+        resourcesBaseDirPath: String,
+        keyName: String,
+        privateKeyPassword: String,
+        templateName: String,
+        pass: PKPass
+    ): ByteArray? {
+        val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCAG3.cer"
+        val privateKeyPath = "$resourcesBaseDirPath/certs/$keyName.p12"
+        val privateKeyPassword = privateKeyPassword
         var result: ByteArray? = null
         try {
             val pkSigningInformation =
@@ -75,7 +81,7 @@ class CreatePass(
                 )
 
             if (pass.isValid) {
-                val pathToTemplateDirectory = "./mypass.raw" // replace with your folder with the icons
+                val pathToTemplateDirectory = "$resourcesBaseDirPath/templates/$templateName"
 
                 result = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(
                     pass,

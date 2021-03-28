@@ -11,4 +11,5 @@ spring:
       uri: "mongodb://dvm1:27017"
 
 contagio:
+  passResourcesDir: "./passresources"
 

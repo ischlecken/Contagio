@@ -31,6 +31,10 @@ spring:
 contagio:
   teamIdentifier: 4V27BGKSLA
   passTypeId: "pass.de.contagio.stt"
+  keyName: "pass"
+  privateKeyPassword: "1234"
+  templateName: "generic"
+  passResourcesDir: "/opt/contagio-server"
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"
