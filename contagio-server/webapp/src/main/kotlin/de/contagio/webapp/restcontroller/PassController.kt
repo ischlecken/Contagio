@@ -23,14 +23,14 @@ open class PassController(
     private val uidGenerator = UIDGenerator()
 
     @GetMapping
-    open fun getUser(@RequestParam name: String): ResponseEntity<PassInfo> {
-        val result = passInfoRepository.findById(name)
+    open fun getPass(@RequestParam serialNumber: String): ResponseEntity<PassInfo> {
+        val result = passInfoRepository.findById(serialNumber)
 
         return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
     }
 
     @GetMapping("/all")
-    open fun allUses(): Collection<PassInfo> {
+    open fun allPass(): Collection<PassInfo> {
         return passInfoRepository.findAll()
     }
 

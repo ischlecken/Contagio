@@ -1,18 +1,18 @@
 package de.contagio.core.usecase
 
-import de.brendamour.jpasskit.PKBarcode
 import de.brendamour.jpasskit.PKField
-import de.brendamour.jpasskit.PKLocation
 import de.brendamour.jpasskit.PKPass
-import de.brendamour.jpasskit.enums.PKBarcodeFormat
 import de.brendamour.jpasskit.passes.PKGenericPass
 import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil
 import de.contagio.core.domain.entity.PassInfo
 import org.slf4j.LoggerFactory
-import java.nio.charset.Charset
+import java.net.URL
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 private val logger = LoggerFactory.getLogger(CreatePass::class.java)
+private val dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT,FormatStyle.SHORT)
 
 class CreatePass(
     private val teamIdentifier: String,
@@ -26,37 +26,26 @@ class CreatePass(
         pass.authenticationToken = this.authenticationToken
         pass.serialNumber = passInfo.serialNumber
         pass.teamIdentifier = this.teamIdentifier
+        pass.webServiceURL = URL("https://efeu.local:13013/co_v1/pass")
 
-        pass.organizationName = "your org"
-        pass.description = "some description"
-        pass.logoText = "some logo text"
+        pass.foregroundColor = "rgb(255, 255, 255)"
+        pass.backgroundColor = "rgb(197, 31, 31)"
+        pass.organizationName = "contagio"
+        pass.description = "Dein Pass in die Freiheit"
+        pass.logoText = "Tübinger Weg"
 
-        val barcode = PKBarcode()
-        barcode.format = PKBarcodeFormat.PKBarcodeFormatQR
-        barcode.message = "123456789"
-        barcode.messageEncoding = Charset.forName("iso-8859-1")
-
-        pass.barcodes = listOf(barcode)
+        pass.addBarcode("http://efeu.local:13013/co_v1/pass?serialNumber=${passInfo.serialNumber}")
 
         val generic = PKGenericPass()
-        val member = PKField()
-        member.key = "mykey" // some unique key for primary field
-        member.value = "myvalue" // some value
-
-        generic.primaryFields = listOf(member)
-
-        val member1 = PKField()
-        member1.key = "UserId"
-        member1.value = passInfo.userId
-        generic.auxiliaryFields = listOf(member1)
+        generic.primaryFields = listOf(PKField("mykey", null, "Hallo Mausi"))
+        generic.auxiliaryFields = listOf(
+            PKField("UserId", "USERID", passInfo.userId),
+            PKField("ValidUntil", "VALIDUNTIL", passInfo.validUntil.format(dateTimeFormatter))
+        )
 
         pass.generic = generic
 
-        val location = PKLocation()
-        location.latitude = 37.33182
-        location.longitude = -122.03118
-
-        pass.locations = listOf(location)
+        pass.addLocation(37.33182, -122.03118)
 
         return pass
     }
@@ -68,7 +57,7 @@ class CreatePass(
         templateName: String,
         pass: PKPass
     ): ByteArray? {
-        val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCAG3.cer"
+        val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCA.cer"
         val privateKeyPath = "$resourcesBaseDirPath/certs/$keyName.p12"
         val privateKeyPassword = privateKeyPassword
         var result: ByteArray? = null
