@@ -1,0 +1,37 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: info,health,loggers,metrics,beans
+  health:
+    db:
+      enabled: false
+    mongo:
+      enabled: true
+
+server:
+  port: 13013
+  tomcat:
+    accesslog:
+      enabled: true
+
+spring:
+  application:
+    name: contagio-server
+  thymeleaf:
+    mode: HTML
+  data:
+    mongodb:
+      uri: "mongodb://gy-qa-mongo.gyl2it.de:8020"
+      database: contagio
+
+contagio:
+  useMinifiedResources: true
+
+  bpRestapi:
+    baseurl: "http://localhost:8080/restapi/api/gy/"
+    user: "restapi"
+    password: "restapi123$"

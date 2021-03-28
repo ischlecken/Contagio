@@ -1,0 +1,17 @@
+.project
+.idea
+*.iml
+.settings
+.classpath
+.factorypath
+
+logs
+work
+
+webapp/logs
+webapp/target
+webapp/src/webpack/dist/*
+webapp/src/webpack/node_modules/*
+
+.DS_Store
+

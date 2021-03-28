@@ -1,0 +1,18 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo:4.4.4
+    ports:
+      - "13014:13014"
+  server:
+    build:
+      context: ./contagio-server
+      dockerfile: Dockerfile-server
+    depends_on:
+      - mongodb
+    ports:
+      - "13013:13013"
+    environment:
+      ACTIVE_PROFILE: stt
+      MONGODB_URI: mongodb://mongodb:13014
+  

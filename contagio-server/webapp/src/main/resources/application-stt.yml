@@ -1,0 +1,14 @@
+server:
+  tomcat:
+    accesslog:
+      directory: logs/${spring.application.name}
+      enabled: true
+    basedir: .
+
+spring:
+  data:
+    mongodb:
+      uri: "mongodb://dvm1:27017"
+
+contagio:
+  useMinifiedResources: false

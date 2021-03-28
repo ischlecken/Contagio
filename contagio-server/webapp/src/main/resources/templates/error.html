@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype='error')}"><title></title></head>
+<body>
+<nav th:replace="~{menu :: menu(pagetype='error')}"></nav>
+
+<div class="container bcmain">
+    <div class="errorpage" th:switch="${status}">
+        <img src="/mcstatic/images/errorpage.jpg" alt="What the heck">
+        <th:block th:case="404">
+            <h1 th:utext="#{errorpage.404.message}">Seite existiert nicht</h1>
+            <a class="btn"
+               href="/"
+               role="button"
+               th:text="#{errorpage.returnbutton}">Go Home</a>
+        </th:block>
+        <th:block th:case="*">
+            <h1 th:utext="#{errorpage.message.0}">Something is rotten</h1>
+            <p th:utext="#{errorpage.message.1}">Our Engineers are on it...</p>
+            <hr class="my-4">
+            <div class="detailerrorinfo">
+                <p>Status:<span th:text="${status}">status</span> <span th:text="${error}">error</span></p>
+                <p th:if="${!#strings.isEmpty(message)}">Message:<span th:text="${message}">Exception</span></p>
+                <p th:if="${errors}">Errors:<span th:text="${errors}">Exception</span></p>
+                <p th:if="${exception}">Exception:<span th:text="${exception}">Exception</span></p>
+                <pre th:if="${trace}" th:text="${trace}"></pre>
+            </div>
+            <a class="btn"
+               href="/"
+               role="button"
+               th:text="#{errorpage.returnbutton}">Go Home</a>
+        </th:block>
+    </div>
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype='HOME')}"></footer>
+</body>
+</html>

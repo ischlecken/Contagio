@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
+<!--/*@thymesVar id="pageMetainfo" type="de.contagiowebapp.model.PageMetainfo"*/-->
+<th:block th:fragment="metainfo"
+          th:object="${pageMetainfo}">
+
+    <title th:if="*{title}" th:text="*{title}">GY-Buencamino</title>
+    <link rel="home" th:href="*{home}">
+    <link rel="copyright" th:href="*{imprint}">
+    <link th:each="l : *{links}" th:rel="${l.key.value}" th:href="${l.value}">
+
+    <meta name="robots" th:content="*{robots}" content="index,follow,noarchive">
+</th:block>
+
+<body>
+</body>
+</html>

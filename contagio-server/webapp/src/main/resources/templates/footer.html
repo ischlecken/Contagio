@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<body>
+
+<!--/*@thymesVar id="buildInfo" type="de.contagiowebapp.config.BuildInfo"*/-->
+<!--/*@thymesVar id="appName" type="String"*/-->
+
+<footer th:fragment="footer(pagetype)">
+    <script type="text/javascript" src="/mcwj/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/mcwj/popper.js/umd/popper.min.js"></script>
+    <script type="text/javascript" src="/mcwj/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/mcstatic/app.js"></script>
+    
+    <div class="main-footer">
+        <div class="footerBasicInfo">
+            <p class="copywrite">&copy; 2021 &mdash; <span th:text="${appName}">appName</span></p>
+            <p class="version">V<span th:text="${buildInfo.version}">version</span> &mdash; R<span
+                  th:text="${buildInfo.revision}">revision</span> &mdash; <span
+                  th:text="${buildInfo.scmBranch}">branch</span> &mdash; <span
+                  th:text="${buildInfo.timestamp}">revision</span> &mdash; SpringBoot V<span
+                  th:text="${buildInfo.springboot}">revision</span> Java<span
+                  th:text="${@environment.getProperty('java.version')}"></span></p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

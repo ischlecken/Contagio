@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<!--suppress HtmlUnknownTarget, HtmlUnknownTag -->
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<body>
+
+<nav th:fragment="menu(pagetype)"
+     class="navbar navbar-expand-md bcmenu">
+    <a tabindex="-1"
+       class="navbar-brand" href="/">
+        <img class="gy-logo" src="/mcstatic/images/icons/gylogo.png" alt="GoYellow Logo">
+    </a>
+    <ul class="navbar-nav ml-auto gelbe-seiten-nav d-md-none">
+        <form action="#" th:action="@{/bc/redirect}" method="post">
+            <input type="hidden" name="to" value="menulink">
+            <input type="hidden" name="param1" value="gelbeseiten">
+            <p class="partner" th:text="#{menu.partner}"></p>
+            <button tabindex="-1" class="btn btn-link nav-link gelbeseiten" type="submit" th:text="#{menu.link.gelbeseiten}">Link
+            </button>
+        </form>
+    </ul>
+</nav>
+
+</body>
+</html>
