@@ -52,6 +52,12 @@
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>de.contagio</groupId>
+                <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -144,6 +150,7 @@
     </scm>
 
     <modules>
+        <module>./core</module>
         <module>./webapp</module>
     </modules>
 </project>

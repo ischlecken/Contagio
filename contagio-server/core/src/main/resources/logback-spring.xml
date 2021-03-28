@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<timestamp key="byDay" datePattern="yyyyMMdd" />
+	<property name="LOG_FILE" value="logs/contagio-${HOSTNAME}-${byDay}.log" />
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	<include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+	<root level="OFF">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.security" level="WARN" />
+	<logger name="org.springframework.web" level="WARN" />
+	<logger name="org.springframework.cache" level="DEBUG" />
+
+	<logger name="org.thymeleaf" level="WARN" />
+
+	<logger name="de.contagio" level="DEBUG" />
+
+</configuration>
+

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import javax.annotation.PostConstruct
 
-private var logger = LoggerFactory.getLogger(MMControlApplication::class.java)
+private var logger = LoggerFactory.getLogger(ContagioApplication::class.java)
 
 @SpringBootApplication(
     exclude = [
@@ -38,7 +38,7 @@ private var logger = LoggerFactory.getLogger(MMControlApplication::class.java)
     ]
 )
 @EnableMongoRepositories("de.contagio.webapp.repository.mongodb")
-open class MMControlApplication(
+open class ContagioApplication(
     @Value("\${spring.application.name}")
     private var appName: String,
     private val buildConfig: BuildInfoConfig
@@ -61,7 +61,7 @@ open class MMControlApplication(
 }
 
 fun main(args: Array<String>) {
-    runApplication<MMControlApplication>(*args) {
+    runApplication<ContagioApplication>(*args) {
         setAdditionalProfiles("buildinfo")
     }
 }

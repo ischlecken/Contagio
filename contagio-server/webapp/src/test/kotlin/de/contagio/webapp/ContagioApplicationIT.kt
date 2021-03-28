@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 
 @SpringBootTest
 @ActiveProfiles(profiles = ["buildinfo","integrationtest"])
-class MMControlAPIApplicationIT {
+class ContagioApplicationIT {
 
     @Test
     fun springcontextLoaded() {
