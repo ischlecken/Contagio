@@ -26,13 +26,13 @@ class CreatePass(
         pass.authenticationToken = this.authenticationToken
         pass.serialNumber = passInfo.serialNumber
         pass.teamIdentifier = this.teamIdentifier
-        pass.webServiceURL = URL("https://efeu.local:13013/co_v1/pass")
+        pass.webServiceURL = URL("http://efeu.local:13013/co_v1/wallet/")
 
         pass.foregroundColor = "rgb(255, 255, 255)"
-        pass.backgroundColor = "rgb(31, 197, 31)"
+        pass.backgroundColor = "rgb(31, 120, 31)"
         pass.organizationName = "contagio"
         pass.description = "Der Pass in die Freiheit"
-        pass.logoText = "Söders Weg"
+        pass.logoText = "Das Tübinger Modell"
 
         pass.addBarcode("http://efeu.local:13013/co_v1/pass?serialNumber=${passInfo.serialNumber}")
 
@@ -59,7 +59,6 @@ class CreatePass(
     ): ByteArray? {
         val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCA.cer"
         val privateKeyPath = "$resourcesBaseDirPath/certs/$keyName.p12"
-        val privateKeyPassword = privateKeyPassword
         var result: ByteArray? = null
         try {
             val pkSigningInformation =
