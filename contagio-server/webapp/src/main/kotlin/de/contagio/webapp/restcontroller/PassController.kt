@@ -1,6 +1,7 @@
 package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.usecase.CreatePass
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
@@ -38,7 +39,7 @@ open class PassController(
     open fun createPass(@RequestBody createPassRequest: CreatePassRequest): ResponseEntity<ByteArray> {
         var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
 
-        createPassPayload(createPassRequest.userId)?.let {
+        createPassPayload(createPassRequest.userId,createPassRequest.testResult)?.let {
             result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
         }
 
@@ -46,19 +47,19 @@ open class PassController(
     }
 
     @GetMapping("/create")
-    open fun createPass(@RequestParam userId: String): ResponseEntity<ByteArray> {
+    open fun createPass(@RequestParam userId: String, @RequestParam testResult: String): ResponseEntity<ByteArray> {
         var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
 
-        createPassPayload(userId)?.let {
+        createPassPayload(userId, TestResultType.valueOf(testResult))?.let {
             result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
         }
 
         return result
     }
 
-    private fun createPassPayload(userId: String): ByteArray? {
+    private fun createPassPayload(userId: String, testResult: TestResultType): ByteArray? {
         var result: ByteArray? = null
-        val passInfo = PassInfo(serialNumber = uidGenerator.generate(), userId = userId)
+        val passInfo = PassInfo(serialNumber = uidGenerator.generate(), userId = userId, testResult = testResult)
 
         if (passInfoRepository.save(passInfo) != null) {
             val createPass = CreatePass(

@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 private val logger = LoggerFactory.getLogger(CreatePass::class.java)
-private val dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT,FormatStyle.SHORT)
+private val dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
 
 class CreatePass(
     private val teamIdentifier: String,
@@ -29,15 +29,15 @@ class CreatePass(
         pass.webServiceURL = URL("https://efeu.local:13013/co_v1/pass")
 
         pass.foregroundColor = "rgb(255, 255, 255)"
-        pass.backgroundColor = "rgb(197, 31, 31)"
+        pass.backgroundColor = "rgb(31, 197, 31)"
         pass.organizationName = "contagio"
-        pass.description = "Dein Pass in die Freiheit"
-        pass.logoText = "Tübinger Weg"
+        pass.description = "Der Pass in die Freiheit"
+        pass.logoText = "Söders Weg"
 
         pass.addBarcode("http://efeu.local:13013/co_v1/pass?serialNumber=${passInfo.serialNumber}")
 
         val generic = PKGenericPass()
-        generic.primaryFields = listOf(PKField("mykey", null, "Hallo Mausi"))
+        generic.primaryFields = listOf(PKField("TestResult", null, passInfo.testResult.display))
         generic.auxiliaryFields = listOf(
             PKField("UserId", "USERID", passInfo.userId),
             PKField("ValidUntil", "VALIDUNTIL", passInfo.validUntil.format(dateTimeFormatter))

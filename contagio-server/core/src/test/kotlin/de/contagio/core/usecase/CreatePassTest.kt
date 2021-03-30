@@ -1,6 +1,7 @@
 package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.TestResultType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,7 +17,7 @@ class CreatePassTest {
             )
 
         val pass = createPass.build(
-            PassInfo("123", " abc ")
+            PassInfo("123", " abc ", TestResultType.NEGATIVE)
         )
 
         assertEquals("123", pass.serialNumber)

@@ -1,3 +1,5 @@
 package de.contagio.webapp.model
 
-data class CreatePassRequest(val userId: String)
+import de.contagio.core.domain.entity.TestResultType
+
+data class CreatePassRequest(val userId: String, val testResult: TestResultType)
