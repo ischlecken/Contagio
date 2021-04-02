@@ -17,6 +17,7 @@
 		3C92CF7F2617018C002B5284 /* TeststationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF7E2617018C002B5284 /* TeststationTests.swift */; };
 		3C92CF8A2617018C002B5284 /* TeststationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF892617018C002B5284 /* TeststationUITests.swift */; };
 		3C92CFA3261705C7002B5284 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFA2261705C7002B5284 /* DetailView.swift */; };
+		3C92CFEB261734FF002B5284 /* TestCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFEA261734FF002B5284 /* TestCertificate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		3C92CF892617018C002B5284 /* TeststationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationUITests.swift; sourceTree = "<group>"; };
 		3C92CF8B2617018C002B5284 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3C92CFA2261705C7002B5284 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		3C92CFEA261734FF002B5284 /* TestCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCertificate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				3C92CF6A2617018B002B5284 /* Teststation.xcdatamodeld */,
 				3C92CF6F2617018C002B5284 /* Preview Content */,
 				3C92CFA2261705C7002B5284 /* DetailView.swift */,
+				3C92CFEA261734FF002B5284 /* TestCertificate.swift */,
 			);
 			path = Teststation;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				3C92CF6C2617018B002B5284 /* Teststation.xcdatamodeld in Sources */,
 				3C92CFA3261705C7002B5284 /* DetailView.swift in Sources */,
 				3C92CF692617018B002B5284 /* ContentView.swift in Sources */,
+				3C92CFEB261734FF002B5284 /* TestCertificate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

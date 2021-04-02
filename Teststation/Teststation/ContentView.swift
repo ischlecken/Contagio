@@ -13,13 +13,14 @@ struct ContentView: View {
         NavigationView {
             List {
               ForEach(certificates, id: \.createts) {
-                Text($0.lastname!)
+                Text("\($0.firstname!) \($0.lastname!)")
+                Text("\($0.phonenumber!)")
               }
               .onDelete(perform: deleteCertificate)
             }
             .navigationTitle("Testzertifikate")
             .navigationBarItems(trailing: Button("Add") {
-                self.addCertificate(firstname: "Stefan", lastname: "Thomas", validuntil: Date().advanced(by: 86400))
+                self.addCertificate(firstname: "Stefan", lastname: "Thomas", phonenumber: "0894556655")
             })
         }
     }
@@ -39,12 +40,13 @@ struct ContentView: View {
     }
 
 
-    func addCertificate(firstname: String, lastname: String, validuntil: Date) {
-        let newCertificate = TestCertificate(context: managedObjectContext)
-
-        newCertificate.firstname = firstname
-        newCertificate.lastname = lastname
-        newCertificate.validuntil = validuntil
+    func addCertificate(firstname: String, lastname: String, phonenumber: String) {
+        let _ = createTestCertificate(
+            firstName:firstname,
+            lastName:lastname,
+            phoneNumber:phonenumber,
+            context:managedObjectContext
+        )
 
         saveContext()
     }
