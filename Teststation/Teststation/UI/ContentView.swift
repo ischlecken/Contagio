@@ -3,18 +3,17 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @FetchRequest(
-      entity: TestCertificate.entity(),
-      sortDescriptors: [NSSortDescriptor(keyPath: \TestCertificate.createts, ascending: false)]
+      entity: Certificate.entity(),
+      sortDescriptors: [NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)]
       //,predicate: NSPredicate(format: "genre contains 'Action'")
-    ) var certificates: FetchedResults<TestCertificate>
+    ) var certificates: FetchedResults<Certificate>
     @State var isPresented = false
     
     var body: some View {
         NavigationView {
             List {
-              ForEach(certificates, id: \.createts) {
-                Text("\($0.firstname!) \($0.lastname!)")
-                Text("\($0.phonenumber!)")
+              ForEach(certificates) {
+                CertificateRow(certificate:$0)
               }
               .onDelete(perform: deleteCertificate)
             }
@@ -41,7 +40,7 @@ struct ContentView: View {
 
 
     func addCertificate(firstname: String, lastname: String, phonenumber: String) {
-        let _ = createTestCertificate(
+        let _ = createCertificate(
             firstName:firstname,
             lastName:lastname,
             phoneNumber:phonenumber,
@@ -62,9 +61,12 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
+        
     static var previews: some View {
+        let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
+                
         Group {
-            ContentView()
+            ContentView().environment(\.managedObjectContext, context)
         }
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="19H524" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Certificate" representedClassName="Certificate" syncable="YES" codeGenerationType="class">
+        <attribute name="createts" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="firstname" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="imageid" optional="YES" attributeType="String"/>
+        <attribute name="lastname" attributeType="String"/>
+        <attribute name="modifyts" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="pass" optional="YES" attributeType="Binary"/>
+        <attribute name="phonenumber" attributeType="String"/>
+        <attribute name="previewimageid" optional="YES" attributeType="String"/>
+        <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="validfrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="validto" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Image" representedClassName="Image" syncable="YES" codeGenerationType="class">
+        <attribute name="data" attributeType="Binary"/>
+        <attribute name="format" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="Certificate" positionX="-63" positionY="-18" width="128" height="28"/>
+        <element name="Image" positionX="-54" positionY="27" width="128" height="28"/>
+    </elements>
+</model>

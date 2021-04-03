@@ -1,0 +1,12 @@
+"certificatestatus_0" = "unknown";
+"certificatestatus_1" = "negative";
+"certificatestatus_2" = "positive";
+
+"certificatetype_0" = "unknown";
+"certificatetype_1" = "Rapid Test";
+"certificatetype_2" = "PCR Test";
+"certificatetype_3" = "Vaccination";
+
+"validuntil: %@" = "valid until %@";
+
+"certificaterow_status: %@ %@" = "%@ status:%@";
