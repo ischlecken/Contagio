@@ -20,16 +20,28 @@ struct ContentView: View {
             }
             .sheet(isPresented: $isPresented) {
               AddCertificate { firstname, lastname, phonenumber, email, type, status, validto in
-                self.addCertificate(firstname: firstname, lastname: lastname, phonenumber: phonenumber, email:email,type:type, status:status, validto:validto)
+                self.addCertificate(
+                    firstname: firstname,
+                    lastname: lastname,
+                    phonenumber: phonenumber,
+                    email:email,
+                    type:type,
+                    status:status,
+                    validto:validto
+                )
                 self.isPresented = false
               }
             }
             .navigationTitle("certificatelist_title")
-            .navigationBarItems(trailing: Button("Add") { self.isPresented.toggle() })
+            .navigationBarItems(trailing: addButton())
         }
     }
     
-    func deleteCertificate(at offsets: IndexSet) {
+    private func addButton() -> some View {
+        return Button(action: { self.isPresented.toggle() }) {Image(systemName: "plus") }
+    }
+    
+    private func deleteCertificate(at offsets: IndexSet) {
       // 1.
       offsets.forEach { index in
         // 2.
@@ -44,7 +56,7 @@ struct ContentView: View {
     }
 
 
-    func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, type:CertificateType, status:CertificateStatus, validto:Date) {
+    private func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, type:CertificateType, status:CertificateStatus, validto:Date) {
         let _ = createCertificate(
             firstName:firstname,
             lastName:lastname,
@@ -60,7 +72,7 @@ struct ContentView: View {
     }
 
 
-    func saveContext() {
+    private func saveContext() {
       do {
         try managedObjectContext.save()
       } catch {
