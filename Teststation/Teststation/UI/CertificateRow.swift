@@ -47,7 +47,10 @@ struct CertificateRow_Previews: PreviewProvider {
             firstName:"Hugo",
             lastName:"Meier",
             phoneNumber:"08945566",
+            email:"bla@fasel.de",
+            validTo: Date().advanced(by: 86400),
             status: CertificateStatus.positive,
+            type: CertificateType.rapidtest,
             context:context
         )
         

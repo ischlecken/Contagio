@@ -21,18 +21,27 @@ enum CertificateType:Int8 {
     case vaccination=3
 }
 
-func createCertificate(firstName:String, lastName:String, phoneNumber:String, status:CertificateStatus, context: NSManagedObjectContext) -> Certificate {
+func createCertificate(
+    firstName:String,
+    lastName:String,
+    phoneNumber:String,
+    email:String,
+    validTo:Date,
+    status:CertificateStatus,
+    type:CertificateType,
+    context: NSManagedObjectContext) -> Certificate {
     let result = Certificate(context:context)
     
     result.createts = Date()
     result.validfrom = Date().advanced(by: 3600)
-    result.validto = Date().advanced(by: 86400)
+    result.validto = validTo
     result.id = UUID().uuidString
     result.phonenumber = phoneNumber
     result.firstname = firstName
     result.lastname = lastName
+    result.email = email
     result.status = Int16(status.rawValue)
-    result.type = Int16(CertificateType.rapidtest.rawValue)
+    result.type = Int16(type.rawValue)
     
     return result
 }

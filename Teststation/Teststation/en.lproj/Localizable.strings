@@ -12,3 +12,15 @@
 "certificaterow_status: %@ %@" = "%@ status:%@";
 
 "certificatelist_title" = "Certificates";
+
+"addcert_firstname" = "Firstname";
+"addcert_firstname_placeholder" = "type in firstname";
+"addcert_lastname" = "Lastname";
+"addcert_lastname_placeholder" = "type in lastname";
+"addcert_phonenumber" = "Phonenumber";
+"addcert_phonenumber_placeholder" = "type in phonenumber";
+"addcert_email" = "EMail";
+"addcert_email_placeholder" = "type in email";
+"addcert_validto" = "valid until";
+"addcert_addbutton" = "add certificate";
+"addcert_title" = "Add Certificate";

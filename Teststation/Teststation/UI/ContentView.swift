@@ -7,6 +7,7 @@ struct ContentView: View {
       sortDescriptors: [NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)]
       //,predicate: NSPredicate(format: "genre contains 'Action'")
     ) var certificates: FetchedResults<Certificate>
+    
     @State var isPresented = false
     
     var body: some View {
@@ -17,10 +18,14 @@ struct ContentView: View {
               }
               .onDelete(perform: deleteCertificate)
             }
+            .sheet(isPresented: $isPresented) {
+              AddCertificate { firstname, lastname, phonenumber,email,validto in
+                self.addCertificate(firstname: firstname, lastname: lastname, phonenumber: phonenumber,email:email,validto:validto)
+                self.isPresented = false
+              }
+            }
             .navigationTitle("certificatelist_title")
-            .navigationBarItems(trailing: Button("Add") {
-                self.addCertificate(firstname: "Stefan", lastname: "Thomas", phonenumber: "0894556655")
-            })
+            .navigationBarItems(trailing: Button("Add") { self.isPresented.toggle() })
         }
     }
     
@@ -39,12 +44,15 @@ struct ContentView: View {
     }
 
 
-    func addCertificate(firstname: String, lastname: String, phonenumber: String) {
+    func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, validto:Date) {
         let _ = createCertificate(
             firstName:firstname,
             lastName:lastname,
             phoneNumber:phonenumber,
+            email:email,
+            validTo: validto,
             status:CertificateStatus.unknown,
+            type:CertificateType.rapidtest,
             context:managedObjectContext
         )
 
