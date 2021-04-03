@@ -12,14 +12,17 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List(certificates) { cert in
-                NavigationLink( destination: CertificateView(certificate:cert) ) {
-                    CertificateRow(certificate:cert)
+            List {
+                ForEach(certificates) { cert in
+                    NavigationLink( destination: CertificateView(certificate:cert) ) {
+                        CertificateRow(certificate:cert)
+                    }
                 }
+                .onDelete(perform: deleteCertificate)
             }
             .sheet(isPresented: $isPresented) {
                 AddCertificate { firstname, lastname, phonenumber, email, type, status, validto in
-                    self.addCertificate(
+                    addCertificate(
                         firstname: firstname,
                         lastname: lastname,
                         phonenumber: phonenumber,
@@ -28,7 +31,7 @@ struct ContentView: View {
                         status:status,
                         validto:validto
                     )
-                    self.isPresented = false
+                    isPresented = false
                 }
             }
             .navigationTitle("certificatelist_title")
@@ -37,14 +40,14 @@ struct ContentView: View {
     }
     
     private func addButton() -> some View {
-        return Button(action: { self.isPresented.toggle() }) {Image(systemName: "plus") }
+        return Button(action: { isPresented.toggle() }) {Image(systemName: "plus") }
     }
     
     private func deleteCertificate(at offsets: IndexSet) {
         // 1.
         offsets.forEach { index in
             // 2.
-            let certificate = self.certificates[index]
+            let certificate = certificates[index]
             
             // 3.
             self.managedObjectContext.delete(certificate)

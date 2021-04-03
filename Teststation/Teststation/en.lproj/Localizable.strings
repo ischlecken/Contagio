@@ -25,3 +25,11 @@
 "addcert_title" = "Add Certificate";
 "addcert_type" = "Certificate Type";
 "addcert_status" = "Certificate Status";
+
+"certview_phonenumber: %@" = "Phone: %@";
+"certview_email: %@" = "EMail: %@";
+"certview_delete" = "delete certificate";
+
+"alert_deletecertificate_title" = "delete certificate?";
+"alert_deletecertificate_message" = "do you really want to delete this certificate?";
+"alert_deletecertificate_deletebutton" = "Delete";

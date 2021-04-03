@@ -25,3 +25,12 @@
 "addcert_title" = "Neues Zertifikat";
 "addcert_type" = "Zertifikat Typ";
 "addcert_status" = "Zertifikat Status";
+
+"certview_delete" = "Zertifikat löschen";
+
+"certview_phonenumber: %@" = "Tel-Nr: %@";
+"certview_email: %@" = "E-Mail: %@";
+
+"alert_deletecertificate_title" = "Zertifikat löschen";
+"alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";
+"alert_deletecertificate_deletebutton" = "Löschen";

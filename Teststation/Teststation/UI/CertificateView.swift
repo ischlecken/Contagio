@@ -1,22 +1,40 @@
 import SwiftUI
 
 struct CertificateView: View {
+    
+    static let releaseFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .short
+    
+    return formatter
+}()
+    
     @State var showAlert = false
     let certificate: Certificate
     
     var body: some View {
         VStack {
-            Text(certificate.lastname!).italic()
+            Text("\(certificate.firstname!) \(certificate.lastname!)").font(.largeTitle)
             Spacer(minLength: 20)
-            Color(.blue)
+            Text("certview_phonenumber: \(certificate.phonenumber!)").font(.caption)
+            Text("certview_email: \(certificate.email!)").font(.caption)
+            
+            let certType = "certificatetype_\(certificate.type)".localized()
+            let certStatus = "certificatestatus_\(certificate.status)".localized()
+            let certValid = certificate.validto != nil ? Self.releaseFormatter.string(from: certificate.validto!) : ""
+            
+            Text("certificaterow_status: \(certType) \(certStatus)").font(.caption)
+            Text("validuntil: \(certValid)").font(.caption)
             Spacer(minLength: 20)
-            Button(certificate.phonenumber!) {
+            
+            Button("certview_delete") {
                 showAlert = true
-            }
+            }.font(.title)
             .alert(isPresented: $showAlert) {
-                Alert(title:Text("bla"),
-                      message: Text("msg is \(certificate.lastname!)"),
-                      primaryButton: .destructive(Text("...Delete...")),
+                Alert(title:Text("alert_deletecertificate_title"),
+                      message: Text("alert_deletecertificate_message"),
+                      primaryButton: .destructive(Text("alert_deletecertificate_deletebutton")),
                       secondaryButton: .cancel()
                 )
             }
