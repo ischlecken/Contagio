@@ -16,7 +16,7 @@
 		3C92CF742617018C002B5284 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C92CF722617018C002B5284 /* LaunchScreen.storyboard */; };
 		3C92CF7F2617018C002B5284 /* TeststationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF7E2617018C002B5284 /* TeststationTests.swift */; };
 		3C92CF8A2617018C002B5284 /* TeststationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF892617018C002B5284 /* TeststationUITests.swift */; };
-		3C92CFA3261705C7002B5284 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFA2261705C7002B5284 /* DetailView.swift */; };
+		3C92CFA3261705C7002B5284 /* CertificateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFA2261705C7002B5284 /* CertificateView.swift */; };
 		3C92CFEB261734FF002B5284 /* Certificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFEA261734FF002B5284 /* Certificate.swift */; };
 		3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFF22618581E002B5284 /* CertificateRow.swift */; };
 		3C9507382618755E00662EB1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C95073A2618755E00662EB1 /* Localizable.strings */; };
@@ -56,7 +56,7 @@
 		3C92CF852617018C002B5284 /* TeststationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeststationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C92CF892617018C002B5284 /* TeststationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationUITests.swift; sourceTree = "<group>"; };
 		3C92CF8B2617018C002B5284 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3C92CFA2261705C7002B5284 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		3C92CFA2261705C7002B5284 /* CertificateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateView.swift; sourceTree = "<group>"; };
 		3C92CFEA261734FF002B5284 /* Certificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certificate.swift; sourceTree = "<group>"; };
 		3C92CFF22618581E002B5284 /* CertificateRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateRow.swift; sourceTree = "<group>"; };
 		3C9506FC26186FC500662EB1 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				3C92CF682617018B002B5284 /* ContentView.swift */,
-				3C92CFA2261705C7002B5284 /* DetailView.swift */,
+				3C92CFA2261705C7002B5284 /* CertificateView.swift */,
 				3C92CFF22618581E002B5284 /* CertificateRow.swift */,
 				3C9507422618B01A00662EB1 /* AddCertificate.swift */,
 			);
@@ -308,7 +308,7 @@
 				3C92CF672617018B002B5284 /* SceneDelegate.swift in Sources */,
 				3C92CF6C2617018B002B5284 /* Teststation.xcdatamodeld in Sources */,
 				3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */,
-				3C92CFA3261705C7002B5284 /* DetailView.swift in Sources */,
+				3C92CFA3261705C7002B5284 /* CertificateView.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
 				3C92CF692617018B002B5284 /* ContentView.swift in Sources */,
 				3C92CFEB261734FF002B5284 /* Certificate.swift in Sources */,
