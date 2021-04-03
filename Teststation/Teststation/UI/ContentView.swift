@@ -19,8 +19,8 @@ struct ContentView: View {
               .onDelete(perform: deleteCertificate)
             }
             .sheet(isPresented: $isPresented) {
-              AddCertificate { firstname, lastname, phonenumber,email,validto in
-                self.addCertificate(firstname: firstname, lastname: lastname, phonenumber: phonenumber,email:email,validto:validto)
+              AddCertificate { firstname, lastname, phonenumber, email, type, status, validto in
+                self.addCertificate(firstname: firstname, lastname: lastname, phonenumber: phonenumber, email:email,type:type, status:status, validto:validto)
                 self.isPresented = false
               }
             }
@@ -44,15 +44,15 @@ struct ContentView: View {
     }
 
 
-    func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, validto:Date) {
+    func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, type:CertificateType, status:CertificateStatus, validto:Date) {
         let _ = createCertificate(
             firstName:firstname,
             lastName:lastname,
             phoneNumber:phonenumber,
             email:email,
             validTo: validto,
-            status:CertificateStatus.unknown,
-            type:CertificateType.rapidtest,
+            status:status,
+            type:type,
             context:managedObjectContext
         )
 

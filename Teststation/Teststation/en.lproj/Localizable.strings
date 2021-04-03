@@ -2,10 +2,9 @@
 "certificatestatus_1" = "negative";
 "certificatestatus_2" = "positive";
 
-"certificatetype_0" = "unknown";
-"certificatetype_1" = "Rapid Test";
-"certificatetype_2" = "PCR Test";
-"certificatetype_3" = "Vaccination";
+"certificatetype_0" = "Rapid Test";
+"certificatetype_1" = "PCR Test";
+"certificatetype_2" = "Vaccination";
 
 "validuntil: %@" = "valid until %@";
 
@@ -24,3 +23,5 @@
 "addcert_validto" = "valid until";
 "addcert_addbutton" = "add certificate";
 "addcert_title" = "Add Certificate";
+"addcert_type" = "Certificate Type";
+"addcert_status" = "Certificate Status";

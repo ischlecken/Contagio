@@ -7,18 +7,17 @@ extension String {
     }
 }
 
-enum CertificateStatus:Int8 {
+enum CertificateStatus:Int8, CaseIterable {
     case unknown=0
     case negative=1
     case positive=2
 }
 
 
-enum CertificateType:Int8 {
-    case unknown=0
-    case rapidtest=1
-    case pcrtest=2
-    case vaccination=3
+enum CertificateType:Int8, CaseIterable {
+    case rapidtest=0
+    case pcrtest=1
+    case vaccination=2
 }
 
 func createCertificate(

@@ -2,10 +2,9 @@
 "certificatestatus_1" = "negativ";
 "certificatestatus_2" = "positiv";
 
-"certificatetype_0" = "unbekannt";
-"certificatetype_1" = "Schnelltest";
-"certificatetype_2" = "PCR-Test";
-"certificatetype_3" = "Impfung";
+"certificatetype_0" = "Schnelltest";
+"certificatetype_1" = "PCR-Test";
+"certificatetype_2" = "Impfung";
 
 "validuntil: %@" = "gültig bis %@";
 
@@ -13,14 +12,16 @@
 
 "certificatelist_title" = "Zertifikate";
 
-"addcert_firstname" = "Vorname";
+"addcert_firstname" = "Vor & Nachname";
 "addcert_firstname_placeholder" = "Geben Sie den Vornamen ein";
 "addcert_lastname" = "Nachname";
 "addcert_lastname_placeholder" = "Geben Sie den Nachnamen ein";
-"addcert_phonenumber" = "Telefonnummer";
+"addcert_phonenumber" = "Telefonnummer & E-Mail";
 "addcert_phonenumber_placeholder" = "Geben Sie die Telefonnummer ein";
 "addcert_email" = "E-Mail";
 "addcert_email_placeholder" = "Geben Sie die E-Mail ein";
 "addcert_validto" = "Gültig bis";
 "addcert_addbutton" = "neues Zertifikat hinzufügen";
 "addcert_title" = "Neues Zertifikat";
+"addcert_type" = "Zertifikat Typ";
+"addcert_status" = "Zertifikat Status";
