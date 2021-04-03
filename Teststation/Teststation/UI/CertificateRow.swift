@@ -12,6 +12,8 @@ struct CertificateRow: View {
     }()
     
     var body: some View {
+        let background = Color("backgroundcertificatestatus_\(certificate.status)")
+        
         VStack(alignment: .leading) {
             HStack {certificate.firstname
                 .map(Text.init)
@@ -30,6 +32,8 @@ struct CertificateRow: View {
                 Text("validuntil: \(certValid)").font(.caption)
             }
         }
+        .background(background)
+        .listRowBackground(background)
     }
 }
 
@@ -43,12 +47,18 @@ struct CertificateRow_Previews: PreviewProvider {
             firstName:"Hugo",
             lastName:"Meier",
             phoneNumber:"08945566",
+            status: CertificateStatus.positive,
             context:context
         )
         
-        CertificateRow(certificate:certificate)
-            .previewLayout(PreviewLayout.sizeThatFits)
-            .padding()
-            .previewDisplayName("CertificateRow")
+        Group {
+            CertificateRow(certificate:certificate)
+                .previewLayout(PreviewLayout.sizeThatFits)
+                .previewDisplayName("CertificateRow")
+            CertificateRow(certificate:certificate)
+                .preferredColorScheme(.dark)
+                .previewLayout(PreviewLayout.sizeThatFits)
+                .previewDisplayName("CertificateRow")
+        }
     }
 }

@@ -17,7 +17,7 @@ struct ContentView: View {
               }
               .onDelete(perform: deleteCertificate)
             }
-            .navigationTitle("Testzertifikate")
+            .navigationTitle("certificatelist_title")
             .navigationBarItems(trailing: Button("Add") {
                 self.addCertificate(firstname: "Stefan", lastname: "Thomas", phonenumber: "0894556655")
             })
@@ -44,6 +44,7 @@ struct ContentView: View {
             firstName:firstname,
             lastName:lastname,
             phoneNumber:phonenumber,
+            status:CertificateStatus.unknown,
             context:managedObjectContext
         )
 

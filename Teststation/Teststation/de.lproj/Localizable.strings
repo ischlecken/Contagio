@@ -10,3 +10,5 @@
 "validuntil: %@" = "gültig bis %@";
 
 "certificaterow_status: %@ %@" = "%@: %@";
+
+"certificatelist_title" = "Testzertifikate";

@@ -10,3 +10,5 @@
 "validuntil: %@" = "valid until %@";
 
 "certificaterow_status: %@ %@" = "%@ status:%@";
+
+"certificatelist_title" = "Certificates";
