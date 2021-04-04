@@ -10,6 +10,10 @@ struct AddCertificate: View {
     @State var selectedType = 0
     @State var selectedStatus = 0
     
+    @State var showingImagePicker = false
+    @State var inputImage: UIImage?
+    @State var image: Image = Image(uiImage: UIImage(named: "image1")!)
+    
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
     let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
     
@@ -25,6 +29,12 @@ struct AddCertificate: View {
                 Section(header: Text("addcert_firstname")) {
                     TextField("addcert_firstname_placeholder", text: $firstname)
                     TextField("addcert_lastname_placeholder", text: $lastname)
+                    Button(action:showImagePicker) {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 100, alignment: .top)
+                    }
                 }
                 Section(header: Text("addcert_phonenumber")) {
                     TextField("addcert_phonenumber_placeholder", text: $phonenumber)
@@ -36,8 +46,6 @@ struct AddCertificate: View {
                             Text("certificatetype_\(types[i])".localized()).tag(i)
                         }
                     }.pickerStyle(SegmentedPickerStyle())
-                }
-                Section(header: Text("addcert_status"))  {
                     Picker(selection: $selectedStatus, label: Text("Certification Status")) {
                         ForEach(status.indices) { i in
                             Text("certificatestatus_\(status[i])".localized()).tag(i)
@@ -57,7 +65,22 @@ struct AddCertificate: View {
                 }
             }
             .navigationBarTitle(Text("addcert_title"), displayMode: .inline)
+            .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
+                ImagePicker(image: self.$inputImage)
+            }
         }
+    }
+    
+    private func showImagePicker() {
+        print("showImagePicker")
+        
+        self.showingImagePicker = true
+    }
+    
+    private func loadImage() {
+        print("loadImage")
+        
+        self.image = Image(uiImage: self.inputImage!)
     }
     
     private func addCertificateAction() {

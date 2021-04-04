@@ -21,6 +21,7 @@
 		3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CFF22618581E002B5284 /* CertificateRow.swift */; };
 		3C9507382618755E00662EB1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C95073A2618755E00662EB1 /* Localizable.strings */; };
 		3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9507422618B01A00662EB1 /* AddCertificate.swift */; };
+		3C9689392619CD2E009CAA6C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9689382619CD2E009CAA6C /* ImagePicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		3C9507392618755E00662EB1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3C95073E2618756700662EB1 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3C9507422618B01A00662EB1 /* AddCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCertificate.swift; sourceTree = "<group>"; };
+		3C9689382619CD2E009CAA6C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +170,7 @@
 				3C92CFA2261705C7002B5284 /* CertificateView.swift */,
 				3C92CFF22618581E002B5284 /* CertificateRow.swift */,
 				3C9507422618B01A00662EB1 /* AddCertificate.swift */,
+				3C9689382619CD2E009CAA6C /* ImagePicker.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				3C92CF652617018B002B5284 /* AppDelegate.swift in Sources */,
 				3C92CF672617018B002B5284 /* SceneDelegate.swift in Sources */,
 				3C92CF6C2617018B002B5284 /* Teststation.xcdatamodeld in Sources */,
+				3C9689392619CD2E009CAA6C /* ImagePicker.swift in Sources */,
 				3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */,
 				3C92CFA3261705C7002B5284 /* CertificateView.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
