@@ -12,7 +12,7 @@ struct AddCertificate: View {
     
     @State var showingImagePicker = false
     @State var inputImage: UIImage?
-    @State var image: Image = Image(uiImage: UIImage(named: "image1")!)
+    @State var image: Image = Image(uiImage: UIImage(named: "passdefaultimg")!)
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
     let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
@@ -33,7 +33,7 @@ struct AddCertificate: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 100, alignment: .top)
+                            .frame(height: 120, alignment: .top)
                     }
                 }
                 Section(header: Text("addcert_phonenumber")) {
@@ -80,7 +80,9 @@ struct AddCertificate: View {
     private func loadImage() {
         print("loadImage")
         
-        self.image = Image(uiImage: self.inputImage!)
+        let inputImage = self.inputImage ?? UIImage(named: "passdefaultimg")!
+        
+        self.image = Image(uiImage: inputImage)
     }
     
     private func addCertificateAction() {
