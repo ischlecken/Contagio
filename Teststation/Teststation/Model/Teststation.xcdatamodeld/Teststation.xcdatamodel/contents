@@ -5,12 +5,16 @@
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="firstname" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="issuestatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lastname" attributeType="String"/>
         <attribute name="modifyts" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="pass" optional="YES" attributeType="Binary"/>
+        <attribute name="passid" optional="YES" attributeType="String"/>
         <attribute name="phonenumber" attributeType="String"/>
         <attribute name="pictureid" optional="YES" attributeType="String"/>
         <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="testerid" optional="YES" attributeType="String"/>
+        <attribute name="teststationid" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="validfrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="validto" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -22,7 +26,7 @@
         <attribute name="id" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Certificate" positionX="-63" positionY="-18" width="128" height="238"/>
+        <element name="Certificate" positionX="-63" positionY="-18" width="128" height="298"/>
         <element name="Picture" positionX="-54" positionY="27" width="128" height="103"/>
     </elements>
 </model>

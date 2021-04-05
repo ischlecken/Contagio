@@ -47,9 +47,9 @@ struct CertificateRow_Previews: PreviewProvider {
     
     static var previews: some View {
         let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
-        let photo = createPicture(image: UIImage(named: "passimg")!, context: context)
+        let photo = context.createPicture(image: UIImage(named: "passimg")!)
     
-        let certificate = createCertificate(
+        let certificate = context.createCertificate(
             firstName:"Hugo",
             lastName:"Meier",
             phoneNumber:"08945566",
@@ -57,8 +57,7 @@ struct CertificateRow_Previews: PreviewProvider {
             validTo: Date().advanced(by: 86400),
             status: CertificateStatus.negative,
             type: CertificateType.rapidtest,
-            pictureid: photo.id!,
-            context:context
+            pictureid: photo.id!
         )
         
         Group {
@@ -66,6 +65,7 @@ struct CertificateRow_Previews: PreviewProvider {
                 .frame(height: 80)
                 .previewLayout(PreviewLayout.sizeThatFits)
                 .previewDisplayName("CertificateRow")
+            
             CertificateRow(certificate:certificate, photo: nil)
                 .frame(height: 80)
                 .preferredColorScheme(.dark)
