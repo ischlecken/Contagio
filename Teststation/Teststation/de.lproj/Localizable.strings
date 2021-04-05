@@ -29,7 +29,8 @@
 
 "modifycert_title" = "Zertifikat ändern";
 "modifycert_updatebutton" = "Änderungen speichern";
-"modifycert_showpass" = "Zertifikat anzeigen";
+"modifycert_deletebutton" = "Zertifikat löschen";
+"modifycert_showpass" = "Pass anzeigen";
 
 "certview_delete" = "Zertifikat löschen";
 "certview_phonenumber: %@" = "Tel-Nr: %@";

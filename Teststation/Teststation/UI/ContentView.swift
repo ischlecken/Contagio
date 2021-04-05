@@ -19,9 +19,14 @@ struct ContentView: View {
                     NavigationLink( destination: ModifyCertificate(
                         certificate:cert,
                         certifcatePhoto: certificatePhotos[cert.id!] ?? UIImage(named:"passdefaultimg")!,
-                        selectedStatus: Int(cert.status) ) { cert,selectedStatus in
+                        selectedStatus: Int(cert.status) ) { cert,selectedStatus,shouldDelete in
                         
-                        managedObjectContext.updateCertificateStatus(certificate: cert, status: selectedStatus)
+                        if( shouldDelete) {
+                            managedObjectContext.deleteCertificate(certificate: cert)
+                        }
+                        else {
+                            managedObjectContext.updateCertificateStatus(certificate: cert, status: selectedStatus)
+                        }
                         
                     }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
                     .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))

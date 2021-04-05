@@ -29,6 +29,7 @@
 
 "modifycert_title" = "Modify Certificate";
 "modifycert_updatebutton" = "Save Changes";
+"modifycert_deletebutton" = "Delete Certificate";
 "modifycert_showpass" = "Show Pass";
 
 "certview_phonenumber: %@" = "Phone: %@";
