@@ -21,13 +21,14 @@ enum CertificateType:Int8, CaseIterable {
 }
 
 func createCertificate(
-    firstName:String,
-    lastName:String,
-    phoneNumber:String,
-    email:String,
-    validTo:Date,
-    status:CertificateStatus,
-    type:CertificateType,
+    firstName: String,
+    lastName: String,
+    phoneNumber: String,
+    email: String,
+    validTo: Date,
+    status: CertificateStatus,
+    type: CertificateType,
+    pictureid: String,
     context: NSManagedObjectContext) -> Certificate {
     let result = Certificate(context:context)
     
@@ -41,6 +42,7 @@ func createCertificate(
     result.email = email
     result.status = Int16(status.rawValue)
     result.type = Int16(type.rawValue)
+    result.pictureid = pictureid
     
     return result
 }

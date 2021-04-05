@@ -43,17 +43,20 @@ struct CertificateView: View {
 }
 
 struct CertificateView_Previews: PreviewProvider {
+    
     static var previews: some View {
         let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
-        
+        let photo = createPicture(image: UIImage(named: "passimg")!, context: context)
+    
         let certificate = createCertificate(
-            firstName:"Hugo",
-            lastName:"Meier",
-            phoneNumber:"08945566",
-            email:"bla@fasel.de",
+            firstName: "Hugo",
+            lastName: "Meier",
+            phoneNumber: "08945566",
+            email: "bla@fasel.de",
             validTo: Date().advanced(by: 86400),
             status: CertificateStatus.positive,
             type: CertificateType.rapidtest,
+            pictureid: photo.id!,
             context:context
         )
         

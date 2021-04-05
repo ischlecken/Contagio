@@ -21,7 +21,7 @@ struct AddCertificate: View {
         firstname.count > 2 && lastname.count > 3 && phonenumber.count > 5 && certifcatePhoto != nil
     }
     
-    let onComplete: (String, String, String, String, CertificateType, CertificateStatus, Date) -> Void
+    let onComplete: (String, String, String, String, CertificateType, CertificateStatus, Date, UIImage) -> Void
     
     var body: some View {
         NavigationView {
@@ -99,9 +99,13 @@ struct AddCertificate: View {
     }
     
     private func loadImage() {
-        print("loadImage")
+        var img = UIImage(named: "passdefaultimg")!
         
-        let img = self.certifcatePhoto ?? UIImage(named: "passdefaultimg")!
+        if let photo = self.certifcatePhoto {
+            img = photo.resizeImage(300, opaque: true)
+        }
+        
+        print("loadImage() size=\(img.size)")
         
         self.image = Image(uiImage: img)
     }
@@ -114,7 +118,8 @@ struct AddCertificate: View {
             email,
             CertificateType(rawValue:types[selectedType])!,
             CertificateStatus(rawValue:status[selectedStatus])!,
-            validto)
+            validto,
+            certifcatePhoto!)
     }
 }
 
@@ -122,7 +127,7 @@ struct AddCertificate: View {
 struct AddCertificate_Previews: PreviewProvider {
     
     static var previews: some View {
-        AddCertificate{ firstname, lastname, phonenumber, email, type, status, validto in
+        AddCertificate{ firstname, lastname, phonenumber, email, type, status, validto, photo in
         }
     }
 }

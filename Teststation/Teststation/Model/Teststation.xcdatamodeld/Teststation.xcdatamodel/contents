@@ -10,20 +10,19 @@
         <attribute name="pass" optional="YES" attributeType="Binary"/>
         <attribute name="phonenumber" attributeType="String"/>
         <attribute name="pictureid" optional="YES" attributeType="String"/>
-        <attribute name="previewpictureid" optional="YES" attributeType="String"/>
         <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="validfrom" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="validto" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="Picture" representedClassName="Picture" syncable="YES" codeGenerationType="class">
+        <attribute name="createts" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="data" attributeType="Binary"/>
         <attribute name="format" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <elements>
-        <element name="Certificate" positionX="-63" positionY="-18" width="128" height="253"/>
+        <element name="Certificate" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Picture" positionX="-54" positionY="27" width="128" height="103"/>
     </elements>
 </model>

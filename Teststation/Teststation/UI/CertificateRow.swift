@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct CertificateRow: View {
-    let certificate: Certificate
     
+    static let defaultPhoto = UIImage(named: "passimg")!
     static let releaseFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -11,11 +11,16 @@ struct CertificateRow: View {
         return formatter
     }()
     
+    let certificate: Certificate
+    let photo: UIImage?
+        
     var body: some View {
         let statusColor = Color("backgroundcertificatestatus_\(certificate.status)")
         
         HStack {
-            Image("passimg").resizable().aspectRatio(contentMode: .fit)
+            Image(uiImage: photo ?? Self.defaultPhoto)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 80, height: 80, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.blue, lineWidth: 4))
@@ -42,7 +47,8 @@ struct CertificateRow_Previews: PreviewProvider {
     
     static var previews: some View {
         let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
-        
+        let photo = createPicture(image: UIImage(named: "passimg")!, context: context)
+    
         let certificate = createCertificate(
             firstName:"Hugo",
             lastName:"Meier",
@@ -51,15 +57,16 @@ struct CertificateRow_Previews: PreviewProvider {
             validTo: Date().advanced(by: 86400),
             status: CertificateStatus.negative,
             type: CertificateType.rapidtest,
+            pictureid: photo.id!,
             context:context
         )
         
         Group {
-            CertificateRow(certificate:certificate)
+            CertificateRow(certificate:certificate, photo: nil)
                 .frame(height: 80)
                 .previewLayout(PreviewLayout.sizeThatFits)
                 .previewDisplayName("CertificateRow")
-            CertificateRow(certificate:certificate)
+            CertificateRow(certificate:certificate, photo: nil)
                 .frame(height: 80)
                 .preferredColorScheme(.dark)
                 .previewLayout(PreviewLayout.sizeThatFits)

@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -9,29 +10,32 @@ struct ContentView: View {
     ) var certificates: FetchedResults<Certificate>
     
     @State var isPresented = false
+    @State var certificatePhotos = [String : UIImage] ()
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(certificates) { cert in
                     NavigationLink( destination: CertificateView(certificate:cert) ) {
-                        CertificateRow(certificate:cert)
+                        CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!])
                     }
                     .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
                 }
                 .onDelete(perform: deleteCertificate)
             }
             .listStyle(GroupedListStyle())
+            .onAppear(perform: updatePictures)
             .sheet(isPresented: $isPresented) {
-                AddCertificate { firstname, lastname, phonenumber, email, type, status, validto in
+                AddCertificate { firstname, lastname, phonenumber, email, type, status, validto, photo in
                     addCertificate(
                         firstname: firstname,
                         lastname: lastname,
                         phonenumber: phonenumber,
-                        email:email,
-                        type:type,
-                        status:status,
-                        validto:validto
+                        email: email,
+                        type: type,
+                        status: status,
+                        validto: validto,
+                        photo: photo
                     )
                     isPresented = false
                 }
@@ -46,33 +50,58 @@ struct ContentView: View {
     }
     
     private func deleteCertificate(at offsets: IndexSet) {
-        // 1.
         offsets.forEach { index in
-            // 2.
             let certificate = certificates[index]
             
-            // 3.
             self.managedObjectContext.delete(certificate)
+            
+            let fetchRequest = NSFetchRequest<Picture>(entityName: "Picture")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", certificate.pictureid!)
+            
+            do {
+                let pictures = try self.managedObjectContext.fetch(fetchRequest)
+                
+                print("deletePictures(\(certificate.pictureid!)): \(pictures.count)")
+                for picture in pictures {
+                    self.managedObjectContext.delete(picture)
+                }
+            }
+            catch let error as NSError {
+                print("could not fetch \(error), \(error.userInfo)")
+            }
         }
         
-        // 4.
         saveContext()
     }
     
     
-    private func addCertificate(firstname: String, lastname: String, phonenumber: String, email: String, type:CertificateType, status:CertificateStatus, validto:Date) {
-        let _ = createCertificate(
-            firstName:firstname,
-            lastName:lastname,
-            phoneNumber:phonenumber,
-            email:email,
+    private func addCertificate(
+        firstname: String,
+        lastname: String,
+        phonenumber: String,
+        email: String,
+        type: CertificateType,
+        status: CertificateStatus,
+        validto: Date,
+        photo: UIImage) {
+        
+        let photoEntity = createPicture(image: photo, context: managedObjectContext)
+        
+        let cert = createCertificate(
+            firstName: firstname,
+            lastName: lastname,
+            phoneNumber: phonenumber,
+            email: email,
             validTo: validto,
-            status:status,
-            type:type,
+            status: status,
+            type: type,
+            pictureid: photoEntity.id!,
             context:managedObjectContext
         )
         
         saveContext()
+        
+        certificatePhotos[cert.id!] = photo
     }
     
     
@@ -81,6 +110,39 @@ struct ContentView: View {
             try managedObjectContext.save()
         } catch {
             print("Error saving managed object context: \(error)")
+        }
+    }
+    
+    private func updatePictures() {
+        (UIApplication.shared.delegate as!AppDelegate).persistentContainer.performBackgroundTask { context in
+            let fetchRequest = NSFetchRequest<Picture>(entityName: "Picture")
+            var newCertPhotos = [String: UIImage]()
+            
+            for c in certificates {
+                if let picid = c.pictureid {
+                    print("updatePictures(\(c.id!),pictid=\(picid))...")
+                    
+                    fetchRequest.predicate = NSPredicate(format: "id == %@", picid)
+                    
+                    do {
+                        let pictures = try context.fetch(fetchRequest)
+                        
+                        print("updatePictures(\(picid)): \(pictures.count)")
+                        for picture in pictures {
+                            print("  \(picture.id!)")
+                            print("  \(picture.format!)")
+                            
+                            newCertPhotos[c.id!] = UIImage(data: picture.data!)
+                        }
+                    }
+                    catch let error as NSError {
+                        print("could not fetch \(error), \(error.userInfo)")
+                    }}
+            }
+            
+            DispatchQueue.main.async {
+                self.certificatePhotos = newCertPhotos
+            }
         }
     }
 }
