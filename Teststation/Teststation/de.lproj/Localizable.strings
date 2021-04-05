@@ -12,11 +12,11 @@
 
 "certificatelist_title" = "Zertifikate";
 
-"addcert_firstname" = "Vor & Nachname";
+"addcert_firstname" = "Vorname";
 "addcert_firstname_placeholder" = "Geben Sie den Vornamen ein";
 "addcert_lastname" = "Nachname";
 "addcert_lastname_placeholder" = "Geben Sie den Nachnamen ein";
-"addcert_phonenumber" = "Telefonnummer & E-Mail";
+"addcert_phonenumber" = "Telefonnummer";
 "addcert_phonenumber_placeholder" = "Geben Sie die Telefonnummer ein";
 "addcert_email" = "E-Mail";
 "addcert_email_placeholder" = "Geben Sie die E-Mail ein";
@@ -25,9 +25,9 @@
 "addcert_title" = "Neues Zertifikat";
 "addcert_type" = "Zertifikat Typ";
 "addcert_status" = "Zertifikat Status";
+"addcert_addphoto" = "Foto hinzufügen";
 
 "certview_delete" = "Zertifikat löschen";
-
 "certview_phonenumber: %@" = "Tel-Nr: %@";
 "certview_email: %@" = "E-Mail: %@";
 

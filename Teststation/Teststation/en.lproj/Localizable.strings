@@ -25,6 +25,7 @@
 "addcert_title" = "Add Certificate";
 "addcert_type" = "Certificate Type";
 "addcert_status" = "Certificate Status";
+"addcert_addphoto" = "Add photo";
 
 "certview_phonenumber: %@" = "Phone: %@";
 "certview_email: %@" = "EMail: %@";

@@ -17,9 +17,11 @@ struct ContentView: View {
                     NavigationLink( destination: CertificateView(certificate:cert) ) {
                         CertificateRow(certificate:cert)
                     }
+                    .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
                 }
                 .onDelete(perform: deleteCertificate)
             }
+            .listStyle(GroupedListStyle())
             .sheet(isPresented: $isPresented) {
                 AddCertificate { firstname, lastname, phonenumber, email, type, status, validto in
                     addCertificate(

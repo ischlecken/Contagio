@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  Teststation
-//
-//  Created by Stefan Thomas on 02.04.21.
-//
-
 import UIKit
 import CoreData
 
