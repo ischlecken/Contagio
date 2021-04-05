@@ -27,6 +27,10 @@
 "addcert_status" = "Certificate Status";
 "addcert_addphoto" = "Add photo";
 
+"modifycert_title" = "Modify Certificate";
+"modifycert_updatebutton" = "Save Changes";
+"modifycert_showpass" = "Show Pass";
+
 "certview_phonenumber: %@" = "Phone: %@";
 "certview_email: %@" = "EMail: %@";
 "certview_delete" = "delete certificate";

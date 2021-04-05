@@ -23,7 +23,7 @@ struct CertificateRow: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 80, height: 80, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Color.blue, lineWidth: 4))
+                .overlay(Circle().stroke(statusColor, lineWidth: 4))
             VStack(alignment: .leading) {
                 Spacer()
                 Text("\(certificate.firstname!) \(certificate.lastname!)").font(.title)

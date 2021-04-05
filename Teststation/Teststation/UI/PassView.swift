@@ -2,8 +2,6 @@ import SwiftUI
 import PassKit
 
 struct PassView: UIViewControllerRepresentable {
-    @Environment(\.presentationMode) var presentationMode
-    
     let pass: PKPass
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<PassView>) -> PKAddPassesViewController {

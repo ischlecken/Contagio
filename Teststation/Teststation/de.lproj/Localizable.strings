@@ -27,6 +27,10 @@
 "addcert_status" = "Zertifikat Status";
 "addcert_addphoto" = "Foto hinzufügen";
 
+"modifycert_title" = "Zertifikat ändern";
+"modifycert_updatebutton" = "Änderungen speichern";
+"modifycert_showpass" = "Zertifikat anzeigen";
+
 "certview_delete" = "Zertifikat löschen";
 "certview_phonenumber: %@" = "Tel-Nr: %@";
 "certview_email: %@" = "E-Mail: %@";

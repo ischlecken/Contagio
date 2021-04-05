@@ -10,16 +10,20 @@ struct ContentView: View {
     ) var certificates: FetchedResults<Certificate>
     
     @State var isPresented = false
-    @State var showPass = false
     @State var certificatePhotos = [String : UIImage] ()
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(certificates) { cert in
-                    NavigationLink( destination: CertificateView(certificate:cert) ) {
-                        CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!])
-                    }
+                    NavigationLink( destination: ModifyCertificate(
+                        certificate:cert,
+                        certifcatePhoto: certificatePhotos[cert.id!] ?? UIImage(named:"passdefaultimg")!,
+                        selectedStatus: Int(cert.status) ) { cert,selectedStatus in
+                        
+                        managedObjectContext.updateCertificateStatus(certificate: cert, status: selectedStatus)
+                        
+                    }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
                     .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
                 }
                 .onDelete { offsets in
@@ -56,14 +60,8 @@ struct ContentView: View {
                     isPresented = false
                 }
             }
-            .sheet(isPresented: $showPass) {
-                if let pass = (UIApplication.shared.delegate as!AppDelegate).eventPass {
-                    PassView(pass: pass)
-                }
-            }
             .navigationTitle("certificatelist_title")
             .navigationBarItems(
-                leading: Button(action: { showPass.toggle() }) {Image(systemName: "minus") },
                 trailing: Button(action: { isPresented.toggle() }) {Image(systemName: "plus") }
             )
         }

@@ -115,4 +115,14 @@ extension NSManagedObjectContext {
             print("Error saving managed object context: \(error)")
         }
     }
+    
+    func updateCertificateStatus(certificate:Certificate,status:Int) {
+        certificate.status = Int16(status)
+        
+        do {
+            try self.save()
+        } catch {
+            print("Error saving managed object context: \(error)")
+        }
+    }
 }
