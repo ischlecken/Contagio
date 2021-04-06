@@ -28,6 +28,7 @@
 		3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9507422618B01A00662EB1 /* AddCertificate.swift */; };
 		3C9689392619CD2E009CAA6C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9689382619CD2E009CAA6C /* ImagePicker.swift */; };
 		3CC20907261B3CD30012520B /* Picture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC20906261B3CD30012520B /* Picture.swift */; };
+		3CCAF195261D073400B9136F /* TeststationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAF194261D073400B9136F /* TeststationEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		3C9507422618B01A00662EB1 /* AddCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCertificate.swift; sourceTree = "<group>"; };
 		3C9689382619CD2E009CAA6C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		3CC20906261B3CD30012520B /* Picture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Picture.swift; sourceTree = "<group>"; };
+		3CCAF194261D073400B9136F /* TeststationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +161,7 @@
 				3C92CF6F2617018C002B5284 /* Preview Content */,
 				3C95073A2618755E00662EB1 /* Localizable.strings */,
 				3C62596C261A6A8600098A9A /* InfoPlist.strings */,
+				3CCAF194261D073400B9136F /* TeststationEngine.swift */,
 			);
 			path = Teststation;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 			files = (
 				3C92CF652617018B002B5284 /* AppDelegate.swift in Sources */,
 				3C92CF672617018B002B5284 /* SceneDelegate.swift in Sources */,
+				3CCAF195261D073400B9136F /* TeststationEngine.swift in Sources */,
 				3C92CF6C2617018B002B5284 /* Teststation.xcdatamodeld in Sources */,
 				3CC20907261B3CD30012520B /* Picture.swift in Sources */,
 				3C9689392619CD2E009CAA6C /* ImagePicker.swift in Sources */,

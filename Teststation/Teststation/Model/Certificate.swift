@@ -21,10 +21,11 @@ enum CertificateType:Int8, CaseIterable {
 }
 
 enum CertificateIssueStatus:Int8, CaseIterable {
-    case unknown=0
-    case signed=1
-    case refused=2
-    case failed=3
+    case created=0
+    case pending=1
+    case signed=2
+    case refused=3
+    case failed=4
 }
 
 
@@ -53,11 +54,53 @@ extension NSManagedObjectContext {
         result.status = Int16(status.rawValue)
         result.type = Int16(type.rawValue)
         result.pictureid = pictureid
-        result.issuestatus = Int16(CertificateIssueStatus.unknown.rawValue)
+        result.issuestatus = Int16(CertificateIssueStatus.created.rawValue)
         result.teststationid = "1"
         result.testerid = "0"
         
         return result
+    }
+    
+    func getCertificate(id:String) -> Certificate? {
+        var result:Certificate? = nil
+        let fetchRequest = NSFetchRequest<Certificate>(entityName: "Certificate")
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
+        
+        do {
+            let certs = try self.fetch(fetchRequest)
+            
+            print("getCertificate(\(id)): \(certs.count)")
+            for cert in certs {
+                result = cert
+                break
+            }
+        }
+        catch let error as NSError {
+            print("could not fetch \(error), \(error.userInfo)")
+        }
+        
+        return result
+    }
+    
+    
+    func cloneCertificate (certificate:Certificate) -> Certificate {
+        let newCert = Certificate(context: self)
+        newCert.createts = certificate.createts
+        newCert.validfrom = certificate.validfrom
+        newCert.validto = certificate.validto
+        newCert.id = UUID().uuidString
+        newCert.phonenumber = certificate.phonenumber
+        newCert.firstname = certificate.firstname
+        newCert.lastname = certificate.lastname
+        newCert.email = certificate.email
+        newCert.status = certificate.status
+        newCert.type = certificate.type
+        newCert.pictureid = certificate.pictureid
+        newCert.issuestatus = certificate.issuestatus
+        newCert.teststationid = certificate.teststationid
+        newCert.testerid = certificate.testerid
+        
+        return newCert
     }
     
     func addCertificate(
@@ -118,6 +161,19 @@ extension NSManagedObjectContext {
     
     func updateCertificateStatus(certificate:Certificate,status:Int) {
         certificate.status = Int16(status)
+        certificate.issuestatus = Int16(CertificateIssueStatus.created.rawValue)
+        certificate.modifyts = Date()
+        
+        do {
+            try self.save()
+        } catch {
+            print("Error saving managed object context: \(error)")
+        }
+    }
+    
+    func updateCertificateIssueStatus(certificate:Certificate,issueStatus:CertificateIssueStatus) {
+        certificate.issuestatus = Int16(issueStatus.rawValue)
+        certificate.modifyts = Date()
         
         do {
             try self.save()

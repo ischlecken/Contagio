@@ -52,6 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
         return container
     }()
     
@@ -71,7 +72,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    // MARK: - Teststation Engine
+    lazy var teststationEngine = TeststationEngine()
     
+        
+    // MARK: - global resource
     lazy var dsPass: PKPass? = loadPass("ds")
     lazy var eventPass: PKPass? = loadPass("event")
     

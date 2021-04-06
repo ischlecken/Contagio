@@ -13,7 +13,7 @@ struct CertificateRow: View {
     
     let certificate: Certificate
     let photo: UIImage?
-        
+    
     var body: some View {
         let statusColor = Color("backgroundcertificatestatus_\(certificate.status)")
         
@@ -48,7 +48,7 @@ struct CertificateRow_Previews: PreviewProvider {
     static var previews: some View {
         let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
         let photo = context.createPicture(image: UIImage(named: "passimg")!)
-    
+        
         let certificate = context.createCertificate(
             firstName:"Hugo",
             lastName:"Meier",

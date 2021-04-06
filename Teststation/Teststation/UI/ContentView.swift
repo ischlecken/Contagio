@@ -6,15 +6,18 @@ struct ContentView: View {
     @FetchRequest(
         entity: Certificate.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)]
-        //,predicate: NSPredicate(format: "genre contains 'Action'")
     ) var certificates: FetchedResults<Certificate>
     
+    @State var issueCertificate = false
     @State var isPresented = false
     @State var certificatePhotos = [String : UIImage] ()
     
     var body: some View {
         NavigationView {
             List {
+                if( issueCertificate ) {
+                    ProgressView("Issue Certificate")
+                }
                 ForEach(certificates) { cert in
                     NavigationLink( destination: ModifyCertificate(
                         certificate:cert,
@@ -26,6 +29,15 @@ struct ContentView: View {
                         }
                         else {
                             managedObjectContext.updateCertificateStatus(certificate: cert, status: selectedStatus)
+                            
+                            issueCertificate = true
+                            (UIApplication.shared.delegate as!AppDelegate).teststationEngine.startIssueOfCertificate(certificate: cert) { cid,cissuestatus in
+                                print("startIssueOfCertificate:\(cid) \(cissuestatus)")
+                                
+                                if( cissuestatus != CertificateIssueStatus.created && cissuestatus != CertificateIssueStatus.pending) {
+                                    issueCertificate = false
+                                }
+                            }
                         }
                         
                     }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
@@ -63,6 +75,14 @@ struct ContentView: View {
                     
                     certificatePhotos[cert.id!] = photo
                     isPresented = false
+                    issueCertificate = true
+                    (UIApplication.shared.delegate as!AppDelegate).teststationEngine.startIssueOfCertificate(certificate: cert) { cid,cissuestatus in
+                        print("startIssueOfCertificate:\(cid) \(cissuestatus)")
+                        
+                        if( cissuestatus != CertificateIssueStatus.created && cissuestatus != CertificateIssueStatus.pending) {
+                            issueCertificate = false
+                        }
+                    }
                 }
             }
             .navigationTitle("certificatelist_title")
