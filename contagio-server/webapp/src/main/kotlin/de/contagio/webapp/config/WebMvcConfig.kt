@@ -1,12 +1,9 @@
 package de.contagio.webapp.config
 
-import de.contagio.webapp.service.authentication.AuthenticationService
-import de.contagio.webapp.util.UserAttributeResolver
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
 import org.springframework.format.datetime.DateFormatter
-import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.LocaleResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration
@@ -18,8 +15,7 @@ import java.util.*
 
 @Configuration
 open class WebMvcConfig(
-    private val dateFormatter: DateFormatter,
-    private val authenticationService: AuthenticationService
+    private val dateFormatter: DateFormatter
 ) : WebMvcConfigurer {
 
 
@@ -81,8 +77,4 @@ open class WebMvcConfig(
                 .resourceChain(true)
     }
 
-
-    override fun addArgumentResolvers(argumentResolvers: MutableList<HandlerMethodArgumentResolver>) {
-        argumentResolvers.add(UserAttributeResolver(authenticationService))
-    }
 }
