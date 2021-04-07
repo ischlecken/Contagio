@@ -38,6 +38,8 @@ struct CertificateRow: View {
                     Text("validuntil: \(certValid)").font(.caption)
                 }
                 Spacer()
+                let certIssueStatus = "certificateissuestatus_\(certificate.issuestatus)".localized()
+                Text("certificaterow_issuestatus: \(certIssueStatus)").font(.caption)
             }}
     }
 }

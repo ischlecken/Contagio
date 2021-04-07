@@ -19,7 +19,7 @@ struct ModifyCertificate: View {
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
     let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
-    let onChange: (Certificate,Int,Bool) -> Void
+    let onChange: (ModifyCertificateResponse) -> Void
     
     var body: some View {
         let statusColor = Color("backgroundcertificatestatus_\(selectedStatus)")
@@ -101,14 +101,27 @@ struct ModifyCertificate: View {
     
     private func modifyCertificateAction() {
         self.presentation.wrappedValue.dismiss()
-        onChange(certificate, selectedStatus,false)
+        
+        onChange(
+            ModifyCertificateResponse(
+                cert:certificate,
+                selectedStatus:CertificateStatus(rawValue: Int8(selectedStatus))!,
+                shouldDelete:false
+            )
+        )
     }
     
     private func deleteCertificateAction() {
         self.presentation.wrappedValue.dismiss()
         
         DispatchQueue.main.async {
-            onChange(certificate, selectedStatus,true)
+            onChange(
+                ModifyCertificateResponse(
+                    cert: certificate,
+                    selectedStatus: CertificateStatus(rawValue: Int8(selectedStatus))!,
+                    shouldDelete: true
+                )
+            )
         }
     }
 }
@@ -135,6 +148,6 @@ struct ModifyCertificate_Previews: PreviewProvider {
             certificate: certificate,
             certifcatePhoto: UIImage(named: "passimg")!,
             selectedStatus: Int(certificate.status)
-        ) { certificate,selectedStatus,shouldDelete in }
+        ) { _ in }
     }
 }

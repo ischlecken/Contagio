@@ -2,6 +2,12 @@
 "certificatestatus_1" = "negative";
 "certificatestatus_2" = "positive";
 
+"certificateissuestatus_0" = "created";
+"certificateissuestatus_1" = "pending";
+"certificateissuestatus_2" = "issued";
+"certificateissuestatus_3" = "refused";
+"certificateissuestatus_4" = "failed";
+
 "certificatetype_0" = "Rapid Test";
 "certificatetype_1" = "PCR Test";
 "certificatetype_2" = "Vaccination";
@@ -9,6 +15,7 @@
 "validuntil: %@" = "valid until %@";
 
 "certificaterow_status: %@ %@" = "%@ status:%@";
+"certificaterow_issuestatus: %@" = "Issue Status: %@";
 
 "certificatelist_title" = "Certificates";
 
@@ -31,10 +38,6 @@
 "modifycert_updatebutton" = "Save Changes";
 "modifycert_deletebutton" = "Delete Certificate";
 "modifycert_showpass" = "Show Pass";
-
-"certview_phonenumber: %@" = "Phone: %@";
-"certview_email: %@" = "EMail: %@";
-"certview_delete" = "delete certificate";
 
 "alert_deletecertificate_title" = "delete certificate?";
 "alert_deletecertificate_message" = "do you really want to delete this certificate?";

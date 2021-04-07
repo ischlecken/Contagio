@@ -21,7 +21,7 @@ struct AddCertificate: View {
         firstname.count > 2 && lastname.count > 3 && phonenumber.count > 5 && certifcatePhoto != nil
     }
     
-    let onComplete: (String, String, String, String, CertificateType, CertificateStatus, Date, UIImage) -> Void
+    let onComplete: (AddCertificateResponse) -> Void
     
     var body: some View {
         NavigationView {
@@ -112,14 +112,17 @@ struct AddCertificate: View {
     
     private func addCertificateAction() {
         onComplete(
-            firstname,
-            lastname,
-            phonenumber,
-            email,
-            CertificateType(rawValue:types[selectedType])!,
-            CertificateStatus(rawValue:status[selectedStatus])!,
-            validto,
-            certifcatePhoto!)
+            AddCertificateResponse(
+                firstname: firstname,
+                lastname: lastname,
+                phonenumber: phonenumber,
+                email: email,
+                type: CertificateType(rawValue:types[selectedType])!,
+                status: CertificateStatus(rawValue:status[selectedStatus])!,
+                validto: validto,
+                photo: certifcatePhoto!
+            )
+        )
     }
 }
 
@@ -127,7 +130,7 @@ struct AddCertificate: View {
 struct AddCertificate_Previews: PreviewProvider {
     
     static var previews: some View {
-        AddCertificate{ firstname, lastname, phonenumber, email, type, status, validto, photo in
+        AddCertificate{ _ in
         }
     }
 }

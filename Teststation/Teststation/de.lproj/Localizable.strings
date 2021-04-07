@@ -2,6 +2,12 @@
 "certificatestatus_1" = "negativ";
 "certificatestatus_2" = "positiv";
 
+"certificateissuestatus_0" = "erzeugt";
+"certificateissuestatus_1" = "ausstehend";
+"certificateissuestatus_2" = "ausgestellt";
+"certificateissuestatus_3" = "abgelehnt";
+"certificateissuestatus_4" = "fehlgeschlagen";
+
 "certificatetype_0" = "Schnelltest";
 "certificatetype_1" = "PCR-Test";
 "certificatetype_2" = "Impfung";
@@ -9,6 +15,7 @@
 "validuntil: %@" = "gültig bis %@";
 
 "certificaterow_status: %@ %@" = "%@: %@";
+"certificaterow_issuestatus: %@" = "Ausstellungsstatus: %@";
 
 "certificatelist_title" = "Zertifikate";
 
@@ -31,10 +38,6 @@
 "modifycert_updatebutton" = "Änderungen speichern";
 "modifycert_deletebutton" = "Zertifikat löschen";
 "modifycert_showpass" = "Pass anzeigen";
-
-"certview_delete" = "Zertifikat löschen";
-"certview_phonenumber: %@" = "Tel-Nr: %@";
-"certview_email: %@" = "E-Mail: %@";
 
 "alert_deletecertificate_title" = "Zertifikat löschen";
 "alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";

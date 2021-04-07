@@ -22,24 +22,35 @@ struct ContentView: View {
                     NavigationLink( destination: ModifyCertificate(
                         certificate:cert,
                         certifcatePhoto: certificatePhotos[cert.id!] ?? UIImage(named:"passdefaultimg")!,
-                        selectedStatus: Int(cert.status) ) { cert,selectedStatus,shouldDelete in
+                        selectedStatus: Int(cert.status) ) { mcr in
                         
-                        if( shouldDelete) {
-                            managedObjectContext.deleteCertificate(certificate: cert)
+                        if( mcr.shouldDelete ) {
+                            managedObjectContext.deleteCertificate(certificate: mcr.cert)
                         }
                         else {
-                            managedObjectContext.updateCertificateStatus(certificate: cert, status: selectedStatus)
-                            
                             issueCertificate = true
-                            (UIApplication.shared.delegate as!AppDelegate).teststationEngine.startIssueOfCertificate(certificate: cert) { cid,cissuestatus in
-                                print("startIssueOfCertificate:\(cid) \(cissuestatus)")
+                            
+                            TeststationEngine.shared.startIssueOfCertificate(mcr: mcr) { issueStatus in
+                                print("ContentView() issueStatus=\(issueStatus)")
                                 
-                                if( cissuestatus != CertificateIssueStatus.created && cissuestatus != CertificateIssueStatus.pending) {
-                                    issueCertificate = false
+                                if( issueStatus.isFinished() ) {
+                                    DispatchQueue.main.async {
+                                        issueCertificate = false
+                                        
+                                        do {
+                                            let c0 = try managedObjectContext.getCertificate(objectID: mcr.cert.objectID)
+                                            
+                                            print("c.status=\(String(describing: c0?.status)) c.issuestatus=\(String(describing: c0?.issuestatus))")
+                                            
+                                            c0?.modifyts = Date()
+                                        } catch {
+                                        }
+                                        
+                                        managedObjectContext.saveContext()
+                                    }
                                 }
                             }
                         }
-                        
                     }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
                     .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
                 }
@@ -62,27 +73,13 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isPresented) {
-                AddCertificate { firstname, lastname, phonenumber, email, type, status, validto, photo in
-                    let cert = managedObjectContext.addCertificate(
-                        firstname: firstname,
-                        lastname: lastname,
-                        phonenumber: phonenumber,
-                        email: email,
-                        type: type,
-                        status: status,
-                        validto: validto,
-                        photo: photo)
+                AddCertificate { acr in
+                    let cert = managedObjectContext.addCertificate(acr: acr)
                     
-                    certificatePhotos[cert.id!] = photo
+                    managedObjectContext.saveContext()
+                    
+                    certificatePhotos[cert.id!] = acr.photo
                     isPresented = false
-                    issueCertificate = true
-                    (UIApplication.shared.delegate as!AppDelegate).teststationEngine.startIssueOfCertificate(certificate: cert) { cid,cissuestatus in
-                        print("startIssueOfCertificate:\(cid) \(cissuestatus)")
-                        
-                        if( cissuestatus != CertificateIssueStatus.created && cissuestatus != CertificateIssueStatus.pending) {
-                            issueCertificate = false
-                        }
-                    }
                 }
             }
             .navigationTitle("certificatelist_title")
