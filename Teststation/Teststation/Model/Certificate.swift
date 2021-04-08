@@ -133,20 +133,21 @@ extension NSManagedObjectContext {
     func deleteCertificate(certificate: Certificate) {
         self.delete(certificate)
         
-        let fetchRequest = NSFetchRequest<Picture>(entityName: "Picture")
-        fetchRequest.predicate = NSPredicate(format: "id == %@", certificate.pictureid!)
-        
-        do {
-            let pictures = try self.fetch(fetchRequest)
+        if let pictureid = certificate.pictureid {
+            let fetchRequest = NSFetchRequest<Picture>(entityName: "Picture")
+            fetchRequest.predicate = NSPredicate(format: "id == %@", pictureid)
             
-            print("deletePictures(\(certificate.pictureid!)): \(pictures.count)")
-            for picture in pictures {
-                self.delete(picture)
+            do {
+                let pictures = try self.fetch(fetchRequest)
+                
+                print("deletePictures(\(pictureid)): \(pictures.count)")
+                for picture in pictures {
+                    self.delete(picture)
+                }
+            }
+            catch let error as NSError {
+                print("could not fetch \(error), \(error.userInfo)")
             }
         }
-        catch let error as NSError {
-            print("could not fetch \(error), \(error.userInfo)")
-        }
-        
     }
 }
