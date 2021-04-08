@@ -18,6 +18,7 @@ enum CertificateType:Int8, CaseIterable {
     case rapidtest=0
     case pcrtest=1
     case vaccination=2
+    case unknown=42
 }
 
 enum CertificateIssueStatus:Int8, CaseIterable {
@@ -26,6 +27,7 @@ enum CertificateIssueStatus:Int8, CaseIterable {
     case signed=2
     case refused=3
     case failed=4
+    case unknown=42
     
     func isFinished() -> Bool {
         return self == CertificateIssueStatus.signed || self == CertificateIssueStatus.refused || self == CertificateIssueStatus.failed
@@ -34,15 +36,41 @@ enum CertificateIssueStatus:Int8, CaseIterable {
 
 extension Certificate {
     func updateStatus(status:CertificateStatus) {
-        self.status = Int16(status.rawValue)
-        self.issuestatus = Int16(CertificateIssueStatus.created.rawValue)
+        self.certStatus = status
+        self.certIssueStatus = CertificateIssueStatus.created
         self.modifyts = Date()
     }
     
     func updateIssueStatus(issueStatus:CertificateIssueStatus) {
-        self.issuestatus = Int16(issueStatus.rawValue)
+        self.certIssueStatus = issueStatus
         self.modifyts = Date()
+    }
     
+    var certIssueStatus: CertificateIssueStatus {
+        set {
+            self.issuestatus = Int16(newValue.rawValue)
+        }
+        get {
+            CertificateIssueStatus(rawValue: Int8(self.issuestatus)) ?? .unknown
+        }
+    }
+    
+    var certType: CertificateType {
+        set {
+            self.type = Int16(newValue.rawValue)
+        }
+        get {
+            CertificateType(rawValue: Int8(self.type)) ?? .unknown
+        }
+    }
+    
+    var certStatus: CertificateStatus {
+        set {
+            self.status = Int16(newValue.rawValue)
+        }
+        get {
+            CertificateStatus(rawValue: Int8(self.status)) ?? .unknown
+        }
     }
 }
 
@@ -68,10 +96,10 @@ extension NSManagedObjectContext {
         result.firstname = firstName
         result.lastname = lastName
         result.email = email
-        result.status = Int16(status.rawValue)
-        result.type = Int16(type.rawValue)
+        result.certStatus = status
+        result.certType = type
         result.pictureid = pictureid
-        result.issuestatus = Int16(CertificateIssueStatus.created.rawValue)
+        result.certIssueStatus = CertificateIssueStatus.created
         result.teststationid = "1"
         result.testerid = "0"
         

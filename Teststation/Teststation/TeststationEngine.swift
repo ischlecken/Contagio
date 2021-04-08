@@ -6,45 +6,43 @@ class TeststationEngine {
     
     static let shared = TeststationEngine()
     
-    private let moc :NSManagedObjectContext
-    
     init() {
         print("TeststationEngine()")
-        
-        moc = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.newBackgroundContext()
-        moc.automaticallyMergesChangesFromParent = true
-        //moc.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
     }
+    
     
     func startIssueOfCertificate(mcr: ModifyCertificateResponse,
                                  onChange: @escaping (CertificateIssueStatus)->Void) {
-        moc.perform {
-            guard let cert = try? self.moc.getCertificate(objectID: mcr.cert.objectID) else {
+        startIssueOfCertificate(certificate: mcr.cert, selectedStatus: mcr.selectedStatus, onChange: onChange)
+    }
+    
+    func startIssueOfCertificate(certificate: Certificate,
+                                 selectedStatus:CertificateStatus,
+                                 onChange: @escaping (CertificateIssueStatus)->Void) {
+        
+        (UIApplication.shared.delegate as!AppDelegate).persistentContainer.performBackgroundTask { context in
+            guard let cert = try?context.getCertificate(objectID: certificate.objectID) else {
                 return
             }
             
-            cert.updateStatus(status: mcr.selectedStatus)
-            self.moc.saveContext()
+            cert.updateStatus(status: selectedStatus)
+            context.saveContext()
             
-            print("TeststationEngine.startIssueOfCertificate(\(cert.id!))")
+            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!))")
             
             sleep(4)
             
             cert.updateIssueStatus(issueStatus: CertificateIssueStatus.pending)
-            self.moc.saveContext()
-            
+            context.saveContext()
             onChange(CertificateIssueStatus.pending)
-            
-            print("TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
+            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
             
             sleep(4)
             
             cert.updateIssueStatus(issueStatus: CertificateIssueStatus.signed)
-            self.moc.saveContext()
-            print("TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
-            
+            context.saveContext()
+            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
             onChange(CertificateIssueStatus.signed)
-            
         }
         
     }

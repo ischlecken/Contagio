@@ -8,47 +8,24 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)]
     ) var certificates: FetchedResults<Certificate>
     
-    @State var issueCertificate = false
     @State var isPresented = false
     @State var certificatePhotos = [String : UIImage] ()
     
     var body: some View {
         NavigationView {
             List {
-                if( issueCertificate ) {
-                    ProgressView("Issue Certificate")
-                }
                 ForEach(certificates) { cert in
                     NavigationLink( destination: ModifyCertificate(
-                        certificate:cert,
+                        certificate: cert,
                         certifcatePhoto: certificatePhotos[cert.id!] ?? UIImage(named:"passdefaultimg")!,
                         selectedStatus: Int(cert.status) ) { mcr in
                         
                         if( mcr.shouldDelete ) {
                             managedObjectContext.deleteCertificate(certificate: mcr.cert)
+                            managedObjectContext.saveContext()
                         }
                         else {
-                            issueCertificate = true
-                            
                             TeststationEngine.shared.startIssueOfCertificate(mcr: mcr) { issueStatus in
-                                print("ContentView() issueStatus=\(issueStatus)")
-                                
-                                if( issueStatus.isFinished() ) {
-                                    DispatchQueue.main.async {
-                                        issueCertificate = false
-                                        
-                                        do {
-                                            let c0 = try managedObjectContext.getCertificate(objectID: mcr.cert.objectID)
-                                            
-                                            print("c.status=\(String(describing: c0?.status)) c.issuestatus=\(String(describing: c0?.issuestatus))")
-                                            
-                                            c0?.modifyts = Date()
-                                        } catch {
-                                        }
-                                        
-                                        managedObjectContext.saveContext()
-                                    }
-                                }
                             }
                         }
                     }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
@@ -80,6 +57,9 @@ struct ContentView: View {
                     
                     certificatePhotos[cert.id!] = acr.photo
                     isPresented = false
+                    
+                    TeststationEngine.shared.startIssueOfCertificate(certificate:cert,selectedStatus:cert.certStatus) { issueStatus in
+                    }
                 }
             }
             .navigationTitle("certificatelist_title")

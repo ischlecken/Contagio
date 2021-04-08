@@ -1,91 +1,109 @@
 {
   "images" : [
     {
+      "filename" : "virus-40x40-2.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
+      "filename" : "virus-60x60.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
+      "filename" : "virus-58x58.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
+      "filename" : "virus-87x87.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
+      "filename" : "virus-80x80.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
+      "filename" : "virus-120x120.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
+      "filename" : "virus-120x120-1.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
+      "filename" : "virus-180x180.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
     },
     {
+      "filename" : "virus-20x20.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "20x20"
     },
     {
+      "filename" : "virus-40x40-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
+      "filename" : "virus-29x29.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "29x29"
     },
     {
+      "filename" : "virus-58x58-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
+      "filename" : "virus-40x40.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "40x40"
     },
     {
+      "filename" : "virus-80x80-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
+      "filename" : "virus-76x76.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "76x76"
     },
     {
+      "filename" : "virus-152x152.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "76x76"
     },
     {
+      "filename" : "virus-167x167.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "83.5x83.5"
     },
     {
+      "filename" : "virus-1024x1024.png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

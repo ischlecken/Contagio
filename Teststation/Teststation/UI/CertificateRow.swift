@@ -11,19 +11,31 @@ struct CertificateRow: View {
         return formatter
     }()
     
-    let certificate: Certificate
+    @ObservedObject
+    var certificate: Certificate
     let photo: UIImage?
     
     var body: some View {
-        let statusColor = Color("backgroundcertificatestatus_\(certificate.status)")
+        let statusColor = certificate.certIssueStatus.isFinished() ? Color("backgroundcertificatestatus_\(certificate.status)") : Color.gray
         
         HStack {
-            Image(uiImage: photo ?? Self.defaultPhoto)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 80, height: 80, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(statusColor, lineWidth: 4))
+            ZStack(alignment: .center) {
+                Image(uiImage: photo ?? Self.defaultPhoto)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 80, height: 80, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(statusColor, lineWidth: 4)
+                    )
+                    .shadow(radius: 4)
+                
+                if( !certificate.certIssueStatus.isFinished() ) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.white))
+                }
+            }
             VStack(alignment: .leading) {
                 Spacer()
                 Text("\(certificate.firstname!) \(certificate.lastname!)").font(.title)
@@ -39,8 +51,15 @@ struct CertificateRow: View {
                 }
                 Spacer()
                 let certIssueStatus = "certificateissuestatus_\(certificate.issuestatus)".localized()
-                Text("certificaterow_issuestatus: \(certIssueStatus)").font(.caption)
-            }}
+                
+                if( certificate.certIssueStatus.isFinished()){
+                    Text("certificaterow_issuestatus: \(certIssueStatus)").font(.caption).bold()
+                }
+                else{
+                    Text("certificaterow_issuestatus: \(certIssueStatus)").font(.caption).foregroundColor(statusColor)
+                }
+            }
+        }
     }
 }
 
