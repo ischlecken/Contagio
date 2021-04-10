@@ -6,7 +6,10 @@ struct CertificateList: View {
     @EnvironmentObject var teststationState: TeststationState
     @FetchRequest(
         entity: Certificate.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)]
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Certificate.modifyts, ascending: false),
+            NSSortDescriptor(keyPath: \Certificate.createts, ascending: false)
+        ]
     ) var certificates: FetchedResults<Certificate>
     
     @State var isPresented = false

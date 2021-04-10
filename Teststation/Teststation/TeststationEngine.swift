@@ -6,7 +6,7 @@ class TeststationEngine {
     
     static let shared = TeststationEngine()
     
-    var contagioAPI : AnyCancellable?
+    var contagioAPISubscription : AnyCancellable?
     var passInfo: [PassInfo]?
     var error: TeststationError?
     
@@ -23,50 +23,47 @@ class TeststationEngine {
                                  selectedStatus:CertificateStatus,
                                  onChange: @escaping (CertificateIssueStatus)->Void) {
         
-        contagioAPI = ContagioAPI
+        let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
+        
+        certificate.updateIssueStatus(issueStatus:.pending)
+        certificate.managedObjectContext?.saveContext()
+        
+        contagioAPISubscription = ContagioAPI
             .allPass()
             .sink(
                 receiveCompletion: { [unowned self] completion in
+                    
+                    let context = persistentContainer.newBackgroundContext()
+                    
+                    guard let cert = try? context.getCertificate(objectID: certificate.objectID) else {
+                        return
+                    }
+                    
+                    sleep(4)
+                    
                     switch completion {
-                    case .finished: break
+                    case .finished:
+                        cert.updateStatus(status: selectedStatus)
+                        cert.updateIssueStatus(issueStatus: .signed)
                     case .failure(let error):
                         print("Error: \(error)")
                         self.error = error
+                        
+                        cert.updateIssueStatus(issueStatus: .failed)
                     }
+                    
+                    context.saveContext()
+                    
+                    contagioAPISubscription = nil
                 },
                 receiveValue: { [unowned self] result in
-                    print("Thread: \(Thread.current)")
+                    print("Thread: \(Thread.current) mainThread:\(Thread.current.isMainThread)")
                     
                     self.passInfo = result
                     
                     print("result= \(result)")
                 }
             )
-        
-        (UIApplication.shared.delegate as!AppDelegate).persistentContainer.performBackgroundTask { context in
-            guard let cert = try?context.getCertificate(objectID: certificate.objectID) else {
-                return
-            }
-            
-            cert.updateStatus(status: selectedStatus)
-            context.saveContext()
-            
-            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!))")
-            
-            sleep(4)
-            
-            cert.updateIssueStatus(issueStatus: CertificateIssueStatus.pending)
-            context.saveContext()
-            onChange(CertificateIssueStatus.pending)
-            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
-            
-            sleep(4)
-            
-            cert.updateIssueStatus(issueStatus: CertificateIssueStatus.signed)
-            context.saveContext()
-            print("\(Thread.current) TeststationEngine.startIssueOfCertificate(\(cert.id!)) issueStatus=\(cert.issuestatus)")
-            onChange(CertificateIssueStatus.signed)
-        }
-        
     }
+    
 }
