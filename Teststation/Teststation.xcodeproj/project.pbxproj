@@ -19,6 +19,7 @@
 		3C56B7432621BD7C0051E1CB /* ContagioAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B7422621BD7C0051E1CB /* ContagioAPI.swift */; };
 		3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B74A2621BEA60051E1CB /* PassInfo.swift */; };
 		3C56B7502621CF270051E1CB /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */; };
+		3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B7542621DE450051E1CB /* CreatePassRequest.swift */; };
 		3C62596A261A6A8600098A9A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C62596C261A6A8600098A9A /* InfoPlist.strings */; };
 		3C7DB458261B366B00DA85C2 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7DB457261B366B00DA85C2 /* UIImage+Extension.swift */; };
 		3C92CF652617018B002B5284 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF642617018B002B5284 /* AppDelegate.swift */; };
@@ -71,6 +72,7 @@
 		3C56B7422621BD7C0051E1CB /* ContagioAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContagioAPI.swift; sourceTree = "<group>"; };
 		3C56B74A2621BEA60051E1CB /* PassInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassInfo.swift; sourceTree = "<group>"; };
 		3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
+		3C56B7542621DE450051E1CB /* CreatePassRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePassRequest.swift; sourceTree = "<group>"; };
 		3C62595B261A66DB00098A9A /* Teststation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teststation.entitlements; sourceTree = "<group>"; };
 		3C62596B261A6A8600098A9A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3C625970261A6A8F00098A9A /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				3C56B73026218A020051E1CB /* TeststationState.swift */,
 				3C56B73C2621BAA20051E1CB /* TeststationError.swift */,
 				3C56B74A2621BEA60051E1CB /* PassInfo.swift */,
+				3C56B7542621DE450051E1CB /* CreatePassRequest.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -401,6 +404,7 @@
 				3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */,
 				3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */,
 				3C12690F261B7BE5006B1009 /* PassView.swift in Sources */,
+				3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */,
 				3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
 				3C56B73126218A020051E1CB /* TeststationState.swift in Sources */,

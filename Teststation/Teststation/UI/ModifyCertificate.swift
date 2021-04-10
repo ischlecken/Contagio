@@ -70,15 +70,17 @@ struct ModifyCertificate: View {
                         Text("modifycert_deletebutton")
                     }
                 }
+                
+                if( certificate.pass != nil){
                 Section {
                     Button(action: { showCert.toggle()}) {
                         Text("modifycert_showpass")
                     }
-                }
+                }}
             }
             .listStyle(InsetGroupedListStyle())
             .sheet(isPresented: $showCert) {
-                PassView(pass: (UIApplication.shared.delegate as!AppDelegate).eventPass!)
+                PassView(data: certificate.pass!)
             }
             .alert(isPresented: $showAlert) {
                 Alert(title:Text("alert_deletecertificate_title"),

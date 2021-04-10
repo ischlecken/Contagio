@@ -35,6 +35,11 @@ enum CertificateIssueStatus:Int8, CaseIterable {
 }
 
 extension Certificate {
+    
+    func fullName() -> String {
+        return "\(firstname ?? "") \(lastname ?? "")"
+    }
+    
     func updateStatus(status:CertificateStatus) {
         self.certStatus = status
         self.certIssueStatus = CertificateIssueStatus.created

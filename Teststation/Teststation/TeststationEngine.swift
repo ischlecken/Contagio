@@ -28,6 +28,51 @@ class TeststationEngine {
         certificate.updateIssueStatus(issueStatus:.pending)
         certificate.managedObjectContext?.saveContext()
         
+        let createPassRequest = CreatePassRequest(
+            userId:certificate.fullName(),
+            testResult: TestResultType.fromCertificateStatus(status: selectedStatus)
+        )
+        
+        contagioAPISubscription = try? ContagioAPI
+            .createPass(createPassRequest: createPassRequest)
+            .sink(
+                receiveCompletion: { [unowned self] completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("Error: \(error)")
+                        self.error = error
+                        
+                        let context = persistentContainer.newBackgroundContext()
+                        guard let cert = try? context.getCertificate(objectID: certificate.objectID) else {
+                            return
+                        }
+                        
+                        cert.updateIssueStatus(issueStatus: .failed)
+                        context.saveContext()
+                    }
+                
+                    contagioAPISubscription = nil
+                },
+                receiveValue: { result in
+                    let context = persistentContainer.newBackgroundContext()
+                    guard let cert = try? context.getCertificate(objectID: certificate.objectID) else {
+                        return
+                    }
+                    
+                    print("result=\(result)")
+                    
+                    sleep(4)
+                    
+                    cert.pass = result
+                    cert.updateStatus(status: selectedStatus)
+                    cert.updateIssueStatus(issueStatus: .signed)
+                    context.saveContext()
+                }
+            )
+        
+        /*
         contagioAPISubscription = ContagioAPI
             .allPass()
             .sink(
@@ -64,6 +109,7 @@ class TeststationEngine {
                     print("result= \(result)")
                 }
             )
+ */
     }
     
 }

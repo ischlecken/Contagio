@@ -4,6 +4,16 @@ import PassKit
 struct PassView: UIViewControllerRepresentable {
     let pass: PKPass
     
+    init(pass: PKPass) {
+        self.pass = pass
+    }
+    
+    init(data: Data) {
+        let pkPass = try? PKPass(data:data)
+        
+        self.init(pass: pkPass!)
+    }
+    
     func makeUIViewController(context: UIViewControllerRepresentableContext<PassView>) -> PKAddPassesViewController {
         let addPassesViewController = PKAddPassesViewController(pass: pass)
         
