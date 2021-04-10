@@ -43,10 +43,9 @@
 "alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";
 "alert_deletecertificate_deletebutton" = "Löschen";
 
+"loginview_title" = "Teststation";
 "loginview_username" = "Tester";
 "loginview_username_placeholder" = "Sind Sie Tester einer Teststation?";
-
 "loginview_password" = "Passwort";
 "loginview_password_placeholder" = "Ihre Authentisierung bitte";
-
 "loginview_loginbutton" = "Einloggen";

@@ -23,7 +23,7 @@ struct ContentView_Previews: PreviewProvider {
             ContentView()
                 .environment(\.managedObjectContext, context)
                 .environmentObject(TeststationSettings())
-                .environmentObject(TeststationState())
+                .environmentObject(TeststationState(teststationId: "Tübingen", employeeId: "ced"))
         }
     }
 }

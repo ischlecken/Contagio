@@ -3,13 +3,7 @@ import SwiftUI
 struct CertificateRow: View {
     
     static let defaultPhoto = UIImage(named: "passimg")!
-    static let releaseFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        
-        return formatter
-    }()
+    
     
     @ObservedObject
     var certificate: Certificate
@@ -43,7 +37,7 @@ struct CertificateRow: View {
                 HStack {
                     let certType = "certificatetype_\(certificate.type)".localized()
                     let certStatus = "certificatestatus_\(certificate.status)".localized()
-                    let certValid = certificate.validto != nil ? Self.releaseFormatter.string(from: certificate.validto!) : ""
+                    let certValid = certificate.validto != nil ? DateFormatter.certificate.string(from: certificate.validto!) : ""
                     
                     Text("certificaterow_status: \(certType) \(certStatus)").font(.caption).foregroundColor(statusColor).bold()
                     Spacer()

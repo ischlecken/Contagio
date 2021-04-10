@@ -8,6 +8,8 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
+            Spacer()
+            Text("loginview_title").font(.largeTitle)
             Spacer(minLength: 20)
             Image("passdefaultimg")
                 .resizable()
@@ -19,7 +21,7 @@ struct LoginView: View {
                 )
                 .shadow(radius: 4)
             Spacer(minLength: 10)
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading) {
                 Text("loginview_username").font(.caption)
                 TextField("loginview_username_placeholder", text: $username)
             }
@@ -33,12 +35,12 @@ struct LoginView: View {
             }
             Spacer(minLength: 20)
         }
-        .padding()
+        .padding(EdgeInsets(top: 0, leading: 40, bottom: 0, trailing: 40))
     }
     
     private func login() {
         
-        if( password == "123" ) {
+        if( !username.isEmpty && password == "123" ) {
             teststationState.employeeId = username
             teststationState.teststationId = "1"
         }

@@ -2,14 +2,6 @@ import SwiftUI
 
 struct ModifyCertificate: View {
     
-    static let releaseFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        
-        return formatter
-    }()
-    
     @Environment(\.presentationMode) var presentation
     @State var certificate: Certificate
     @State var certifcatePhoto: UIImage
@@ -42,7 +34,7 @@ struct ModifyCertificate: View {
                             
                             HStack {
                                 Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
-                                Text(Self.releaseFormatter.string(from: certificate.validto!)).font(.caption).bold()
+                                Text(DateFormatter.certificate.string(from: certificate.validto!)).font(.caption).bold()
                             }
                         }
                         
