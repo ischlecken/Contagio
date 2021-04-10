@@ -24,3 +24,6 @@ cat fritzboxRootCA.crt gy-fritz-box.crt > gy-fritz-box.ca-bundle
 ```
 
 ## Links
+PKPass Validator
+
+https://pkpassvalidator.com/

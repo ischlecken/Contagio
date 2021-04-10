@@ -1,16 +1,21 @@
 package de.contagio.webapp.restcontroller
 
+import de.contagio.core.domain.entity.PassImage
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.TestResultType
-import de.contagio.core.usecase.CreatePass
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
-import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.repository.mongodb.PassRepository
+import de.contagio.webapp.service.PassBuilder
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+
+private var logger = LoggerFactory.getLogger(PassController::class.java)
 
 
 @CrossOrigin
@@ -18,65 +23,73 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(PASS)
 open class PassController(
     private val passInfoRepository: PassInfoRepository,
-    private val contagioProperties: ContagioProperties
+    private val passRepository: PassRepository,
+    private val passBuilder: PassBuilder
 ) {
-
     private val uidGenerator = UIDGenerator()
 
-    @GetMapping
-    open fun getPass(@RequestParam serialNumber: String): ResponseEntity<PassInfo> {
+    @GetMapping("/info/all")
+    open fun getAllPass(): Collection<PassInfo> {
+        logger.debug("getAllPass()")
+
+        return passInfoRepository.findAll()
+    }
+
+    @GetMapping("/info/{serialNumber}")
+    open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfo> {
+        logger.debug("getPassInfo($serialNumber)")
+
         val result = passInfoRepository.findById(serialNumber)
 
         return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/all")
-    open fun allPass(): Collection<PassInfo> {
-        return passInfoRepository.findAll()
+
+    @GetMapping("/{passId}")
+    open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
+        logger.debug("getPass(passId=$passId)")
+
+        val result = passRepository.findById(passId)
+
+        return if (result.isPresent)
+            ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(result.get().data)
+        else
+            ResponseEntity.notFound().build()
     }
 
-    @PostMapping
-    open fun createPass(@RequestBody createPassRequest: CreatePassRequest): ResponseEntity<ByteArray> {
-        var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
 
-        createPassPayload(createPassRequest.userId,createPassRequest.testResult)?.let {
-            result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
-        }
+    @PostMapping()
+    open fun createPass(
+        @RequestParam image: MultipartFile,
+        @RequestParam userId: String,
+        @RequestParam testResult: TestResultType
+    ): ResponseEntity<PassInfo> {
+        logger.debug("createPass(userId=$userId,testResult=$testResult)")
+        logger.debug("  image.size=${image.size}")
 
-        return result
+        val passImage = PassImage(
+            id = uidGenerator.generate(),
+            type = image.contentType ?: "",
+            data = image.bytes
+        )
+
+        val passInfo = PassInfo(
+            serialNumber = uidGenerator.generate(),
+            userId = userId,
+            imageId = uidGenerator.generate(),
+            passId = uidGenerator.generate(),
+            authToken = uidGenerator.generate(),
+            testResult = testResult
+        )
+
+        val createPassRequest = CreatePassRequest(
+            passInfo = passInfo,
+            passImage = passImage
+        )
+
+        return passBuilder.build(createPassRequest)?.let {
+            ResponseEntity.status(HttpStatus.CREATED).body(it)
+        } ?: ResponseEntity.badRequest().build()
     }
 
-    @GetMapping("/create")
-    open fun createPass(@RequestParam userId: String, @RequestParam testResult: String): ResponseEntity<ByteArray> {
-        var result: ResponseEntity<ByteArray> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-
-        createPassPayload(userId, TestResultType.valueOf(testResult))?.let {
-            result = ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(it)
-        }
-
-        return result
-    }
-
-    private fun createPassPayload(userId: String, testResult: TestResultType): ByteArray? {
-        var result: ByteArray? = null
-        val passInfo = PassInfo(serialNumber = uidGenerator.generate(), userId = userId, testResult = testResult)
-
-        if (passInfoRepository.save(passInfo) != null) {
-            val createPass = CreatePass(
-                teamIdentifier = contagioProperties.teamIdentifier,
-                passTypeIdentifier = contagioProperties.passTypeId,
-                authenticationToken = "0123456789abcdef"
-            )
-
-            result = createPass.buildSignedPassPayload(
-                contagioProperties.passResourcesDir,
-                contagioProperties.keyName,
-                contagioProperties.privateKeyPassword,
-                contagioProperties.templateName,
-                createPass.build(passInfo)
-            )
-        }
-
-        return result
-    }
 }

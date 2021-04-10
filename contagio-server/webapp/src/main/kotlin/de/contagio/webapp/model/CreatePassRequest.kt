@@ -1,5 +1,9 @@
 package de.contagio.webapp.model
 
-import de.contagio.core.domain.entity.TestResultType
+import de.contagio.core.domain.entity.PassImage
+import de.contagio.core.domain.entity.PassInfo
 
-data class CreatePassRequest(val userId: String, val testResult: TestResultType)
+data class CreatePassRequest(
+    val passInfo: PassInfo,
+    val passImage: PassImage
+)

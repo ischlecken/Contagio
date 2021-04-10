@@ -161,7 +161,7 @@ button:hover.nav-link {
 }
 
 .bcmenu {
-    background-color: #F8B10E;
+    background-color: #88202078;
     position: fixed;
     width: 100%;
     top: 0;
@@ -298,19 +298,12 @@ nav.pagenavigation {
     margin-bottom: 1.85rem;
 }
 
-/* iPad media queries */
-@media only screen and (min-width: 768px) and (max-width: 900px) {
-    .gelbeseiten {
-        width: 4.25rem;
-    }
+.gy-logo {
+    height: 40px;
+}
 
-    .gy-logo {
-        width: 7.5rem;
-    }
-
-    .nav-link.kundenportal {
-        max-width: 6.4rem;
-    }
+.errorimg {
+    height: 180px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -363,10 +356,6 @@ nav.pagenavigation {
         width: 1rem;
     }
 
-    .gelbeseiten {
-        margin: 5px 0 5px 0;
-        width: 3.8rem;
-    }
 }
 
 

@@ -6,7 +6,7 @@
 
 <div class="container bcmain">
     <div class="errorpage" th:switch="${status}">
-        <img src="/mcstatic/images/errorpage.jpg" alt="What the heck">
+        <img class="errorimg" src="/mcstatic/images/errorpage.png" alt="What the heck">
         <th:block th:case="404">
             <h1 th:utext="#{errorpage.404.message}">Seite existiert nicht</h1>
             <a class="btn"
