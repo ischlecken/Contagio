@@ -42,3 +42,9 @@
 "alert_deletecertificate_title" = "delete certificate?";
 "alert_deletecertificate_message" = "do you really want to delete this certificate?";
 "alert_deletecertificate_deletebutton" = "Delete";
+
+"loginview_username" = "Teststation Employee";
+"loginview_username_placeholder" = "Employee Name";
+"loginview_password" = "Password";
+"loginview_password_placeholder" = "Your authentication please...";
+"loginview_loginbutton" = "Login";
