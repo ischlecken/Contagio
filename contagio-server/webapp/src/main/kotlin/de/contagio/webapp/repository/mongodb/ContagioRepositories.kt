@@ -11,12 +11,12 @@ interface PassRepository : MongoRepository<Pass, String> {
 }
 
 
+interface PassImageRepository : MongoRepository<PassImage, String> {
+}
+
+
 interface TesterRepository : MongoRepository<Tester, String> {
 }
 
 interface TeststationRepository : MongoRepository<Teststation, String> {
-}
-
-
-interface PassImageRepository : MongoRepository<PassImage, String> {
 }

@@ -50,12 +50,12 @@ open class PassController(
 
     @GetMapping("/image/{id}")
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
-        logger.debug("getPassImage($id)")
-
         val result = passImageRepository.findById(id)
 
+        logger.debug("getPassImage($id)")
+
         return if (result.isPresent)
-            ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(result.get().data)
+            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(result.get().data)
         else
             ResponseEntity.notFound().build()
     }
