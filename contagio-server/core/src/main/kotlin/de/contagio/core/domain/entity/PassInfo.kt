@@ -3,9 +3,18 @@ package de.contagio.core.domain.entity
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
 
-enum class TestResultType(val display: String) {
-    UNKNOWN("unbekannt"), POSITIVE("positiv"), NEGATIVE("negativ")
+enum class TestResultType {
+    UNKNOWN, POSITIVE, NEGATIVE
 }
+
+enum class TestType {
+    RAPIDTEST, PCRTEST, VACCINATION
+}
+
+enum class IssueStatus {
+    CREATED, SIGNED, REFUSED
+}
+
 
 data class GeoPosition(
     val latitude: String,
@@ -30,19 +39,6 @@ data class Person(
         get() = "$firstName $lastName"
 }
 
-
-data class PassInfo(
-    @Id val serialNumber: String,
-    val person: Person,
-    val imageId: String,
-    val passId: String,
-    val teststationId: String,
-    val testerId: String,
-    val authToken: String,
-    val testResult: TestResultType,
-    val created: LocalDateTime = LocalDateTime.now(),
-    val validUntil: LocalDateTime = LocalDateTime.now().plusHours(12)
-)
 
 data class PassImage(
     @Id val id: String,
@@ -116,3 +112,18 @@ data class Tester(
     val created: LocalDateTime = LocalDateTime.now()
 )
 
+
+data class PassInfo(
+    @Id val serialNumber: String,
+    val person: Person,
+    val imageId: String,
+    val teststationId: String,
+    val testerId: String,
+    val authToken: String,
+    val testResult: TestResultType,
+    val testType: TestType,
+    val issueStatus: IssueStatus,
+    val created: LocalDateTime = LocalDateTime.now(),
+    val passId: String? = null,
+    val validUntil: LocalDateTime? = null
+)

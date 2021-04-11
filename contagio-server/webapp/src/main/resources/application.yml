@@ -47,6 +47,7 @@ contagio:
   privateKeyPassword: "1234"
   templateName: "contagio"
   passResourcesDir: "/opt/contagio-server"
+  baseUrl: "https://www.contagio.de"
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"

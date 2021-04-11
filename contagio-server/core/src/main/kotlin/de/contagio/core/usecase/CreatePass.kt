@@ -39,10 +39,10 @@ class CreatePass(
         pass.addBarcode("$baseUrl/co_v1/pass/info/${passInfo.serialNumber}")
 
         val generic = PKGenericPass()
-        generic.primaryFields = listOf(PKField("TestResult", null, passInfo.testResult.display))
+        generic.primaryFields = listOf(PKField("TestResult", null, "testresult_${passInfo.testResult.name}"))
         generic.auxiliaryFields = listOf(
             PKField("UserId", "USERID", passInfo.person.fullName),
-            PKField("ValidUntil", "VALIDUNTIL", passInfo.validUntil.format(dateTimeFormatter))
+            PKField("ValidUntil", "VALIDUNTIL", passInfo.validUntil?.format(dateTimeFormatter))
         )
 
         pass.generic = generic

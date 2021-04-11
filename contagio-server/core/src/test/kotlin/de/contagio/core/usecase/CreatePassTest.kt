@@ -1,9 +1,6 @@
 package de.contagio.core.usecase
 
-import de.contagio.core.domain.entity.PassImage
-import de.contagio.core.domain.entity.PassInfo
-import de.contagio.core.domain.entity.Person
-import de.contagio.core.domain.entity.TestResultType
+import de.contagio.core.domain.entity.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -28,6 +25,8 @@ class CreatePassTest {
                 imageId = "456",
                 authToken = "abc",
                 testResult = TestResultType.NEGATIVE,
+                testType = TestType.RAPIDTEST,
+                issueStatus = IssueStatus.CREATED,
                 teststationId = "1",
                 testerId = "1"
             ),

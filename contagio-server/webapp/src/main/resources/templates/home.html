@@ -1,19 +1,29 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
-<body>
+<body class="bchomeimage">
 <nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
 
-<div class="container-fluid title-container bcsearch bcheaderimage bchomeimage">
-    <div class="home container text-center">
-        <h1 th:text="#{home.welcome1}">Hi ya!</h1>
-        <p class="lead" th:text="#{home.welcome2}">welcome1</p>
-
-    </div>
+<div class="container-fluid title-container bcsearch bcheaderimage ">
+  <div class="home container text-center">
+    <h1 th:text="#{home.welcome1}">Hi ya!</h1>
+    <p class="lead" th:text="#{home.welcome2}">welcome1</p>
+  </div>
 </div>
 
 <div class="container bcmain">
-
+  <div class="row">
+    <div class="col-4">
+      <div class="card">
+        <div class="card-header" th:text="#{home.activepass.title}">Aktive Pässe</div>
+        <div class="card-body">
+          <h5 class="card-title" th:text="#{home.activepass.count(${activePassCount})}">0</h5>
+          <p class="card-text" th:text="#{home.activepass.moreinfo}">Mehr Information finden Sie hier...</p>
+          <a href="#" class="btn btn-primary" th:text="#{home.activepass.button}">Zur Übersicht</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <footer th:replace="~{footer :: footer(pagetype=${pagetype})}"></footer>

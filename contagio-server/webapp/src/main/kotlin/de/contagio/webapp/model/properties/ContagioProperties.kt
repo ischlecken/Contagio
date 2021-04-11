@@ -18,6 +18,7 @@ data class ContagioProperties(
     val privateKeyPassword: String,
     val templateName: String,
     val passResourcesDir: String,
+    val baseUrl: String,
 
     val bpRestapi: MmcontrolBenutzerportalRestapiProperties
 )

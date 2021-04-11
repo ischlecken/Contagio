@@ -1,9 +1,6 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.PassImage
-import de.contagio.core.domain.entity.PassInfo
-import de.contagio.core.domain.entity.Person
-import de.contagio.core.domain.entity.TestResultType
+import de.contagio.core.domain.entity.*
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
 import de.contagio.webapp.repository.mongodb.PassImageRepository
@@ -83,26 +80,29 @@ open class PassController(
         @RequestParam teststationId: String,
         @RequestParam testerId: String,
 
-        @RequestParam testResult: TestResultType
+        @RequestParam testResult: TestResultType,
+        @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        val passImage = PassImage(
-            id = uidGenerator.generate(),
-            type = image.contentType ?: "",
-            data = image.bytes
-        )
 
         val passInfo = PassInfo(
             serialNumber = uidGenerator.generate(),
             person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo),
             imageId = uidGenerator.generate(),
-            passId = uidGenerator.generate(),
             authToken = uidGenerator.generate(),
             testResult = testResult,
+            testType = testType,
+            issueStatus = IssueStatus.CREATED,
             testerId = testerId,
             teststationId = teststationId
+        )
+
+        val passImage = PassImage(
+            id = passInfo.imageId,
+            type = image.contentType ?: "",
+            data = image.bytes
         )
 
         val createPassRequest = CreatePassRequest(

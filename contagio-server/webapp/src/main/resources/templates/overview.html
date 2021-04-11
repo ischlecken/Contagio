@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
+<body>
+<nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
+
+<div class="container-fluid bcmain overview">
+  <div class="row">
+    <div class="col-12">
+
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>SerialNo</th>
+          <th>Name</th>
+          <th>Bild</th>
+          <th>Testresultat</th>
+          <th>Testtyp</th>
+          <th>Status</th>
+          <th>Teststation</th>
+          <th>Erzeugt</th>
+          <th>Gültig bis</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${passInfo.content}">
+          <td th:text="${p.serialNumber}"/>
+          <td th:text="${p.person.fullName}"/>
+          <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
+          <td th:text="${p.testResult}"/>
+          <td th:text="${p.testType}"/>
+          <td th:text="${p.issueStatus}"/>
+          <td th:text="${p.teststationId}"/>
+          <td th:text="${p.created}"/>
+          <td th:text="${p.validUntil}"/>
+
+        </tr>
+        </tbody>
+      </table>
+
+      <div th:if="${passInfo.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
+        <a th:href="@{/overview(size=${passInfo.size}, page=${pageNumber})}"
+           th:text=${pageNumber}
+           th:class="${pageNumber==passInfo.number + 1} ? active"></a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pagetype})}"></footer>
+</body>
+</html>
