@@ -2,6 +2,7 @@ package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.PassImage
 import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.Person
 import de.contagio.core.domain.entity.TestResultType
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,14 +19,17 @@ class CreatePassTest {
                 baseUrl = "http://bla.de"
             )
 
+        val person = Person(firstName = "Hugo", lastName = "Schlecken")
         val pass = createPass.build(
             PassInfo(
                 serialNumber = "123",
-                userId = " abc ",
+                person = person,
                 passId = "123",
                 imageId = "456",
                 authToken = "abc",
-                testResult = TestResultType.NEGATIVE
+                testResult = TestResultType.NEGATIVE,
+                teststationId = "1",
+                testerId = "1"
             ),
             PassImage(
                 id = "adfa",

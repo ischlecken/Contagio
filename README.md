@@ -34,12 +34,16 @@ keytool -list -keystore contagio.jks
 
 ```
 
-
-
 ## Lokalen DNS manipulieren
 auf macos /etc/hosts editieren
 ```
 192.168.169.59  www.contagio.de
+```
+
+## Mongodb
+MongoDb in Dockercontainer starten
+```
+docker run -d --name mongodb -p 27017:27017 mongo:4.4.4
 ```
 
 # Links

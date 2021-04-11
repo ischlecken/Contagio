@@ -41,7 +41,7 @@ class CreatePass(
         val generic = PKGenericPass()
         generic.primaryFields = listOf(PKField("TestResult", null, passInfo.testResult.display))
         generic.auxiliaryFields = listOf(
-            PKField("UserId", "USERID", passInfo.userId),
+            PKField("UserId", "USERID", passInfo.person.fullName),
             PKField("ValidUntil", "VALIDUNTIL", passInfo.validUntil.format(dateTimeFormatter))
         )
 

@@ -2,6 +2,7 @@ package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.entity.PassImage
 import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.Person
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
@@ -75,10 +76,16 @@ open class PassController(
     @PostMapping()
     open fun createPass(
         @RequestParam image: MultipartFile,
-        @RequestParam userId: String,
+        @RequestParam firstName: String,
+        @RequestParam lastName: String,
+        @RequestParam phoneNo: String,
+
+        @RequestParam teststationId: String,
+        @RequestParam testerId: String,
+
         @RequestParam testResult: TestResultType
     ): ResponseEntity<PassInfo> {
-        logger.debug("createPass(userId=$userId,testResult=$testResult)")
+        logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
         val passImage = PassImage(
@@ -89,11 +96,13 @@ open class PassController(
 
         val passInfo = PassInfo(
             serialNumber = uidGenerator.generate(),
-            userId = userId,
+            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo),
             imageId = uidGenerator.generate(),
             passId = uidGenerator.generate(),
             authToken = uidGenerator.generate(),
-            testResult = testResult
+            testResult = testResult,
+            testerId = testerId,
+            teststationId = teststationId
         )
 
         val createPassRequest = CreatePassRequest(
