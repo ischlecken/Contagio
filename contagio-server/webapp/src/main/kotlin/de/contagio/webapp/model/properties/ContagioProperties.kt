@@ -20,5 +20,9 @@ data class ContagioProperties(
     val passResourcesDir: String,
     val baseUrl: String,
 
+    val passOrganisationName: String,
+    val passDescription: String,
+    val passLogoText: String,
+
     val bpRestapi: MmcontrolBenutzerportalRestapiProperties
 )

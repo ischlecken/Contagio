@@ -33,7 +33,7 @@ open class OverviewController(
             passInfoRepository.findAll(
                 PageRequest.of(
                     currentPage, pageSize,
-                    Sort.by(Sort.Direction.DESC, "modifyts", "createts")
+                    Sort.by(Sort.Direction.DESC, "modified", "created")
                 )
             )
         )

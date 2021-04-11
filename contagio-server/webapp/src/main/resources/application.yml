@@ -45,9 +45,13 @@ contagio:
   passTypeId: "pass.de.contagio.stt"
   keyName: "pass"
   privateKeyPassword: "1234"
-  templateName: "contagio"
+  templateName: "contagio1"
   passResourcesDir: "/opt/contagio-server"
   baseUrl: "https://www.contagio.de"
+
+  passOrganisationName: "Contagio"
+  passDescription: "Contagio - Dein Pass in die Freiheit"
+  passLogoText: "Testen Impfen Machen"
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"

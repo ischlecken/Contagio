@@ -4,6 +4,7 @@ import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.entity.Pass
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.usecase.CreatePass
+import de.contagio.core.usecase.CreatePassParameter
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
@@ -36,14 +37,20 @@ class PassBuilder(
             validUntil = LocalDateTime.now().plusHours(12)
         )
 
+        val createPassParameter = CreatePassParameter(
+            organisationName = contagioProperties.passOrganisationName,
+            description = contagioProperties.passDescription,
+            logoText = contagioProperties.passLogoText,
+        )
         val pkpass = createPass.buildSignedPassPayload(
             contagioProperties.passResourcesDir,
             contagioProperties.keyName,
             contagioProperties.privateKeyPassword,
             contagioProperties.templateName,
+            createPassRequest.passImage,
             createPass.build(
                 passInfo,
-                createPassRequest.passImage
+                createPassParameter
             )
         )
 

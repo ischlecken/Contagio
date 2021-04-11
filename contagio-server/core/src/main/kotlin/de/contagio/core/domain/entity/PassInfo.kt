@@ -124,6 +124,7 @@ data class PassInfo(
     val testType: TestType,
     val issueStatus: IssueStatus,
     val created: LocalDateTime = LocalDateTime.now(),
+    val modified: LocalDateTime? = null,
     val passId: String? = null,
     val validUntil: LocalDateTime? = null
 )

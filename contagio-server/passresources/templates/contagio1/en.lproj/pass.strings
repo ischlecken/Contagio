@@ -1,0 +1,6 @@
+"USERID" = "User ID";
+"VALIDUNTIL" = "Valid Until";
+
+"testresult_UNKNOWN" = "unknown";
+"testresult_POSITIVE" = "positive";
+"testresult_NEGATIVE" = "negative";

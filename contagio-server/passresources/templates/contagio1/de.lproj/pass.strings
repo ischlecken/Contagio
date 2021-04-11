@@ -1,0 +1,6 @@
+"USERID" = "Kundennummer";
+"VALIDUNTIL" = "Gültig bis";
+
+"testresult_UNKNOWN" = "Unbekannt";
+"testresult_POSITIVE" = "Positiv";
+"testresult_NEGATIVE" = "Negativ";

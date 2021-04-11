@@ -30,10 +30,10 @@ class CreatePassTest {
                 teststationId = "1",
                 testerId = "1"
             ),
-            PassImage(
-                id = "adfa",
-                data = ByteArray(10),
-                type = "image/bla"
+            CreatePassParameter(
+                organisationName = "hugo",
+                description = "bla",
+                logoText = "fasel"
             )
         )
 
