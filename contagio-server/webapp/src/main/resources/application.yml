@@ -20,7 +20,7 @@ server:
     key-store: classpath:contagio.jks
     key-store-password: contagio123
     key-alias: contagio
-    
+
   tomcat:
     accesslog:
       enabled: true

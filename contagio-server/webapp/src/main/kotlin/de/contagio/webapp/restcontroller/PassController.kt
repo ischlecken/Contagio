@@ -5,6 +5,7 @@ import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassRequest
+import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
 import de.contagio.webapp.service.PassBuilder
@@ -23,6 +24,7 @@ private var logger = LoggerFactory.getLogger(PassController::class.java)
 @RequestMapping(PASS)
 open class PassController(
     private val passInfoRepository: PassInfoRepository,
+    private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
     private val passBuilder: PassBuilder
 ) {
@@ -44,6 +46,18 @@ open class PassController(
         return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
     }
 
+
+    @GetMapping("/image/{id}")
+    open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
+        logger.debug("getPassImage($id)")
+
+        val result = passImageRepository.findById(id)
+
+        return if (result.isPresent)
+            ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(result.get().data)
+        else
+            ResponseEntity.notFound().build()
+    }
 
     @GetMapping("/{passId}")
     open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
