@@ -476,7 +476,22 @@ nav.pagenavigation {
 }
 
 .passimg {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
+}
+
+.showpass .passimg {
+    width: 240px;
+    height: 240px;
+}
+
+a.addtowallet {
+    background-attachment: scroll;
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: fit;
+    background-image: url(images/addtowallet.svg);
+    height: 4rem;
+    display: block;
 }

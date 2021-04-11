@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
+<body>
+<nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
+
+<div class="container bcmain showpass">
+  <h1 th:text="#{showpass.title(${passInfo.person.fullName})}">Pass für Member</h1>
+  <div class="row">
+    <div class="col-8">
+
+      <div class="form-group">
+        <label for="serialNumber">Seriennummer</label>
+        <input class="form-control" readonly name="serialNumber" id="serialNumber" th:value="${passInfo.serialNumber}">
+      </div>
+
+      <div class="form-group">
+        <label for="testType">Testtyp</label>
+        <input class="form-control" readonly name="testType" id="testType" th:value="${passInfo.testType}">
+      </div>
+      <div class="form-group">
+        <label for="testResult">Testresultat</label>
+        <input class="form-control" readonly name="testResult" id="testResult" th:value="${passInfo.testResult}">
+      </div>
+
+      <div class="form-group">
+        <label for="issueStatus">Status der Ausstellung</label>
+        <input class="form-control" readonly name="issueStatus" id="issueStatus" th:value="${passInfo.issueStatus}">
+      </div>
+
+
+      <div class="form-group">
+        <label for="created">Erzeugt am</label>
+        <input class="form-control" readonly name="created" id="created" th:value="${passInfo.created}">
+      </div>
+      <div class="form-group">
+        <label for="validUntil">Gültig bis</label>
+        <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${passInfo.validUntil}">
+      </div>
+
+      <div class="form-group">
+        <label for="teststationId">ausstellende Teststation</label>
+        <input class="form-control" readonly name="teststationId" id="teststationId" th:value="${passInfo.teststationId}">
+      </div>
+      <div class="form-group">
+        <label for="testerId">Tester</label>
+        <input class="form-control" readonly name="testerId" id="testerId" th:value="${passInfo.testerId}">
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNo">Telefonnummer</label>
+        <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${passInfo.person.phoneNo}">
+      </div>
+      <div class="form-group" th:if="${passInfo.person.email}">
+        <label for="email">E-Mail</label>
+        <input class="form-control" readonly name="email" id="email" th:value="${passInfo.person.email}">
+      </div>
+
+    </div>
+
+    <div class="col-4">
+      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${passInfo.imageId})}">
+
+      <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${passInfo.passId})}"></a>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pagetype})}"></footer>
+</body>
+</html>

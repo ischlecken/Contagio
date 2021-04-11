@@ -76,10 +76,9 @@ open class PassController(
         @RequestParam firstName: String,
         @RequestParam lastName: String,
         @RequestParam phoneNo: String,
-
+        @RequestParam email: String?,
         @RequestParam teststationId: String,
         @RequestParam testerId: String,
-
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
@@ -89,7 +88,7 @@ open class PassController(
 
         val passInfo = PassInfo(
             serialNumber = uidGenerator.generate(),
-            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo),
+            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
             imageId = uidGenerator.generate(),
             authToken = uidGenerator.generate(),
             testResult = testResult,
