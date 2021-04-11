@@ -14,6 +14,13 @@ management:
 
 server:
   port: 13013
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:contagio.jks
+    key-store-password: contagio123
+    key-alias: contagio
+    
   tomcat:
     accesslog:
       enabled: true
