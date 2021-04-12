@@ -9,7 +9,7 @@
 
   <form action="/createpass" method="POST" enctype="multipart/form-data">
     <div class="row">
-      <div class="col-4">
+      <div class="col-sm-12 col-lg-4">
         <div class="form-group">
           <label for="firstName">Vorname</label>
           <input class="form-control" type="text" name="firstName" id="firstName" value="Hugo">
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <div class="col-4">
+      <div class="col-sm-12 col-lg-4">
         <div class="form-group">
           <label for="teststationId">Teststation ID</label>
           <input class="form-control" type="text" name="teststationId" id="teststationId" value="1">
@@ -52,7 +52,11 @@
 
         <div class="form-group">
           <label for="testType">Testtyp</label>
-          <input class="form-control" type="text" name="testType" id="testType" value="RAPIDTEST">
+          <select class="form-control" name="testType" id="testType" >
+            <option value="RAPIDTEST">Schnelltest</option>
+            <option value="PCRTEST">PCR Test</option>
+            <option value="VACCINATION">Impfung</option>
+          </select>
         </div>
       </div>
 

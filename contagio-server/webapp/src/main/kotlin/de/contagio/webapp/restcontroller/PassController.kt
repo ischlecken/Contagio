@@ -64,7 +64,7 @@ open class PassController(
         val result = passRepository.findById(passId)
 
         return if (result.isPresent)
-            ResponseEntity.ok().contentType(MediaType("application", "vnd.apple.pkpass")).body(result.get().data)
+            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
         else
             ResponseEntity.notFound().build()
     }

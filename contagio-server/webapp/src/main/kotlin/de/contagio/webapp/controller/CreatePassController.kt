@@ -60,7 +60,7 @@ open class CreatePassController(
             testResult,
             testType
         ).copy(
-            validUntil = LocalDateTime.now().plusHours(12)
+            validUntil = LocalDateTime.now().plusMinutes(5)
         )
 
         val passImage = PassImage.build(image.bytes, image.contentType, passInfo)
