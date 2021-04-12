@@ -1,5 +1,6 @@
 package de.contagio.core.domain.entity
 
+import de.contagio.core.domain.port.IUIDGenerator
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
 
@@ -67,6 +68,20 @@ data class PassImage(
         result = 31 * result + created.hashCode()
         return result
     }
+
+    companion object {
+        fun build(
+            data: ByteArray,
+            contentType: String?,
+            passInfo: PassInfo
+        ): PassImage {
+            return PassImage(
+                id = passInfo.imageId,
+                type = contentType ?: "",
+                data = data
+            )
+        }
+    }
 }
 
 
@@ -127,4 +142,30 @@ data class PassInfo(
     val modified: LocalDateTime? = null,
     val passId: String? = null,
     val validUntil: LocalDateTime? = null
-)
+) {
+    companion object {
+        fun build(
+            uidGenerator: IUIDGenerator,
+            firstName: String,
+            lastName: String,
+            phoneNo: String,
+            email: String?,
+            teststationId: String,
+            testerId: String,
+            testResult: TestResultType,
+            testType: TestType
+        ): PassInfo {
+            return PassInfo(
+                serialNumber = uidGenerator.generate(),
+                person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
+                imageId = uidGenerator.generate(),
+                authToken = uidGenerator.generate(),
+                testResult = testResult,
+                testType = testType,
+                issueStatus = IssueStatus.CREATED,
+                testerId = testerId,
+                teststationId = teststationId
+            )
+        }
+    }
+}

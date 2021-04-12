@@ -1,8 +1,8 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.*
-import de.contagio.core.util.UIDGenerator
-import de.contagio.webapp.model.CreatePassRequest
+import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.TestResultType
+import de.contagio.core.domain.entity.TestType
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
@@ -26,7 +26,7 @@ open class PassController(
     private val passRepository: PassRepository,
     private val passBuilder: PassBuilder
 ) {
-    private val uidGenerator = UIDGenerator()
+
 
     @GetMapping("/info/all")
     open fun getAllPass(): Collection<PassInfo> {
@@ -85,31 +85,17 @@ open class PassController(
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-
-        val passInfo = PassInfo(
-            serialNumber = uidGenerator.generate(),
-            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
-            imageId = uidGenerator.generate(),
-            authToken = uidGenerator.generate(),
-            testResult = testResult,
-            testType = testType,
-            issueStatus = IssueStatus.CREATED,
-            testerId = testerId,
-            teststationId = teststationId
-        )
-
-        val passImage = PassImage(
-            id = passInfo.imageId,
-            type = image.contentType ?: "",
-            data = image.bytes
-        )
-
-        val createPassRequest = CreatePassRequest(
-            passInfo = passInfo,
-            passImage = passImage
-        )
-
-        return passBuilder.build(createPassRequest)?.let {
+        return passBuilder.build(
+            image,
+            firstName,
+            lastName,
+            phoneNo,
+            email,
+            teststationId,
+            testerId,
+            testResult,
+            testType
+        )?.let {
             ResponseEntity.status(HttpStatus.CREATED).body(it)
         } ?: ResponseEntity.badRequest().build()
     }

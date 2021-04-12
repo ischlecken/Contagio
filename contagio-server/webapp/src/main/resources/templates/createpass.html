@@ -1,17 +1,15 @@
-<html>
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-</head>
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
 <body>
+<nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
 
-<div class="container">
-  <h1>Test Multipart Upload</h1>
+<div class="container bcmain createpass">
+  <h1>Pass erzeugen</h1>
 
-  <div class="row">
-    <div class="col">
-      <form action="https://www.contagio.de:13013/co_v1/pass" method="POST" enctype="multipart/form-data">
-
+  <form action="/createpass" method="POST" enctype="multipart/form-data">
+    <div class="row">
+      <div class="col-4">
         <div class="form-group">
           <label for="firstName">Vorname</label>
           <input class="form-control" type="text" name="firstName" id="firstName" value="Hugo">
@@ -29,9 +27,11 @@
 
         <div class="form-group">
           <label for="email">E-Mail</label>
-          <input class="form-control" type="text" name="email" id="email" value="">
+          <input class="form-control" type="text" name="email" id="email" value="hugo@bla.de">
         </div>
+      </div>
 
+      <div class="col-4">
         <div class="form-group">
           <label for="teststationId">Teststation ID</label>
           <input class="form-control" type="text" name="teststationId" id="teststationId" value="1">
@@ -43,23 +43,36 @@
 
         <div class="form-group">
           <label for="testResult">Testresult</label>
-          <input class="form-control" type="text" name="testResult" id="testResult" value="NEGATIVE">
+          <select class="form-control" name="testResult" id="testResult" >
+            <option value="UNKNOWN">unbekannt</option>
+            <option value="NEGATIVE">Negativ</option>
+            <option value="POSITIVE">Positiv</option>
+          </select>
         </div>
 
         <div class="form-group">
           <label for="testType">Testtyp</label>
           <input class="form-control" type="text" name="testType" id="testType" value="RAPIDTEST">
         </div>
+      </div>
 
+      <div class="col-4">
         <div class="form-group">
           <label for="datei">Datei</label>
           <input class="form-control" id="datei" type="file" name="image">
         </div>
-
-        <input class="btn btn-primary" type="submit" value="Submit">
-      </form>
+      </div>
     </div>
-  </div>
+
+    <div class="row">
+      <div class="col">
+        <input class="btn btn-primary" type="submit" value="Submit">
+      </div>
+    </div>
+  </form>
+
 </div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pagetype})}"></footer>
 </body>
 </html>
