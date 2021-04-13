@@ -1,6 +1,25 @@
-"USERID" = "User ID";
+"FULLNAME" = "Name";
 "VALIDUNTIL" = "Valid Until";
+"EMAIL" = "E-Mail";
+"PHONENO" = "Phoneno";
+"TESTSTATIONID" = "Teststation ID";
+"TESTERID" = "Tester ID";
+"TESTRESULT" = "Testresult";
+"TESTTYPE" = "Test";
+"VACCINATION" = "Vaccination";
+"SHOWPASSURL" = "Show Pass";
 
-"testresult_UNKNOWN" = "unknown";
-"testresult_POSITIVE" = "positive";
-"testresult_NEGATIVE" = "negative";
+"TESTRESULT_UNKNOWN" = "-";
+"TESTRESULT_POSITIVE" = "positive";
+"TESTRESULT_NEGATIVE" = "negative";
+
+"TESTTYPE_RAPIDTEST" = "Rapid Test";
+"TESTTYPE_PCRTEST" = "PCR Test";
+"TESTTYPE_VACCINATION" = "Vaccination";
+
+"LOGO_TESTTYPE_RAPIDTEST" = "TIL - Rapidtest Pass";
+"LOGO_TESTTYPE_PCRTEST" = "TIL - PCR-Test Pass";
+"LOGO_TESTTYPE_VACCINATION" = "TIL - Vaccination Pass";
+
+"TERMSCONDITIONS" = "Terms & conditions";
+"TERMSCONDITIONS_VALUE" = "This ticket may cause happiness and good cheer! Free lei with ticket.";

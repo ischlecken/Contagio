@@ -32,7 +32,7 @@ spring:
     mode: HTML
   data:
     mongodb:
-      uri: "mongodb://gy-qa-mongo.gyl2it.de:8020"
+      uri: "mongodb://dvm1:27017"
       database: contagio
   servlet:
     multipart:

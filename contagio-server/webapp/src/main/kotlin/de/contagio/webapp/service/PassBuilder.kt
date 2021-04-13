@@ -74,7 +74,12 @@ class PassBuilder(
         }
     }
 
-    fun buildPkPass(passInfo: PassInfo, passImage: PassImage): ByteArray? {
+    fun buildPkPass(
+        passInfo: PassInfo,
+        passImage: PassImage,
+        passType: PassType = PassType.GENERIC,
+        templateName: String? = null
+    ): ByteArray? {
         val createPass = CreatePass(
             teamIdentifier = contagioProperties.teamIdentifier,
             passTypeIdentifier = contagioProperties.passTypeId,
@@ -86,13 +91,14 @@ class PassBuilder(
             organisationName = contagioProperties.passOrganisationName,
             description = contagioProperties.passDescription,
             logoText = contagioProperties.passLogoText,
+            passType = passType
         )
 
         return createPass.buildSignedPassPayload(
             contagioProperties.passResourcesDir,
             contagioProperties.keyName,
             contagioProperties.privateKeyPassword,
-            contagioProperties.templateName,
+            templateName ?: contagioProperties.templateName,
             passImage,
             createPass.build(passInfo, createPassParameter)
         )

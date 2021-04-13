@@ -12,6 +12,11 @@ enum class TestType {
     RAPIDTEST, PCRTEST, VACCINATION
 }
 
+
+enum class PassType {
+    GENERIC, COUPON, EVENT, STORE
+}
+
 enum class IssueStatus {
     CREATED, SIGNED, REFUSED
 }

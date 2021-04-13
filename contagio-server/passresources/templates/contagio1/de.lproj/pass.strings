@@ -18,9 +18,9 @@
 "TESTTYPE_VACCINATION" = "Impfung";
 
 
-"LOGO_TESTTYPE_RAPIDTEST" = "TIL - Schnelltest Pass";
-"LOGO_TESTTYPE_PCRTEST" = "TIL - PCR-Test Pass";
-"LOGO_TESTTYPE_VACCINATION" = "TIL - Impfpass";
+"LOGO_TESTTYPE_RAPIDTEST" = "TIL - Pass";
+"LOGO_TESTTYPE_PCRTEST" = "TIL - Pass";
+"LOGO_TESTTYPE_VACCINATION" = "TIL - Pass";
 
 "TERMSCONDITIONS" = "Allgemeine Geschäftsbedingungen";
 "TERMSCONDITIONS_VALUE" = "Bitte verhalten Sie sich ruhig, hier gibt es nichts zu sehen :-)";

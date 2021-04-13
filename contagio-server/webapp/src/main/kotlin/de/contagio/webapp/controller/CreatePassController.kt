@@ -2,10 +2,7 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.core.domain.entity.PassImage
-import de.contagio.core.domain.entity.PassInfo
-import de.contagio.core.domain.entity.TestResultType
-import de.contagio.core.domain.entity.TestType
+import de.contagio.core.domain.entity.*
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.restcontroller.pkpassMediatype
 import de.contagio.webapp.service.PassBuilder
@@ -43,7 +40,9 @@ open class CreatePassController(
         @RequestParam teststationId: String,
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
-        @RequestParam testType: TestType
+        @RequestParam testType: TestType,
+        @RequestParam passType: PassType,
+        @RequestParam templateName: String?
     ): ResponseEntity<ByteArray> {
 
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
@@ -58,13 +57,13 @@ open class CreatePassController(
             teststationId,
             testerId,
             testResult,
-            testType
+            testType,
         ).copy(
-            validUntil = LocalDateTime.now().plusMinutes(5)
+            validUntil = LocalDateTime.now().plusDays(1)
         )
 
         val passImage = PassImage.build(image.bytes, image.contentType, passInfo)
-        val pkPass = passBuilder.buildPkPass(passInfo, passImage)
+        val pkPass = passBuilder.buildPkPass(passInfo, passImage, passType, templateName)
 
         if (pkPass != null)
             return ResponseEntity
