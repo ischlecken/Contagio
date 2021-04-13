@@ -29,8 +29,14 @@ class TeststationEngine {
         certificate.managedObjectContext?.saveContext()
         
         let createPassRequest = CreatePassRequest(
-            userId:certificate.fullName(),
-            testResult: TestResultType.fromCertificateStatus(status: selectedStatus)
+            firstName: certificate.firstname!,
+            lastName: certificate.lastname!,
+            phoneNo: certificate.phonenumber!,
+            email: certificate.email,
+            teststationId: certificate.teststationid!,
+            testerId: certificate.testerid!,
+            testResult: TestResultType.fromCertificateStatus(status: selectedStatus),
+            testType: TestType.fromCertificateType(type: certificate.certType)
         )
         
         contagioAPISubscription = try? ContagioAPI

@@ -5,7 +5,7 @@ enum ContagioAPI {
     static let accessToken = "<your key>"
     
     static func allPass() -> AnyPublisher<[PassInfo], TeststationError> {
-        let url = URL(string: "http://localhost:13013/co_v1/pass/all")!
+        let url = URL(string: "https://localhost:13013/co_v1/pass/all")!
         
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -43,7 +43,7 @@ enum ContagioAPI {
         config.urlCache = nil
         let session = URLSession(configuration: config)
         
-        let url = URL(string: "http://localhost:13013/co_v1/pass")!
+        let url = URL(string: "https://localhost:13013/co_v1/pass")!
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
