@@ -16,11 +16,12 @@ class TeststationEngine {
     
     func startIssueOfCertificate(mcr: ModifyCertificateResponse,
                                  onChange: @escaping (CertificateIssueStatus)->Void) {
-        startIssueOfCertificate(certificate: mcr.cert, selectedStatus: mcr.selectedStatus, onChange: onChange)
+        //startIssueOfCertificate(certificate: mcr.cert, selectedStatus: mcr.selectedStatus, onChange: onChange)
     }
     
     func startIssueOfCertificate(certificate: Certificate,
                                  selectedStatus:CertificateStatus,
+                                 photo: UIImage,
                                  onChange: @escaping (CertificateIssueStatus)->Void) {
         
         let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
@@ -36,7 +37,8 @@ class TeststationEngine {
             teststationId: certificate.teststationid!,
             testerId: certificate.testerid!,
             testResult: TestResultType.fromCertificateStatus(status: selectedStatus),
-            testType: TestType.fromCertificateType(type: certificate.certType)
+            testType: TestType.fromCertificateType(type: certificate.certType),
+            photo: photo.pngData()!
         )
         
         contagioAPISubscription = try? ContagioAPI
@@ -77,45 +79,6 @@ class TeststationEngine {
                     context.saveContext()
                 }
             )
-        
-        /*
-        contagioAPISubscription = ContagioAPI
-            .allPass()
-            .sink(
-                receiveCompletion: { [unowned self] completion in
-                    
-                    let context = persistentContainer.newBackgroundContext()
-                    
-                    guard let cert = try? context.getCertificate(objectID: certificate.objectID) else {
-                        return
-                    }
-                    
-                    sleep(4)
-                    
-                    switch completion {
-                    case .finished:
-                        cert.updateStatus(status: selectedStatus)
-                        cert.updateIssueStatus(issueStatus: .signed)
-                    case .failure(let error):
-                        print("Error: \(error)")
-                        self.error = error
-                        
-                        cert.updateIssueStatus(issueStatus: .failed)
-                    }
-                    
-                    context.saveContext()
-                    
-                    contagioAPISubscription = nil
-                },
-                receiveValue: { [unowned self] result in
-                    print("Thread: \(Thread.current) mainThread:\(Thread.current.isMainThread)")
-                    
-                    self.passInfo = result
-                    
-                    print("result= \(result)")
-                }
-            )
- */
     }
     
 }

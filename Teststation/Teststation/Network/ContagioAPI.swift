@@ -5,7 +5,7 @@ enum ContagioAPI {
     static let accessToken = "<your key>"
     
     static func allPass() -> AnyPublisher<[PassInfo], TeststationError> {
-        let url = URL(string: "https://localhost:13013/co_v1/pass/all")!
+        let url = URL(string: "https://efeu.local:13013/co_v1/pass/all")!
         
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -33,21 +33,24 @@ enum ContagioAPI {
             .eraseToAnyPublisher()
     }
     
-    static func createPass(createPassRequest: CreatePassRequest) throws -> AnyPublisher<Data, TeststationError> {
-        guard let jsonData = try? JSONEncoder().encode(createPassRequest) else {
-            throw TeststationError.encoding
-        }
-        
+    static func createPass(createPassRequest: CreatePassRequest) throws -> AnyPublisher<Data, TeststationError> {        
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData
         config.urlCache = nil
         let session = URLSession(configuration: config)
         
-        let url = URL(string: "https://localhost:13013/co_v1/pass")!
+        let url = URL(string: "https://efeu.local:13013/co_v1/pass")!
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest.httpBody = jsonData
+        
+        let boundary = UUID().uuidString
+        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        let payload = createPassRequest.toMultipart(boundary: boundary)
+        
+        urlRequest.httpBody = payload
+        
+        print("payload=\(payload)")
         
         return session
             .dataTaskPublisher(for: urlRequest)

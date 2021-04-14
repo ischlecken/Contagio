@@ -70,7 +70,7 @@ open class PassController(
     }
 
 
-    @PostMapping()
+    @PostMapping
     open fun createPass(
         @RequestParam image: MultipartFile,
         @RequestParam firstName: String,

@@ -68,7 +68,11 @@ struct CertificateList: View {
                     certificatePhotos[cert.id!] = acr.photo
                     isPresented = false
                     
-                    TeststationEngine.shared.startIssueOfCertificate(certificate:cert,selectedStatus:cert.certStatus) { issueStatus in
+                    TeststationEngine.shared.startIssueOfCertificate(
+                        certificate:cert,
+                        selectedStatus:cert.certStatus,
+                        photo: acr.photo
+                    ) { issueStatus in
                     }
                 }
             }
