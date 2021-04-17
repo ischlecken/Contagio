@@ -18,7 +18,7 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, SIGNED, REFUSED
+    CREATED, SIGNED, EXPIRED, REVOKED, REFUSED
 }
 
 
@@ -146,7 +146,8 @@ data class PassInfo(
     val created: LocalDateTime = LocalDateTime.now(),
     val modified: LocalDateTime? = null,
     val passId: String? = null,
-    val validUntil: LocalDateTime? = null
+    val validUntil: LocalDateTime? = null,
+    val version: Int = 0
 ) {
     companion object {
         fun build(

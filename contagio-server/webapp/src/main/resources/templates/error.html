@@ -4,7 +4,7 @@
 <body>
 <nav th:replace="~{menu :: menu(pagetype='error')}"></nav>
 
-<div class="container bcmain">
+<div class="container">
     <div class="errorpage" th:switch="${status}">
         <img class="errorimg" src="/mcstatic/images/errorpage.png" alt="What the heck">
         <th:block th:case="404">

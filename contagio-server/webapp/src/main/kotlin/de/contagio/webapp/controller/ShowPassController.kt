@@ -18,14 +18,17 @@ open class ShowPassController(
     @GetMapping("/showpass")
     open fun home(
         model: Model,
-        @RequestParam serialNumber: String
+        @RequestParam serialNumber: String,
+        @RequestParam showDetails: Boolean?
     ): String {
 
         val passInfo = passInfoRepository.findById(serialNumber)
 
         if (passInfo.isPresent) {
             model.addAttribute("pageType", "showpass")
-            model.addAttribute("passInfo",passInfo.get())
+            model.addAttribute("passInfo", passInfo.get())
+
+            model.addAttribute("showDetails", showDetails ?: false)
 
             return "showpass"
         }

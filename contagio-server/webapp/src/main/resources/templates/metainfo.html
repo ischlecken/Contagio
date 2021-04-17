@@ -10,7 +10,7 @@
     <link rel="copyright" th:href="*{imprint}">
     <link th:each="l : *{links}" th:rel="${l.key.value}" th:href="${l.value}">
 
-    <meta name="robots" th:content="*{robots}" content="index,follow,noarchive">
+    <meta name="robots" th:content="*{robots}" content="noindex,nofollow,noarchive">
 </th:block>
 
 <body>

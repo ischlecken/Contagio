@@ -1,19 +1,21 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
-<body class="bchomeimage">
+<body class="homeimage">
 <nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
 
-<div class="container-fluid title-container bcsearch bcheaderimage ">
-  <div class="home container text-center">
-    <h1 th:text="#{home.welcome1}">Hi ya!</h1>
-    <p class="lead" th:text="#{home.welcome2}">welcome1</p>
+<div class="container main">
+  <div class="row">
+    <div class="col jumbotron text-center">
+      <h1 th:text="#{home.welcome1}">Hi ya!</h1>
+      <p class="lead" th:text="#{home.welcome2}">welcome1</p>
+    </div>
   </div>
 </div>
 
-<div class="container bcmain">
+<div class="container">
   <div class="row">
-    <div class="col-sm-12 col-lg-4">
+    <div class="col col-lg-4">
       <div class="card">
         <div class="card-header" th:text="#{home.activepass.title}">Aktive Pässe</div>
         <div class="card-body">

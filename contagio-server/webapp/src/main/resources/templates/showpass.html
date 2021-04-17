@@ -4,68 +4,119 @@
 <body>
 <nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
 
-<div class="container bcmain showpass">
-  <h1 th:text="#{showpass.title(${passInfo.person.fullName})}">Pass für Member</h1>
+<div class="container showpass main">
+  <h1><span th:text="#{showpass.title(${passInfo.person.fullName})}">Pass für Member</span>
+    <small class="serialno text-muted" th:text="${passInfo.serialNumber}">serial no</small>
+  </h1>
   <div class="row">
-    <div class="col-8">
+    <div class="col-12 col-lg-8 order-2 order-lg-1">
 
-      <div class="form-group">
-        <label for="serialNumber">Seriennummer</label>
-        <input class="form-control" readonly name="serialNumber" id="serialNumber" th:value="${passInfo.serialNumber}">
-      </div>
-
-      <div class="form-group">
-        <label for="testType">Testtyp</label>
-        <input class="form-control" readonly name="testType" id="testType" th:value="${passInfo.testType}">
-      </div>
-      <div class="form-group">
-        <label for="testResult">Testresultat</label>
-        <input class="form-control" readonly name="testResult" id="testResult" th:value="${passInfo.testResult}">
-      </div>
-
-      <div class="form-group">
-        <label for="issueStatus">Status der Ausstellung</label>
-        <input class="form-control" readonly name="issueStatus" id="issueStatus" th:value="${passInfo.issueStatus}">
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
+            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${passInfo.person.phoneNo}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group" th:if="${passInfo.person.email}">
+            <label for="email" th:text="#{field.email}">E-Mail</label>
+            <input class="form-control" readonly name="email" id="email" th:value="${passInfo.person.email}">
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="passId">Serialnumber</label>
-        <input class="form-control" readonly name="passId" id="passId" th:value="${passInfo.passId}">
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="testType" th:text="#{field.testtype}">Testtyp</label>
+            <input class="form-control"
+                   readonly
+                   name="testType"
+                   id="testType"
+                   th:value="#{testType.__${passInfo.testType}__}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="testResult" th:text="#{field.testresult}">Testresultat</label>
+            <input class="form-control"
+                   readonly
+                   name="testResult"
+                   id="testResult"
+                   th:value="#{testResultType.__${passInfo.testResult}__}">
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="created">Erzeugt am</label>
-        <input class="form-control" readonly name="created" id="created" th:value="${passInfo.created}">
-      </div>
-      <div class="form-group">
-        <label for="validUntil">Gültig bis</label>
-        <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${passInfo.validUntil}">
-      </div>
-
-      <div class="form-group">
-        <label for="teststationId">ausstellende Teststation</label>
-        <input class="form-control" readonly name="teststationId" id="teststationId" th:value="${passInfo.teststationId}">
-      </div>
-      <div class="form-group">
-        <label for="testerId">Tester</label>
-        <input class="form-control" readonly name="testerId" id="testerId" th:value="${passInfo.testerId}">
-      </div>
-
-      <div class="form-group">
-        <label for="phoneNo">Telefonnummer</label>
-        <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${passInfo.person.phoneNo}">
-      </div>
-      <div class="form-group" th:if="${passInfo.person.email}">
-        <label for="email">E-Mail</label>
-        <input class="form-control" readonly name="email" id="email" th:value="${passInfo.person.email}">
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="issueStatus" th:text="#{field.issuestatus}">Ausstellungsstatus</label>
+            <input class="form-control"
+                   readonly
+                   name="issueStatus"
+                   id="issueStatus"
+                   th:value="#{issueType.__${passInfo.issueStatus}__}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
+            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{passInfo.validUntil}}">
+          </div>
+        </div>
       </div>
 
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="teststationId" th:text="#{field.teststation}">ausstellende Teststation</label>
+            <input class="form-control" readonly name="teststationId" id="teststationId" th:value="${passInfo.teststationId}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="testerId" th:text="#{field.tester}">Tester</label>
+            <input class="form-control" readonly name="testerId" id="testerId" th:value="${passInfo.testerId}">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div th:if="${showDetails}" class="form-group">
+            <label for="passId" th:text="#{field.passid}">PassId</label>
+            <input class="form-control" readonly name="passId" id="passId" th:value="${passInfo.passId}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div th:if="${showDetails}" class="form-group">
+            <label for="passId" th:text="#{field.version}">Version</label>
+            <input class="form-control" readonly name="version" id="version" th:value="${passInfo.version}">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div th:if="${showDetails}" class="form-group">
+            <label for="created" th:text="#{field.created}">Erzeugt am</label>
+            <input class="form-control" readonly name="created" id="created" th:value="${{passInfo.created}}">
+          </div>
+        </div>
+        <div class="col-6">
+          <div th:if="${showDetails}" class="form-group">
+            <label for="created" th:text="#{field.modified}">Geändert am</label>
+            <input class="form-control" readonly name="modified" id="modified" th:value="${{passInfo.modified}}">
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="col-4">
+    <div class="col-12 col-lg-4 order-1 order-lg-2 passimage">
       <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${passInfo.imageId})}">
-
-      <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${passInfo.passId})}"></a>
+      <a class="addtowallet" th:if="${showDetails}" th:href="@{/co_v1/pass/{id}(id=${passInfo.passId})}"></a>
     </div>
   </div>
 </div>

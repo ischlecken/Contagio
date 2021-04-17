@@ -3,10 +3,10 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <body>
 
-<nav th:fragment="menu(pagetype)" class="navbar navbar-expand-md bcmenu">
-  <a tabindex="-1"
-     class="navbar-brand" href="/">
+<nav th:fragment="menu(pagetype)" class="navbar navbar-expand-md">
+  <a class="navbar-brand" href="/">
     <img class="gy-logo" src="/mcstatic/images/icons/gylogo.png" alt="GoYellow Logo">
+    <span th:text="#{menu.title}">Menu Title</span>
   </a>
 </nav>
 

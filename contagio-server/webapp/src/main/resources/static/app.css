@@ -57,158 +57,11 @@ li {
     list-style-type: none;
 }
 
-button.nav-link {
-    color: black;
-}
-
-button:hover.nav-link {
-    color: white;
-}
-
-.bcmain {
-    margin-top: 8rem;
-    position: relative;
-}
-
-.bcsearch > .container {
-    padding-top: 10rem;
-}
-
-.search-input {
-    border: transparent;
-    border-radius: 0;
-    height: 60px;
-    padding: 0 10px 0 10px;
-    font: 20px/11px Lato;
-    color: #737373;
-}
-
-.find-button {
-    background-color: #f8b10e;
-    color: white;
-    border: transparent;
-    border-radius: 0;
-    width: 100%;
-    height: 60px;
-}
-
-.bcsearch {
-    display: flex;
-    position: relative;
-}
-
-.bcsearch::after {
-    content: "";
-    background: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-}
-
-.bcsearch > * {
-    z-index: 2;
-}
-
-.bcsearch h1, .bcsearch h3, .bcsearch h4 {
-    color: white;
-}
-
-.bcsearch .fastlinks {
-    text-align: center;
-}
-
-.bcsearch .fastlinks a,
-.bcsearch .fastlinks button {
-    color: white;
-    margin: 0 .5rem;
-}
-
-.bcsearch .fastlinks hr {
-    padding: 0;
-    margin: .5ex auto;
-    width: 10%;
-    border-style: none;
-    height: 1px;
-    background-color: #FFF;
-}
-
-.bcform {
-    margin: 1rem auto;
-}
-
-.bcheaderimage {
-    background-attachment: scroll;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-bottom: 9rem;
-}
-
-.bchomeimage {
+.homeimage {
     background-image: url(images/main.jpg);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-}
-
-.bcsearch button[type='submit'] {
-    padding: .1rem .5rem;
-    font: 20px/11px Lato;
-}
-
-.breadcrumb {
-    background-color: white;
-}
-
-.bcmenu {
-    background-color: #88202078;
-    position: fixed;
-    width: 100%;
-    top: 0;
-}
-
-.bcmenu a, .bcmenu a:visited {
-    color: #2B2B2B;
-    font: 600 16px/35px Lato;
-}
-
-.dropdown-menu {
-    padding: 0;
-}
-
-.nav-link.dropdown-item {
-    padding-left: 0.5rem;
-}
-
-.bcmain h1 {
-    font-size: 2.5rem;
-    font-family: Lato, sans-serif;
-    color: #707070;
-}
-
-.bcmain h2 {
-    border-left: 4px solid #f8b10c;
-    padding-left: 6px;
-    margin: 40px 0 16px;
-    font: 300 35px/42px Lato;
-    color: #707070;
-}
-
-.lead {
-    color: white;
-}
-
-a.gray-button {
-    border-style: none;
-    background-color: #f7f7f7;
-    color: #0A529D;
-    font: 300 16px/29px Lato;
-    border-radius: 5%;
-    margin: 0.5rem 0.5rem 0.3rem 0;
-    padding: 0.4rem;
 }
 
 footer {
@@ -229,229 +82,25 @@ footer p.version {
 }
 
 .jumbotron {
-    margin: 3rem;
-    background-color: rgba(255, 255, 255, .3);
+    background-color: rgba(255, 255, 255, .7);
 }
 
-.table > tbody > tr {
-    background-color: rgba(255, 255, 255, .3);
-}
-
-
-.table-striped > tbody > tr {
-    background-color: #eee;
-}
-
-.table-striped tbody tr:nth-child(odd) {
-    background-color: #ccc;
-}
-
-nav ul {
-    margin: 0 0 .5ex 0;
-}
-
-nav {
-    z-index: 5;
-}
-
-nav.pagenavigation {
+.navbar {
+    background-color: #e42a00;
+    position: fixed;
     display: block;
-    margin: 1rem auto;
-    width: 22rem;
+    top: 0;
+    width: 100%;
+    z-index: 10;
 }
 
-.pagenavigation .page-link {
-    color: #0A529D;
-}
-
-.nav {
-    margin: 1ex 0;
-}
-
-.alignbottom button {
-    position: absolute;
-    bottom: 0;
-}
-
-.nav {
-    position: relative;
-    min-height: 2rem;
-}
-
-.partner {
-    display: inline-block;
-    text-align: right;
-    font: normal normal normal 10px/11px Lato;
-    margin-top: 0.5rem;
-    width: 2.7rem;
-}
-
-.badge.category,
-.badge.locality,
-.badge.keyword {
-    margin-right: 1em;
-}
-
-.card-category {
-    margin-right: 0;
-}
-
-.localities a {
-    color: #0b529d;
-    margin-bottom: 1.85rem;
-}
-
-.gy-logo {
-    height: 40px;
-}
-
-.errorimg {
-    height: 180px;
-}
-
-@media only screen and (max-width: 767px) {
-    .title-container {
-        height: 100%;
-        width: 100%;
-        background-repeat: no-repeat;
-    }
-
-    .localities a {
-        margin-bottom: 1rem;
-    }
-
-    h1 {
-        font: bold 26px/41px Lato;
-    }
-
-    .home .title-container h1 {
-        margin-top: 2rem;
-    }
-
-    .bcsearch > .container {
-        padding-top: 4rem;
-    }
-
-    .bcheaderimage {
-        padding-bottom: 2rem;
-    }
-
-    .bcmain h2 {
-        font-size: 22px;
-    }
-
-    .subtitle {
-        font: normal normal bold 20px/34px Lato;
-    }
-
-    .form-group {
-        width: 100%;
-    }
-
-    .find-button {
-        width: 100%;
-    }
-
-}
-
-@media only screen and (max-width: 365px) {
-    .navbar-toggler-icon {
-        width: 1rem;
-    }
-
-}
-
-
-.title1 {
-    font-size: 2.5rem;
-    font-family: Lato, sans-serif;
+.navbar-brand {
     color: white;
 }
 
-.title2 {
-    font-size: 1.5rem;
-    font-family: Lato, sans-serif;
-    color: white;
-}
-
-
-.home-main-seo-and-footer {
-    background: linear-gradient(45deg, #b5b5b5 0, #f6f6f6 40%, #f6f6f6 60%, #b5b5b5 100%);
-}
-
-.home-main-section {
-    padding: 3rem 0;
-}
-
-.home-main-section.further-info {
-    background-color: transparent;
-    margin-left: 5%;
-}
-
-.home-main-section.further-info ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 0;
-    line-height: 1.6;
-}
-
-.home-main-section.further-info ul > li {
-    flex: 0 1 20rem;
-    list-style-type: none;
-    text-align: left;
-}
-
-
-.main-footer {
-    padding: 2rem 1rem 1rem 1rem;
-    text-align: center;
-}
-
-.main-footer a {
-    color: #555;
-    transition: color 1s
-}
-
-.main-footer a:hover {
-    color: black
-}
-
-.main-footer p {
-    color: #555;
-    margin-bottom: 1rem
-}
-
-.social-media-row {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem
-}
-
-.social-media-icon {
-    width: 30px;
-    height: 30px;
-    margin: 0 4px
-}
-
-.footerLinks {
-    margin: 1ex 0;
-}
-
-.footerLinks > form {
-    display: inline-block;
-}
-
-.footerLinks > form > button {
-    margin: 0;
-    padding: 0;
-    color: #555;
-}
-
-.footerLinks > form:not(:first-child)::before,
-.footerLinks > span:not(:first-child)::before {
-    content: "\00b7";
-    padding: 0 2px;
+.navbar-brand .gy-logo {
+    width: 1.8rem;
+    height: 1.8rem;
 }
 
 .errorpage {
@@ -481,6 +130,10 @@ nav.pagenavigation {
     object-fit: contain;
 }
 
+.showpass .passimage {
+    text-align: center;
+}
+
 .showpass .passimg {
     width: 240px;
     height: 240px;
@@ -488,10 +141,20 @@ nav.pagenavigation {
 
 a.addtowallet {
     background-attachment: scroll;
-    background-position: left;
+    background-position: center;
     background-repeat: no-repeat;
-    background-size: fit;
+    background-size: contain;
     background-image: url(images/addtowallet.svg);
     height: 4rem;
     display: block;
+    margin-top: 1rem;
+}
+
+.serialno {
+    display: block;
+    font-size: small;
+}
+
+.main {
+    margin-top: 6rem;
 }
