@@ -27,6 +27,8 @@ enum CertificateIssueStatus:Int8, CaseIterable {
     case signed=2
     case refused=3
     case failed=4
+    case revoked=5
+    case expired=6
     case unknown=42
     
     func isFinished() -> Bool {
@@ -86,7 +88,6 @@ extension NSManagedObjectContext {
         lastName: String,
         phoneNumber: String,
         email: String,
-        validTo: Date,
         status: CertificateStatus,
         type: CertificateType,
         pictureid: String) -> Certificate {
@@ -94,8 +95,6 @@ extension NSManagedObjectContext {
         let result = Certificate(context: self)
         
         result.createts = Date()
-        result.validfrom = Date().advanced(by: 3600)
-        result.validto = validTo
         result.id = UUID().uuidString
         result.phonenumber = phoneNumber
         result.firstname = firstName
@@ -126,7 +125,6 @@ extension NSManagedObjectContext {
             lastName: acr.lastname,
             phoneNumber: acr.phonenumber,
             email: acr.email,
-            validTo: acr.validto,
             status: acr.status,
             type: acr.type,
             pictureid: photoEntity.id!

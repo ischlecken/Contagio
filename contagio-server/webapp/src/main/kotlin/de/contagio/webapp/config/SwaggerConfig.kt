@@ -1,8 +1,10 @@
 package de.contagio.webapp.config
 
+import de.contagio.webapp.model.SwaggerPageable
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.Pageable
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.service.ApiInfo
@@ -25,6 +27,7 @@ open class SwaggerConfig {
                     .paths(PathSelectors.regex("/actuator.*").negate())
                     .build()
                     .genericModelSubstitutes(Optional::class.java)
+                    .directModelSubstitute(Pageable::class.java, SwaggerPageable::class.java)
                     .apiInfo(apiInfo())
 
 

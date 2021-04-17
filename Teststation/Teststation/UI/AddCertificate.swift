@@ -5,7 +5,6 @@ struct AddCertificate: View {
     @State var lastname = ""
     @State var phonenumber = ""
     @State var email = ""
-    @State var validto = Date().advanced(by: 86400)
     
     @State var selectedType = 0
     @State var selectedStatus = 0
@@ -74,11 +73,6 @@ struct AddCertificate: View {
                     }
                 }
                 Section {
-                    DatePicker(selection: $validto,displayedComponents: [.hourAndMinute, .date]) {
-                        Text("addcert_validto").foregroundColor(Color(.gray))
-                    }
-                }
-                Section {
                     Button(action: addCertificateAction) {
                         Text("addcert_addbutton")
                     }
@@ -119,7 +113,6 @@ struct AddCertificate: View {
                 email: email,
                 type: CertificateType(rawValue:types[selectedType])!,
                 status: CertificateStatus(rawValue:status[selectedStatus])!,
-                validto: validto,
                 photo: certifcatePhoto!
             )
         )

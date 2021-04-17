@@ -7,7 +7,6 @@ struct AddCertificateResponse {
     let email: String
     let type: CertificateType
     let status: CertificateStatus
-    let validto: Date
     let photo: UIImage
 }
 

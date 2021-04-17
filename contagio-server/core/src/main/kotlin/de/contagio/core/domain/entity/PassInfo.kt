@@ -18,7 +18,7 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, SIGNED, EXPIRED, REVOKED, REFUSED
+    CREATED, SIGNED, EXPIRED, REVOKED, REFUSED, PENDING, FAILED, UNKNOWN
 }
 
 
@@ -174,4 +174,6 @@ data class PassInfo(
             )
         }
     }
+
+    val updated: LocalDateTime get() = modified ?: created
 }

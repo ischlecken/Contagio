@@ -73,9 +73,11 @@ class TeststationEngine {
                     
                     sleep(4)
                     
-                    cert.pass = result
-                    cert.updateStatus(status: selectedStatus)
-                    cert.updateIssueStatus(issueStatus: .signed)
+                    cert.validuntil = result.validUntil
+                    cert.passid = result.passId
+                    cert.serialnumber = result.serialNumber
+                    cert.updateStatus(status: result.testResult.toCertificateStatus())
+                    cert.updateIssueStatus(issueStatus: result.issueStatus.toCertificateIssueStatus())
                     context.saveContext()
                 }
             )

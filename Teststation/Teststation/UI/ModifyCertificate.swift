@@ -8,6 +8,7 @@ struct ModifyCertificate: View {
     @State var selectedStatus: Int
     @State var showCert = false
     @State var showAlert = false
+    @State var validuntil = Date()
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
     let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
@@ -34,7 +35,7 @@ struct ModifyCertificate: View {
                             
                             HStack {
                                 Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
-                                Text(DateFormatter.certificate.string(from: certificate.validto!)).font(.caption).bold()
+                                Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
                             }
                         }
                         
@@ -61,6 +62,11 @@ struct ModifyCertificate: View {
                     }
                 }
                 Section {
+                    DatePicker(selection: $validuntil, displayedComponents: [.hourAndMinute, .date]) {
+                        Text("addcert_validto").foregroundColor(Color(.gray))
+                    }
+                }
+                Section {
                     Button(action: modifyCertificateAction) {
                         Text("modifycert_updatebutton")
                     }
@@ -71,16 +77,15 @@ struct ModifyCertificate: View {
                     }
                 }
                 
-                if( certificate.pass != nil){
                 Section {
                     Button(action: { showCert.toggle()}) {
                         Text("modifycert_showpass")
                     }
-                }}
+                }
             }
             .listStyle(InsetGroupedListStyle())
             .sheet(isPresented: $showCert) {
-                PassView(data: certificate.pass!)
+                PassView(pass: (UIApplication.shared.delegate as!AppDelegate).eventPass!)
             }
             .alert(isPresented: $showAlert) {
                 Alert(title:Text("alert_deletecertificate_title"),
@@ -95,6 +100,8 @@ struct ModifyCertificate: View {
     
     private func modifyCertificateAction() {
         self.presentation.wrappedValue.dismiss()
+        
+        certificate.validuntil = validuntil
         
         onChange(
             ModifyCertificateResponse(
@@ -132,7 +139,6 @@ struct ModifyCertificate_Previews: PreviewProvider {
             lastName:"Meier",
             phoneNumber:"08945566",
             email:"bla@fasel.de",
-            validTo: Date().advanced(by: 86400),
             status: CertificateStatus.unknown,
             type: CertificateType.rapidtest,
             pictureid: photo.id!

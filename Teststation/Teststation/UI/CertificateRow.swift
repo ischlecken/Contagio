@@ -37,7 +37,7 @@ struct CertificateRow: View {
                 HStack {
                     let certType = "certificatetype_\(certificate.type)".localized()
                     let certStatus = "certificatestatus_\(certificate.status)".localized()
-                    let certValid = certificate.validto != nil ? DateFormatter.certificate.string(from: certificate.validto!) : ""
+                    let certValid = certificate.validuntil != nil ? DateFormatter.certificate.string(from: certificate.validuntil!) : ""
                     
                     Text("certificaterow_status: \(certType) \(certStatus)").font(.caption).foregroundColor(statusColor).bold()
                     Spacer()
@@ -69,7 +69,6 @@ struct CertificateRow_Previews: PreviewProvider {
             lastName:"Meier",
             phoneNumber:"08945566",
             email:"bla@fasel.de",
-            validTo: Date().advanced(by: 86400),
             status: CertificateStatus.negative,
             type: CertificateType.rapidtest,
             pictureid: photo.id!

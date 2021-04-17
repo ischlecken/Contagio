@@ -26,4 +26,8 @@ extension NSMutableData {
             self.appendString(fieldString)
         }
     }
+    
+    func appendEndMarker(boundary: String){
+        self.appendString("--\(boundary)--\r\n")
+    }
 }

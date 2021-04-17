@@ -9,6 +9,7 @@ enum TeststationError: Error {
     case other(Error)
     
     static func map(_ error: Error) -> TeststationError {
+        print("TeststationError(error=\(error))")
         return (error as? TeststationError) ?? .other(error)
     }
 }

@@ -4,6 +4,7 @@ package de.contagio.webapp.controller
 
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -20,19 +21,15 @@ open class OverviewController(
     @GetMapping("/overview")
     open fun home(
         model: Model,
-        @RequestParam page: Int?,
-        @RequestParam size: Int?
+        pageable: Pageable
     ): String {
-        val currentPage = page ?: 0
-        val pageSize = size ?: 10
-
         model.addAttribute("pageType", "overview")
-
         model.addAttribute(
             "passInfo",
             passInfoRepository.findAll(
                 PageRequest.of(
-                    currentPage, pageSize,
+                    pageable.pageNumber,
+                    pageable.pageSize,
                     Sort.by(Sort.Direction.DESC, "modified", "created")
                 )
             )
