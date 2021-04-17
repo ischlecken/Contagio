@@ -12,12 +12,10 @@
         <table class="table table-striped table-sm">
           <thead>
           <tr>
-            <th th:text="#{field.serialno}">SerialNo</th>
             <th th:text="#{field.name}">Name</th>
             <th th:text="#{field.image}">Bild</th>
             <th th:text="#{field.testtype}">Testtyp</th>
             <th th:text="#{field.testresult}">Testresultat</th>
-            <th th:text="#{field.issuestatus}">Ausstellungsstatus</th>
             <th th:text="#{field.validuntil}">Gültig bis</th>
           </tr>
           </thead>
@@ -25,15 +23,12 @@
           <tr th:each="p : ${passInfo.content}">
             <td>
               <a th:title="#{overview.opendetails.title}" title="Passdetails öffnen"
-                 th:href="@{/showpass(serialNumber=${p.serialNumber},showDetails=true)}" th:text="${p.serialNumber}"></a>
+                 th:href="@{/showpass(serialNumber=${p.serialNumber},showDetails=true)}" th:text="${p.person.fullName}"></a>
             </td>
-            <td th:text="${p.person.fullName}"/>
             <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
             <td th:text="#{testType.__${p.testType}__}"/>
             <td th:text="#{testResultType.__${p.testResult}__}"/>
-            <td th:text="#{issueType.__${p.issueStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>
-
           </tr>
           </tbody>
         </table>
