@@ -52,7 +52,7 @@ enum ContagioAPI {
         urlRequest.httpBody = payload
         urlRequest.setValue(String(payload.count), forHTTPHeaderField: "Content-Length")
         
-        print(String(decoding: payload, as: UTF8.self))
+        //print(String(decoding: payload, as: UTF8.self))
         
         let jsonDecoder = JSONDecoder()
         jsonDecoder.dateDecodingStrategy = .formatted(DateFormatter.iso8601Full)

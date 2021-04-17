@@ -33,10 +33,11 @@ struct ModifyCertificate: View {
                             Spacer()
                             Text("certificatetype_\(certificate.type)".localized()).font(.callout).bold()
                             
-                            HStack {
-                                Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
-                                Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
-                            }
+                            if( certificate.validuntil != nil) {
+                                HStack {
+                                    Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
+                                    Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
+                                }}
                         }
                         
                     }

@@ -16,7 +16,9 @@
             <th th:text="#{field.image}">Bild</th>
             <th th:text="#{field.testtype}">Testtyp</th>
             <th th:text="#{field.testresult}">Testresultat</th>
+            <th th:text="#{field.issuestatus}">Ausgabestatus</th>
             <th th:text="#{field.validuntil}">Gültig bis</th>
+            <th th:text="#{field.commands}">Befehle</th>
           </tr>
           </thead>
           <tbody>
@@ -28,8 +30,26 @@
             <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
             <td th:text="#{testType.__${p.testType}__}"/>
             <td th:text="#{testResultType.__${p.testResult}__}"/>
+            <td th:text="#{issueType.__${p.issueStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>
+
+            <td>
+              <form method="post">
+                <input type="hidden" name="serialnumber" th:value="${p.serialNumber}"/>
+                <button class="btn btn-danger" name="command" value="delete" type="submit"><span th:title="#{command.delete}"><i class="fas fa-trash-alt"></i></span>
+                </button>
+                <button class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i class="fas fa-undo"></i></span>
+                </button>
+                <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i class="fas fa-user-minus"></i></span>
+                </button>
+                <button class="btn btn-warning" name="command" value="positive" type="submit"><span th:title="#{command.positive}"><i class="fas fa-user-plus"></i></span>
+                </button>
+              </form>
+
+
+            </td>
           </tr>
+
           </tbody>
         </table>
       </div>
