@@ -14,6 +14,8 @@ struct CertificateList: View {
     
     @State var isPresented = false
     @State var certificatePhotos = [String : UIImage] ()
+    @State var showAlert = false
+    @State var deletedOffsets:IndexSet? = nil
     
     var body: some View {
         NavigationView {
@@ -40,11 +42,8 @@ struct CertificateList: View {
                         .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
                     }
                     .onDelete { offsets in
-                        offsets.forEach { index in
-                            let certificate = certificates[index]
-                            
-                            managedObjectContext.deleteCertificate(certificate: certificate)
-                        }
+                        deletedOffsets = offsets
+                        showAlert = true
                     }
                 }
                 
@@ -76,6 +75,13 @@ struct CertificateList: View {
                     }
                 }
             }
+            .alert(isPresented: $showAlert) {
+                Alert(title:Text("alert_deletecertificate_title"),
+                      message: Text("alert_deletecertificate_message"),
+                      primaryButton: .destructive(Text("alert_deletecertificate_deletebutton"),action: deleteCertificates),
+                      secondaryButton: .cancel()
+                )
+            }
             .navigationTitle("certificatelist_title")
             .navigationBarItems(
                 trailing: Button(action: { isPresented.toggle() }) {Image(systemName: "plus") }
@@ -83,6 +89,17 @@ struct CertificateList: View {
         }
     }
     
+    func deleteCertificates() {
+        deletedOffsets?.forEach { index in
+            let certificate = certificates[index]
+            
+            managedObjectContext.deleteCertificate(certificate: certificate)
+        }
+        managedObjectContext.saveContext()
+        
+        deletedOffsets = nil
+        
+    }
 }
 
 struct CertificateList_Previews: PreviewProvider {

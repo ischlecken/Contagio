@@ -1,13 +1,55 @@
 import SwiftUI
+import Combine
+
+class PassLoader: ObservableObject {
+    @Published var pass: Data? = nil
+    @Published var isLoading: Bool = false
+    @Published var showPass: Bool = false
+    
+    var loadPassSubscription: AnyCancellable? = nil
+    
+    func loadingPass(passid: String) {
+        isLoading = false
+        
+        if( pass != nil ) {
+            showPass = true
+        
+            return
+        }
+        
+        if( loadPassSubscription == nil ) {
+            isLoading = true
+            
+            loadPassSubscription = try? ContagioAPI
+                .getPass(passId: passid)
+                .sink(
+                    receiveCompletion: { [unowned self]completion in
+                        switch completion {
+                        case .finished:
+                            showPass = true
+                        case .failure(let error):
+                            print("Error: \(error)")
+                        }
+                        
+                        isLoading = false
+                        loadPassSubscription = nil
+                    },
+                    receiveValue: { [unowned self]result in
+                        pass = result
+                    }
+                )
+        }
+    }
+}
 
 struct ModifyCertificate: View {
     
     @Environment(\.presentationMode) var presentation
+    @StateObject var passLoader = PassLoader()
+    
     @State var certificate: Certificate
     @State var certifcatePhoto: UIImage
     @State var selectedStatus: Int
-    @State var showCert = false
-    @State var showAlert = false
     @State var validuntil = Date()
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
@@ -39,7 +81,6 @@ struct ModifyCertificate: View {
                                     Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
                                 }}
                         }
-                        
                     }
                 }
                 Section()  {
@@ -72,30 +113,20 @@ struct ModifyCertificate: View {
                         Text("modifycert_updatebutton")
                     }
                 }
-                Section {
-                    Button(action: { showAlert.toggle()}) {
-                        Text("modifycert_deletebutton")
-                    }
-                }
                 
-                Section {
-                    Button(action: { showCert.toggle()}) {
-                        Text("modifycert_showpass")
+                if( certificate.passid != nil ) {
+                    Section {
+                        Button(action: { passLoader.loadingPass(passid: certificate.passid!)} ) {
+                            Text("modifycert_showpass")
+                        }
+                        .disabled(passLoader.isLoading)
                     }
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .sheet(isPresented: $showCert) {
-                PassView(pass: (UIApplication.shared.delegate as!AppDelegate).eventPass!)
+            .sheet(isPresented: $passLoader.showPass ) {
+                PassView(data: passLoader.pass!)
             }
-            .alert(isPresented: $showAlert) {
-                Alert(title:Text("alert_deletecertificate_title"),
-                      message: Text("alert_deletecertificate_message"),
-                      primaryButton: .destructive(Text("alert_deletecertificate_deletebutton"),action: deleteCertificateAction),
-                      secondaryButton: .cancel()
-                )
-            }
-            
         }
     }
     
@@ -111,20 +142,6 @@ struct ModifyCertificate: View {
                 shouldDelete:false
             )
         )
-    }
-    
-    private func deleteCertificateAction() {
-        self.presentation.wrappedValue.dismiss()
-        
-        DispatchQueue.main.async {
-            onChange(
-                ModifyCertificateResponse(
-                    cert: certificate,
-                    selectedStatus: CertificateStatus(rawValue: Int8(selectedStatus))!,
-                    shouldDelete: true
-                )
-            )
-        }
     }
 }
 
