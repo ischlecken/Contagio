@@ -21,22 +21,19 @@ struct CertificateList: View {
         NavigationView {
             List {
                 Section(footer: HStack {
-                            Text("Teststation: \(teststationState.teststation?.name ?? "-")")
-                            Text("Tester: \(teststationState.tester?.person.lastName ?? "-")")}
+                    Text("Tester: \(teststationState.tester?.person.lastName ?? "-")")
+                    Spacer()
+                    Text("Teststation: \(teststationState.teststation?.name ?? "-")")}
                 ) {
                     ForEach(certificates) { cert in
                         NavigationLink( destination: ModifyCertificate(
                             certificate: cert,
                             certifcatePhoto: certificatePhotos[cert.id!] ?? UIImage(named:"passdefaultimg")!,
-                            selectedStatus: Int(cert.status) ) { mcr in
+                            selectedStatus: Int(cert.status),
+                            validuntil: cert.validuntil ?? Date()
+                        ) { mcr in
                             
-                            if( mcr.shouldDelete ) {
-                                managedObjectContext.deleteCertificate(certificate: mcr.cert)
-                                managedObjectContext.saveContext()
-                            }
-                            else {
-                                TeststationEngine.shared.startIssueOfCertificate(mcr: mcr) { issueStatus in
-                                }
+                            TeststationEngine.shared.startIssueOfCertificate(mcr: mcr) { issueStatus in
                             }
                         }) { CertificateRow(certificate: cert, photo: self.certificatePhotos[cert.id!]) }
                         .listRowInsets(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 16))
@@ -90,14 +87,16 @@ struct CertificateList: View {
     }
     
     func deleteCertificates() {
-        deletedOffsets?.forEach { index in
-            let certificate = certificates[index]
+        DispatchQueue.main.async {
+            deletedOffsets?.forEach { index in
+                let certificate = certificates[index]
+                
+                managedObjectContext.deleteCertificate(certificate: certificate)
+            }
+            //managedObjectContext.saveContext()
             
-            managedObjectContext.deleteCertificate(certificate: certificate)
+            deletedOffsets = nil
         }
-        managedObjectContext.saveContext()
-        
-        deletedOffsets = nil
         
     }
 }

@@ -16,7 +16,58 @@ class TeststationEngine {
     
     func startIssueOfCertificate(mcr: ModifyCertificateResponse,
                                  onChange: @escaping (CertificateIssueStatus)->Void) {
-        //startIssueOfCertificate(certificate: mcr.cert, selectedStatus: mcr.selectedStatus, onChange: onChange)
+        
+        let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
+        
+        mcr.cert.updateIssueStatus(issueStatus:.pending)
+        mcr.cert.managedObjectContext?.saveContext()
+        
+        let updatePassRequest = UpdatePassRequest(
+            serialNumber: mcr.cert.serialnumber!,
+            testResult: TestResultType.fromCertificateStatus(status: mcr.selectedStatus),
+            validUntil: mcr.validuntil
+        )
+        
+        contagioAPISubscription = try? ContagioAPI
+            .updatePass(updatePassRequest: updatePassRequest)
+            .sink(
+                receiveCompletion: { [unowned self] completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("Error: \(error)")
+                        self.error = error
+                        
+                        let context = persistentContainer.newBackgroundContext()
+                        guard let cert = try? context.getCertificate(objectID: mcr.cert.objectID) else {
+                            return
+                        }
+                        
+                        cert.updateIssueStatus(issueStatus: .failed)
+                        context.saveContext()
+                    }
+                
+                    contagioAPISubscription = nil
+                },
+                receiveValue: { result in
+                    let context = persistentContainer.newBackgroundContext()
+                    guard let cert = try? context.getCertificate(objectID: mcr.cert.objectID) else {
+                        return
+                    }
+                    
+                    print("result=\(result)")
+                    
+                    sleep(4)
+                    
+                    cert.validuntil = result.validUntil
+                    cert.passid = result.passId
+                    cert.modifyts = result.modified
+                    cert.updateStatus(status: result.testResult.toCertificateStatus())
+                    cert.updateIssueStatus(issueStatus: result.issueStatus.toCertificateIssueStatus())
+                    context.saveContext()
+                }
+            )
     }
     
     func startIssueOfCertificate(certificate: Certificate,

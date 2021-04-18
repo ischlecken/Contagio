@@ -15,5 +15,5 @@ struct AddCertificateResponse {
 struct ModifyCertificateResponse {
     let cert: Certificate
     let selectedStatus: CertificateStatus
-    let shouldDelete: Bool
+    let validuntil: Date
 }

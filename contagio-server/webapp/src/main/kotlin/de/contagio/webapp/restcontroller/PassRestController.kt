@@ -39,28 +39,6 @@ open class PassRestController(
         return passInfoRepository.findAll(pageable)
     }
 
-    @PatchMapping("/info")
-    open fun patchPass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfo> {
-        logger.debug("patchPass()")
-
-        val result = passInfoRepository.findById(updatePassRequest.serialNumber)
-        if (result.isPresent) {
-            var r = result.get()
-
-            if (updatePassRequest.testResult != null)
-                r = r.copy(testResult = updatePassRequest.testResult)
-
-            if (updatePassRequest.validUntil != null)
-                r = r.copy(validUntil = updatePassRequest.validUntil)
-
-            r = passInfoRepository.save(r.copy(modified = LocalDateTime.now(), version = r.version + 1))
-
-            return ResponseEntity.ok(r)
-        }
-
-        return ResponseEntity.notFound().build()
-    }
-
     @GetMapping("/info/{serialNumber}")
     open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfo> {
         logger.debug("getPassInfo($serialNumber)")
@@ -70,33 +48,7 @@ open class PassRestController(
         return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
     }
 
-
-    @GetMapping("/image/{id}")
-    open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
-        val result = passImageRepository.findById(id)
-
-        logger.debug("getPassImage($id)")
-
-        return if (result.isPresent)
-            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(result.get().data)
-        else
-            ResponseEntity.notFound().build()
-    }
-
-    @GetMapping("/{passId}")
-    open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
-        logger.debug("getPass(passId=$passId)")
-
-        val result = passRepository.findById(passId)
-
-        return if (result.isPresent)
-            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
-        else
-            ResponseEntity.notFound().build()
-    }
-
-
-    @PostMapping
+    @PostMapping("/info")
     open fun createPass(
         @RequestParam image: MultipartFile,
         @RequestParam firstName: String,
@@ -124,6 +76,54 @@ open class PassRestController(
         )?.let {
             ResponseEntity.status(HttpStatus.CREATED).body(it)
         } ?: ResponseEntity.badRequest().build()
+    }
+
+    @PatchMapping("/info")
+    open fun patchPass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfo> {
+        val result = passInfoRepository.findById(updatePassRequest.serialNumber)
+        if (result.isPresent) {
+            var r = result.get()
+
+            if (updatePassRequest.testResult != null)
+                r = r.copy(testResult = updatePassRequest.testResult)
+
+            if (updatePassRequest.validUntil != null)
+                r = r.copy(validUntil = updatePassRequest.validUntil)
+
+            r = passInfoRepository.save(r.copy(modified = LocalDateTime.now(), version = r.version + 1))
+
+            logger.debug("patchPass($updatePassRequest): $r")
+
+            return ResponseEntity.ok(r)
+        }
+
+        return ResponseEntity.notFound().build()
+    }
+
+
+
+    @GetMapping("/image/{id}")
+    open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
+        val result = passImageRepository.findById(id)
+
+        logger.debug("getPassImage($id)")
+
+        return if (result.isPresent)
+            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(result.get().data)
+        else
+            ResponseEntity.notFound().build()
+    }
+
+    @GetMapping("/{passId}")
+    open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
+        val result = passRepository.findById(passId)
+
+        logger.debug("getPass(passId=$passId): ${result.isPresent}")
+
+        return if (result.isPresent)
+            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
+        else
+            ResponseEntity.notFound().build()
     }
 
 }

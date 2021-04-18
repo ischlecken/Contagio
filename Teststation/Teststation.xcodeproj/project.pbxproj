@@ -42,6 +42,8 @@
 		3CB2FE61261E5599002F87B5 /* ViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB2FE60261E5599002F87B5 /* ViewModels.swift */; };
 		3CC20907261B3CD30012520B /* Picture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC20906261B3CD30012520B /* Picture.swift */; };
 		3CCAF195261D073400B9136F /* TeststationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAF194261D073400B9136F /* TeststationEngine.swift */; };
+		3CE47191262CCF1800C3E97C /* PassLoaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE47190262CCF1800C3E97C /* PassLoaderService.swift */; };
+		3CE47196262CD92900C3E97C /* UpdatePassRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE47195262CD92900C3E97C /* UpdatePassRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,8 @@
 		3CB2FE60261E5599002F87B5 /* ViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels.swift; sourceTree = "<group>"; };
 		3CC20906261B3CD30012520B /* Picture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Picture.swift; sourceTree = "<group>"; };
 		3CCAF194261D073400B9136F /* TeststationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationEngine.swift; sourceTree = "<group>"; };
+		3CE47190262CCF1800C3E97C /* PassLoaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassLoaderService.swift; sourceTree = "<group>"; };
+		3CE47195262CD92900C3E97C /* UpdatePassRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePassRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				3C56B7422621BD7C0051E1CB /* ContagioAPI.swift */,
+				3CE47190262CCF1800C3E97C /* PassLoaderService.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 				3C56B73C2621BAA20051E1CB /* TeststationError.swift */,
 				3C56B74A2621BEA60051E1CB /* PassInfo.swift */,
 				3C56B7542621DE450051E1CB /* CreatePassRequest.swift */,
+				3CE47195262CD92900C3E97C /* UpdatePassRequest.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -410,6 +416,7 @@
 				3C56B72C2621889B0051E1CB /* TeststationSettings.swift in Sources */,
 				3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */,
 				3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */,
+				3CE47196262CD92900C3E97C /* UpdatePassRequest.swift in Sources */,
 				3C12690F261B7BE5006B1009 /* PassView.swift in Sources */,
 				3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */,
 				3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */,
@@ -421,6 +428,7 @@
 				3C56B73826218AD40051E1CB /* LoginView.swift in Sources */,
 				3C56B7432621BD7C0051E1CB /* ContagioAPI.swift in Sources */,
 				3C56B73D2621BAA20051E1CB /* TeststationError.swift in Sources */,
+				3CE47191262CCF1800C3E97C /* PassLoaderService.swift in Sources */,
 				3C92CF692617018B002B5284 /* ContentView.swift in Sources */,
 				3C92CFEB261734FF002B5284 /* Certificate.swift in Sources */,
 			);

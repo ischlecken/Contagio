@@ -1,11 +1,6 @@
 import UIKit
 import CoreData
 
-extension String {
-    func localized(bundle: Bundle = .main, tableName: String = "Localizable") -> String {
-        return NSLocalizedString(self, tableName: tableName, value: "**\(self)**", comment: "")
-    }
-}
 
 enum CertificateStatus:Int8, CaseIterable {
     case unknown=0

@@ -11,6 +11,7 @@
 "certificatetype_0" = "Schnelltest";
 "certificatetype_1" = "PCR-Test";
 "certificatetype_2" = "Impfung";
+"certificatetype_42" = "Unbekannt";
 
 "validuntil: %@" = "gültig bis %@";
 
@@ -43,6 +44,8 @@
 "alert_deletecertificate_title" = "Zertifikat löschen";
 "alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";
 "alert_deletecertificate_deletebutton" = "Löschen";
+
+"sendpass.message" = "Angefügt ist Ihr Contagio Pass. Bitte fügen Sie diesen Pass Ihrem Wallet hinzu.";
 
 "loginview_title" = "Teststation";
 "loginview_username" = "Tester";

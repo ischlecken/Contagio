@@ -1,5 +1,12 @@
 import Foundation
 
+
+extension String {
+    func localized(bundle: Bundle = .main, tableName: String = "Localizable") -> String {
+        return NSLocalizedString(self, tableName: tableName, value: "**\(self)**", comment: "")
+    }
+}
+
 extension NSMutableData {
     func appendString(_ string: String) {
         if let d = string.data(using: .utf8) {

@@ -2,57 +2,15 @@ import SwiftUI
 import Combine
 import MessageUI
 
-class PassLoader: ObservableObject {
-    @Published var pass: Data? = nil
-    @Published var isLoading: Bool = false
-    @Published var showPassView: Bool = false
-    
-    var loadPassSubscription: AnyCancellable? = nil
-    
-    func loadingPass(passid: String) {
-        isLoading = false
-        
-        if( pass != nil ) {
-            showPassView = true
-            
-            return
-        }
-        
-        if( loadPassSubscription == nil ) {
-            isLoading = true
-            
-            loadPassSubscription = try? ContagioAPI
-                .getPass(passId: passid)
-                .receive(on: DispatchQueue.main)
-                .sink(
-                    receiveCompletion: { [unowned self]completion in
-                        switch completion {
-                        case .finished:
-                            showPassView = true
-                        case .failure(let error):
-                            print("Error: \(error)")
-                        }
-                        
-                        isLoading = false
-                        loadPassSubscription = nil
-                    },
-                    receiveValue: { [unowned self]result in
-                        pass = result
-                    }
-                )
-        }
-    }
-}
-
 struct ModifyCertificate: View {
     
     @Environment(\.presentationMode) var presentation
-    @StateObject var passLoader = PassLoader()
+    @StateObject var passLoader = PassLoaderService()
     
     @State var certificate: Certificate
     @State var certifcatePhoto: UIImage
     @State var selectedStatus: Int
-    @State var validuntil = Date()
+    @State var validuntil: Date
     @State var showPassSend: Bool = false
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
@@ -118,26 +76,19 @@ struct ModifyCertificate: View {
                     }
                 }
                 
-                if( certificate.passid != nil ) {
+                if( MFMessageComposeViewController.canSendText() ) {
                     Section {
-                        Button(action: { passLoader.loadingPass(passid: certificate.passid!)} ) {
-                            Text("modifycert_showpass")
+                        Button(action: { presentMessageCompose(); } ) {
+                            Text("modifycert_sendpass")
                         }
-                        .disabled(passLoader.isLoading)
+                        .disabled(!passLoader.passIsLoaded)
                     }
                     
-                    if( passLoader.pass != nil && MFMessageComposeViewController.canSendText()) {
-                        Section {
-                            Button(action: { presentMessageCompose(); } ) {
-                                Text("modifycert_sendpass")
-                            }
-                        }
-                    }
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .sheet(isPresented: $passLoader.showPassView ) {
-                PassView(data: passLoader.pass!)
+            .onAppear {
+                passLoader.startLoadingPass(passid: certificate.passid)
             }
         }
     }
@@ -149,7 +100,7 @@ struct ModifyCertificate: View {
     }
     
     private func presentMessageCompose() {
-        guard MFMessageComposeViewController.canSendText() else {
+        guard let pass = passLoader.pass, MFMessageComposeViewController.canSendText() else {
             return
         }
         let vc = UIApplication.shared.keyWindow?.rootViewController
@@ -158,9 +109,9 @@ struct ModifyCertificate: View {
         composeVC.messageComposeDelegate = messageComposeDelegate
         
         composeVC.recipients = [certificate.phonenumber!]
-        composeVC.body = "Hier ist ihr Pass"
+        composeVC.body = "sendpass.message".localized()
         
-        composeVC.addAttachmentData(passLoader.pass!, typeIdentifier: "application/vnd.apple.pkpass", filename: "bla.pkpass")
+        composeVC.addAttachmentData(pass, typeIdentifier: "application/vnd.apple.pkpass", filename: "\(certificate.serialnumber!).pkpass")
         
         vc?.present(composeVC, animated: true)
     }
@@ -168,13 +119,11 @@ struct ModifyCertificate: View {
     private func modifyCertificateAction() {
         self.presentation.wrappedValue.dismiss()
         
-        certificate.validuntil = validuntil
-        
         onChange(
             ModifyCertificateResponse(
                 cert:certificate,
-                selectedStatus:CertificateStatus(rawValue: Int8(selectedStatus))!,
-                shouldDelete:false
+                selectedStatus: CertificateStatus(rawValue: Int8(selectedStatus))!,
+                validuntil: validuntil
             )
         )
     }
@@ -202,7 +151,8 @@ struct ModifyCertificate_Previews: PreviewProvider {
         ModifyCertificate(
             certificate: certificate,
             certifcatePhoto: UIImage(named: "passimg")!,
-            selectedStatus: Int(certificate.status)
+            selectedStatus: Int(certificate.status),
+            validuntil: Date()
         ) { _ in }
     }
 }

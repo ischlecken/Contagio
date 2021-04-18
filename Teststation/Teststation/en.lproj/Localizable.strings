@@ -11,6 +11,7 @@
 "certificatetype_0" = "Rapid Test";
 "certificatetype_1" = "PCR Test";
 "certificatetype_2" = "Vaccination";
+"certificatetype_42" = "Unknown";
 
 "validuntil: %@" = "valid until %@";
 
@@ -43,6 +44,8 @@
 "alert_deletecertificate_title" = "delete certificate?";
 "alert_deletecertificate_message" = "do you really want to delete this certificate?";
 "alert_deletecertificate_deletebutton" = "Delete";
+
+"sendpass.message" = "Attached is your Contagio Pass";
 
 "loginview_title" = "Teststation";
 "loginview_username" = "Teststation Employee";

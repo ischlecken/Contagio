@@ -15,8 +15,8 @@ struct AddCertificate: View {
     @State var certifcatePhoto: UIImage?
     @State var image: Image = Image(uiImage: UIImage(named: "passdefaultimg")!)
     
-    let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
-    let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
+    let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }.filter { $0<10 }
+    let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }.filter { $0<10 }
     
     var isValid: Bool {
         firstname.count > 2 && lastname.count > 3 && phonenumber.count > 5 && certifcatePhoto != nil
@@ -100,8 +100,6 @@ struct AddCertificate: View {
         if let photo = self.certifcatePhoto {
             img = photo.resizeImage(300, opaque: true)
         }
-        
-        print("loadImage() size=\(img.size)")
         
         self.image = Image(uiImage: img)
     }

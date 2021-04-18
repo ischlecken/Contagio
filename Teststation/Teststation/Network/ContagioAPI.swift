@@ -65,7 +65,7 @@ enum ContagioAPI {
     
     
     static func createPass(createPassRequest: CreatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/pass")!
+        let url = URL(string: "\(contagioBaseURL)/pass/info")!
         
         var urlRequest = URLRequest(url: url)
         
@@ -96,6 +96,36 @@ enum ContagioAPI {
             .eraseToAnyPublisher()
     }
     
+    static func updatePass(updatePassRequest: UpdatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
+        let url = URL(string: "\(contagioBaseURL)/pass/info")!
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "PATCH"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let payload = try createJsonEncoder().encode(updatePassRequest)
+        
+        print("updatePass() payload=\(String(decoding: payload, as: UTF8.self))")
+        urlRequest.httpBody = payload
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: urlRequest)
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                
+                print("updatePass() response.data=\(String(decoding: response.data, as: UTF8.self))")
+                
+                return response.data
+            }
+            .decode(type: PassInfo.self, decoder: createJsonDecoder())
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
     static func getPass(passId: String) throws -> AnyPublisher<Data, TeststationError> {
         let url = URL(string: "\(contagioBaseURL)/pass/\(passId)")!
         
@@ -108,6 +138,8 @@ enum ContagioAPI {
                 else {
                     throw TeststationError.statusCode
                 }
+                
+                sleep(2)
                 
                 return response.data
             }
@@ -124,9 +156,17 @@ enum ContagioAPI {
     }
     
     private static func createJsonDecoder() ->JSONDecoder {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .formatted(DateFormatter.iso8601Full)
+        let result = JSONDecoder()
+        result.dateDecodingStrategy = .formatted(DateFormatter.iso8601Full)
         
-        return jsonDecoder;
+        return result;
+    }
+    
+    
+    private static func createJsonEncoder() ->JSONEncoder {
+        let result = JSONEncoder()
+        result.dateEncodingStrategy = .formatted(DateFormatter.iso8601Full)
+        
+        return result;
     }
 }
