@@ -8,6 +8,6 @@ final class TeststationSettings: ObservableObject {
     }
     
     init() {
-        self.apibase = UserDefaults.standard.object(forKey: "apibase") as? String ?? "http://dvm1:13013"
+        self.apibase = UserDefaults.standard.object(forKey: "apibase") as? String ?? "https://efeu.local:13013"
     }
 }

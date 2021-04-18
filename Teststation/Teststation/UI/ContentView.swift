@@ -5,7 +5,7 @@ struct ContentView: View {
     @EnvironmentObject var teststationState: TeststationState
     
     var body: some View {
-        if( teststationState.employeeId.isEmpty ) {
+        if( teststationState.tester == nil) {
             LoginView()
         } else {
             CertificateList()
@@ -23,7 +23,7 @@ struct ContentView_Previews: PreviewProvider {
             ContentView()
                 .environment(\.managedObjectContext, context)
                 .environmentObject(TeststationSettings())
-                .environmentObject(TeststationState(teststationId: "Tübingen", employeeId: "ced"))
+                .environmentObject(TeststationState().mockLogin())
         }
     }
 }

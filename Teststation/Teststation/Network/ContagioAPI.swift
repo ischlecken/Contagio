@@ -4,6 +4,46 @@ import Combine
 enum ContagioAPI {
     static let contagioBaseURL = "https://efeu.local:13013/co_v1"
     
+    
+    static func getTeststations() -> AnyPublisher<[Teststation], TeststationError> {
+        let url = URL(string: "\(contagioBaseURL)/teststations")!
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: URLRequest(url: url))
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                return response.data
+            }
+            .decode(type: [Teststation].self, decoder: createJsonDecoder())
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    static func getTester() -> AnyPublisher<[Tester], TeststationError> {
+        let url = URL(string: "\(contagioBaseURL)/tester")!
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: URLRequest(url: url))
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                return response.data
+            }
+            .decode(type: [Tester].self, decoder: createJsonDecoder())
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    
     static func allPass() -> AnyPublisher<[PassInfo], TeststationError> {
         let url = URL(string: "\(contagioBaseURL)/pass")!
         

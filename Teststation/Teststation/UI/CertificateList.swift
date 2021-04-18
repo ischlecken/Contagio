@@ -21,8 +21,8 @@ struct CertificateList: View {
         NavigationView {
             List {
                 Section(footer: HStack {
-                            Text("Teststation: \(teststationState.teststationId)")
-                            Text("Tester: \(teststationState.employeeId)")}
+                            Text("Teststation: \(teststationState.teststation?.name ?? "-")")
+                            Text("Tester: \(teststationState.tester?.person.lastName ?? "-")")}
                 ) {
                     ForEach(certificates) { cert in
                         NavigationLink( destination: ModifyCertificate(
@@ -103,22 +103,13 @@ struct CertificateList: View {
 }
 
 struct CertificateList_Previews: PreviewProvider {
-    
-    static var teststationState: TeststationState {
-        let teststationState = TeststationState()
-        teststationState.teststationId = "tübingen"
-        teststationState.employeeId = "42"
-        
-        return teststationState
-    }
-    
     static var previews: some View {
         let context = (UIApplication.shared.delegate as!AppDelegate).persistentContainer.viewContext
         
         Group {
             CertificateList()
                 .environment(\.managedObjectContext, context)
-                .environmentObject(teststationState)
+                .environmentObject(TeststationState().mockLogin())
         }
     }
 }

@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 
-private var logger = LoggerFactory.getLogger(PassController::class.java)
+private var logger = LoggerFactory.getLogger(PassRestController::class.java)
 
 
 @CrossOrigin
 @RestController
 @RequestMapping(PASS)
-open class PassController(
+open class PassRestController(
     private val passInfoRepository: PassInfoRepository,
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,

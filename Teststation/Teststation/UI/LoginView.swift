@@ -39,11 +39,7 @@ struct LoginView: View {
     }
     
     private func login() {
-        
-        if( !username.isEmpty && password == "123" ) {
-            teststationState.employeeId = username
-            teststationState.teststationId = "1"
-        }
+        teststationState.login(user: username, password: password)
     }
 }
 

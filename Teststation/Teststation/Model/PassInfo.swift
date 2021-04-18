@@ -108,7 +108,64 @@ struct Person: Decodable{
     var lastName: String
     var phoneNo: String?
     var email: String?
+    
+    init(firstName:String, lastName:String, phoneNo:String, email:String) {
+        self.firstName = firstName
+        self.lastName = lastName
+        self.phoneNo = phoneNo
+        self.email = email
+    }
 }
+
+
+struct GeoPosition: Decodable {
+    var latitude: String
+    var longitude: String
+}
+
+struct Address: Decodable{
+    var city: String
+    var zipcode: String
+    var street: String?
+    var hno: String?
+    var position: GeoPosition?
+    
+    init(city:String, zipcode:String, street:String, hno:String) {
+        self.city = city
+        self.zipcode = zipcode
+        self.street = street
+        self.hno = hno
+    }
+}
+
+
+struct Teststation: Decodable {
+    var id: String
+    var name: String
+    var address: Address
+    var created: Date = Date()
+    
+    init(id:String, name:String, address:Address) {
+        self.id = id
+        self.name = name
+        self.address = address
+    }
+}
+
+
+struct Tester: Decodable {
+    var id: String
+    var teststationId: String
+    var person: Person
+    var created: Date = Date()
+    
+    init(id:String, teststationId:String, person:Person) {
+        self.id = id
+        self.teststationId = teststationId
+        self.person = person
+    }
+}
+
 
 struct PassInfo: Decodable {
     var serialNumber: String
