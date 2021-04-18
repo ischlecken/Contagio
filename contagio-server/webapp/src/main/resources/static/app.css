@@ -53,6 +53,11 @@ a {
     color: #0A529D;
 }
 
+a.nav-link,
+a.nav-link:hover {
+    color: white;
+}
+
 li {
     list-style-type: none;
 }
@@ -88,7 +93,6 @@ footer p.version {
 .navbar {
     background-color: #e42a00;
     position: fixed;
-    display: block;
     top: 0;
     width: 100%;
     z-index: 10;
@@ -97,6 +101,7 @@ footer p.version {
 .navbar-brand {
     color: white;
 }
+
 
 .navbar-brand .gy-logo {
     width: 1.8rem;

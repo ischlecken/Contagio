@@ -33,7 +33,10 @@ data class Address(
     val street: String? = null,
     val hno: String? = null,
     val position: GeoPosition? = null,
-)
+) {
+    val fullAddress: String
+        get() = "$zipcode $city, $street $hno"
+}
 
 data class Person(
     val firstName: String,

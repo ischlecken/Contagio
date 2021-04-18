@@ -28,7 +28,7 @@ open class AppStartupRunner(
             Teststation(
                 id = "1",
                 name = "Tübingen Marktplatz",
-                address = Address(city = "Tübingen", zipcode = "12345")
+                address = Address(city = "Tübingen", zipcode = "12345", street = "Marktplatz", hno = "1")
             )
         )
 
@@ -36,7 +36,7 @@ open class AppStartupRunner(
             Teststation(
                 id = "2",
                 name = "München Riemarkaden",
-                address = Address(city = "München", zipcode = "81673")
+                address = Address(city = "München", zipcode = "81673", "Willy-Brandt-Platz", hno = "10")
             )
         )
 
