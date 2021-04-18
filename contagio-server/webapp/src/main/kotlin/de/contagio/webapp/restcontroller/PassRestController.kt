@@ -108,7 +108,7 @@ open class PassRestController(
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
-        logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
+        logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult, teststationId=$teststationId testerId=$testerId)")
         logger.debug("  image.size=${image.size}")
 
         return passBuilder.build(

@@ -71,7 +71,9 @@ struct CertificateRow_Previews: PreviewProvider {
             email:"bla@fasel.de",
             status: CertificateStatus.negative,
             type: CertificateType.rapidtest,
-            pictureid: photo.id!
+            pictureid: photo.id!,
+            teststationid: "32",
+            testerid: "43"
         )
         
         Group {

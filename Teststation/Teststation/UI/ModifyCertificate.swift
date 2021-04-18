@@ -1,10 +1,11 @@
 import SwiftUI
 import Combine
+import MessageUI
 
 class PassLoader: ObservableObject {
     @Published var pass: Data? = nil
     @Published var isLoading: Bool = false
-    @Published var showPass: Bool = false
+    @Published var showPassView: Bool = false
     
     var loadPassSubscription: AnyCancellable? = nil
     
@@ -12,8 +13,8 @@ class PassLoader: ObservableObject {
         isLoading = false
         
         if( pass != nil ) {
-            showPass = true
-        
+            showPassView = true
+            
             return
         }
         
@@ -22,11 +23,12 @@ class PassLoader: ObservableObject {
             
             loadPassSubscription = try? ContagioAPI
                 .getPass(passId: passid)
+                .receive(on: DispatchQueue.main)
                 .sink(
                     receiveCompletion: { [unowned self]completion in
                         switch completion {
                         case .finished:
-                            showPass = true
+                            showPassView = true
                         case .failure(let error):
                             print("Error: \(error)")
                         }
@@ -51,10 +53,12 @@ struct ModifyCertificate: View {
     @State var certifcatePhoto: UIImage
     @State var selectedStatus: Int
     @State var validuntil = Date()
+    @State var showPassSend: Bool = false
     
     let types:[Int8] = CertificateType.allCases.map{ $0.rawValue }
     let status:[Int8] = CertificateStatus.allCases.map{ $0.rawValue }
     let onChange: (ModifyCertificateResponse) -> Void
+    private let messageComposeDelegate = MessageDelegate()
     
     var body: some View {
         let statusColor = Color("backgroundcertificatestatus_\(selectedStatus)")
@@ -121,13 +125,44 @@ struct ModifyCertificate: View {
                         }
                         .disabled(passLoader.isLoading)
                     }
+                    
+                    if( passLoader.pass != nil && MFMessageComposeViewController.canSendText()) {
+                        Section {
+                            Button(action: { presentMessageCompose(); } ) {
+                                Text("modifycert_sendpass")
+                            }
+                        }
+                    }
                 }
             }
             .listStyle(InsetGroupedListStyle())
-            .sheet(isPresented: $passLoader.showPass ) {
+            .sheet(isPresented: $passLoader.showPassView ) {
                 PassView(data: passLoader.pass!)
             }
         }
+    }
+    
+    private class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
+        func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+            controller.dismiss(animated: true)
+        }
+    }
+    
+    private func presentMessageCompose() {
+        guard MFMessageComposeViewController.canSendText() else {
+            return
+        }
+        let vc = UIApplication.shared.keyWindow?.rootViewController
+        
+        let composeVC = MFMessageComposeViewController()
+        composeVC.messageComposeDelegate = messageComposeDelegate
+        
+        composeVC.recipients = [certificate.phonenumber!]
+        composeVC.body = "Hier ist ihr Pass"
+        
+        composeVC.addAttachmentData(passLoader.pass!, typeIdentifier: "application/vnd.apple.pkpass", filename: "bla.pkpass")
+        
+        vc?.present(composeVC, animated: true)
     }
     
     private func modifyCertificateAction() {
@@ -159,7 +194,9 @@ struct ModifyCertificate_Previews: PreviewProvider {
             email:"bla@fasel.de",
             status: CertificateStatus.unknown,
             type: CertificateType.rapidtest,
-            pictureid: photo.id!
+            pictureid: photo.id!,
+            teststationid: "42",
+            testerid: "43"
         )
         
         ModifyCertificate(

@@ -38,6 +38,7 @@
 "modifycert_updatebutton" = "Änderungen speichern";
 "modifycert_deletebutton" = "Zertifikat löschen";
 "modifycert_showpass" = "Pass anzeigen";
+"modifycert_sendpass" = "Pass senden";
 
 "alert_deletecertificate_title" = "Zertifikat löschen";
 "alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";

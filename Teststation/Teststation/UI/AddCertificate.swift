@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AddCertificate: View {
+    @EnvironmentObject var teststationState: TeststationState
+    
     @State var firstname = ""
     @State var lastname = ""
     @State var phonenumber = ""
@@ -113,7 +115,10 @@ struct AddCertificate: View {
                 email: email,
                 type: CertificateType(rawValue:types[selectedType])!,
                 status: CertificateStatus(rawValue:status[selectedStatus])!,
-                photo: certifcatePhoto!
+                photo: certifcatePhoto!,
+                teststationId: teststationState.teststation?.id ?? "",
+                testerId: teststationState.tester?.id ?? ""
+                
             )
         )
     }

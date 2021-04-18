@@ -12,6 +12,7 @@
         <table class="table table-striped table-sm">
           <thead>
           <tr>
+            <th th:text="#{field.id}">ID</th>
             <th th:text="#{field.name}">Name</th>
             <th th:text="#{field.teststation}">Teststation</th>
             <th th:text="#{field.created}">Erzeugt</th>
@@ -20,6 +21,7 @@
           </thead>
           <tbody>
           <tr th:each="p : ${tester.content}">
+            <td th:text="${p.id}"/>
             <td th:text="${p.person.fullName}"/>
             <td th:text="${p.teststationId}"/>
             <td th:text="${{p.created}}"/>

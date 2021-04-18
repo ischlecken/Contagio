@@ -8,6 +8,8 @@ struct AddCertificateResponse {
     let type: CertificateType
     let status: CertificateStatus
     let photo: UIImage
+    let teststationId: String
+    let testerId: String
 }
 
 struct ModifyCertificateResponse {

@@ -90,7 +90,9 @@ extension NSManagedObjectContext {
         email: String,
         status: CertificateStatus,
         type: CertificateType,
-        pictureid: String) -> Certificate {
+        pictureid: String,
+        teststationid: String,
+        testerid: String) -> Certificate {
         
         let result = Certificate(context: self)
         
@@ -104,8 +106,8 @@ extension NSManagedObjectContext {
         result.certType = type
         result.pictureid = pictureid
         result.certIssueStatus = CertificateIssueStatus.created
-        result.teststationid = "1"
-        result.testerid = "0"
+        result.teststationid = teststationid
+        result.testerid = testerid
         
         return result
     }
@@ -127,7 +129,9 @@ extension NSManagedObjectContext {
             email: acr.email,
             status: acr.status,
             type: acr.type,
-            pictureid: photoEntity.id!
+            pictureid: photoEntity.id!,
+            teststationid: acr.teststationId,
+            testerid: acr.testerId
         )
         
         return cert

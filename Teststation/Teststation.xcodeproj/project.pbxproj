@@ -36,6 +36,7 @@
 		3C9507382618755E00662EB1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C95073A2618755E00662EB1 /* Localizable.strings */; };
 		3C9507432618B01A00662EB1 /* AddCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9507422618B01A00662EB1 /* AddCertificate.swift */; };
 		3C9689392619CD2E009CAA6C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9689382619CD2E009CAA6C /* ImagePicker.swift */; };
+		3C9FEA0E262C8BC9007F7121 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9FEA0D262C8BC9007F7121 /* MessageView.swift */; };
 		3CAD0E78262762BE00F74719 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CAD0E77262762BE00F74719 /* String+Extension.swift */; };
 		3CB2FE5C261E529F002F87B5 /* NSManagedObjectContext+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB2FE5B261E529F002F87B5 /* NSManagedObjectContext+Extension.swift */; };
 		3CB2FE61261E5599002F87B5 /* ViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB2FE60261E5599002F87B5 /* ViewModels.swift */; };
@@ -100,6 +101,7 @@
 		3C95073E2618756700662EB1 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3C9507422618B01A00662EB1 /* AddCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCertificate.swift; sourceTree = "<group>"; };
 		3C9689382619CD2E009CAA6C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		3C9FEA0D262C8BC9007F7121 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		3CAD0E77262762BE00F74719 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		3CB2FE5B261E529F002F87B5 /* NSManagedObjectContext+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extension.swift"; sourceTree = "<group>"; };
 		3CB2FE60261E5599002F87B5 /* ViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 		3C92CFF826185B8F002B5284 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				3C9FEA0D262C8BC9007F7121 /* MessageView.swift */,
 				3C56B73526218AD40051E1CB /* CertificateList.swift */,
 				3C56B73626218AD40051E1CB /* LoginView.swift */,
 				3C126916261BBCCE006B1009 /* ModifyCertificate.swift */,
@@ -412,6 +415,7 @@
 				3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
 				3C56B73126218A020051E1CB /* TeststationState.swift in Sources */,
+				3C9FEA0E262C8BC9007F7121 /* MessageView.swift in Sources */,
 				3C7DB458261B366B00DA85C2 /* UIImage+Extension.swift in Sources */,
 				3CB2FE61261E5599002F87B5 /* ViewModels.swift in Sources */,
 				3C56B73826218AD40051E1CB /* LoginView.swift in Sources */,
