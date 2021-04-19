@@ -101,7 +101,6 @@ open class PassRestController(
     }
 
 
-
     @GetMapping("/image/{id}")
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
         val result = passImageRepository.findById(id)
@@ -115,15 +114,24 @@ open class PassRestController(
     }
 
     @GetMapping("/{passId}")
-    open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
+    open fun getPass(@PathVariable passId: String, @RequestParam signature: Boolean?): ResponseEntity<ByteArray> {
         val result = passRepository.findById(passId)
 
         logger.debug("getPass(passId=$passId): ${result.isPresent}")
 
-        return if (result.isPresent)
-            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
+        if (result.isEmpty)
+            return ResponseEntity.notFound().build()
+
+        return if (signature == true) {
+            val signature = passBuilder.sign(result.get())
+
+            if( signature!=null )
+                ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(signature)
+            else
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
         else
-            ResponseEntity.notFound().build()
+            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
     }
 
 }

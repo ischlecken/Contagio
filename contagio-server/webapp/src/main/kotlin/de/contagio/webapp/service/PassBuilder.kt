@@ -8,9 +8,17 @@ import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
+import org.apache.commons.codec.binary.Hex
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.security.KeyStore
+import java.security.MessageDigest
+import java.security.PrivateKey
 import java.time.LocalDateTime
+import javax.crypto.Cipher
+
+private var logger = LoggerFactory.getLogger(PassBuilder::class.java)
 
 @Service
 class PassBuilder(
@@ -102,5 +110,37 @@ class PassBuilder(
             passImage,
             createPass.build(passInfo, createPassParameter)
         )
+    }
+
+    fun sign(pass: Pass): ByteArray? {
+        var result: ByteArray? = null
+        val keyStoreFile = PassBuilder::class.java.getResourceAsStream("/contagio-sign.p12")
+
+        if (keyStoreFile != null) {
+            try {
+
+                val keyStore = KeyStore.getInstance("PKCS12")
+                val keyStorePassword = "contagio".toCharArray()
+                keyStore.load(keyStoreFile, keyStorePassword)
+                val privateKey = keyStore.getKey("contagiosign", keyStorePassword) as PrivateKey
+                logger.debug("sign(): privateKey=${Hex.encodeHexString(privateKey.encoded)}")
+
+                val md: MessageDigest = MessageDigest.getInstance("SHA-256")
+                val messageHash: ByteArray = md.digest(pass.data)
+                logger.debug("sign(): messageHash=${Hex.encodeHexString(messageHash)}")
+
+                val cipher: Cipher = Cipher.getInstance("RSA")
+                cipher.init(Cipher.ENCRYPT_MODE, privateKey)
+                val digitalSignature: ByteArray = cipher.doFinal(messageHash)
+
+                logger.debug("sign(): signature=${Hex.encodeHexString(digitalSignature)}")
+
+                result = digitalSignature
+            } catch (ex: Exception) {
+                logger.error("Exception while signing pass", ex)
+            }
+        }
+
+        return result
     }
 }
