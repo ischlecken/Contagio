@@ -3,26 +3,28 @@ package de.contagio.webapp.model.properties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
-data class MmcontrolBenutzerportalRestapiProperties(
-    val baseurl: String,
-    val user: String,
+data class SignProperties(
+    val keystore: String,
+    val keyname: String,
     val password: String
 )
 
-@ConstructorBinding
-@ConfigurationProperties(prefix = "contagio")
-data class ContagioProperties(
+data class PassProperties(
+    val organisationName: String,
+    val description: String,
+    val logoText: String,
     val teamIdentifier: String,
     val passTypeId: String,
     val keyName: String,
     val privateKeyPassword: String,
     val templateName: String,
-    val passResourcesDir: String,
+    val resourcesDir: String
+)
+
+@ConstructorBinding
+@ConfigurationProperties(prefix = "contagio")
+data class ContagioProperties(
     val baseUrl: String,
-
-    val passOrganisationName: String,
-    val passDescription: String,
-    val passLogoText: String,
-
-    val bpRestapi: MmcontrolBenutzerportalRestapiProperties
+    val pass: PassProperties,
+    val sign: SignProperties
 )

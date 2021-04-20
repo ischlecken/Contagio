@@ -1,15 +1,17 @@
 "FULLNAME" = "Name";
-"VALIDUNTIL" = "Valid Until";
+"VALIDUNTIL" = "valid until";
 "EMAIL" = "E-Mail";
 "PHONENO" = "Phoneno";
 "TESTSTATIONID" = "Teststation ID";
+"TESTSTATION" = "Teststation";
+"TESTSTATIONADDRESS" = "Address";
 "TESTERID" = "Tester ID";
 "TESTRESULT" = "Testresult";
 "TESTTYPE" = "Test";
 "VACCINATION" = "Vaccination";
 "SHOWPASSURL" = "Show Pass";
 
-"TESTRESULT_UNKNOWN" = "-";
+"TESTRESULT_UNKNOWN" = "pending";
 "TESTRESULT_POSITIVE" = "positive";
 "TESTRESULT_NEGATIVE" = "negative";
 
@@ -17,6 +19,7 @@
 "TESTTYPE_PCRTEST" = "PCR Test";
 "TESTTYPE_VACCINATION" = "Vaccination";
 
+"LOGO_TESTTYPE" = "TIL - Pass";
 "LOGO_TESTTYPE_RAPIDTEST" = "TIL - Pass";
 "LOGO_TESTTYPE_PCRTEST" = "TIL - Pass";
 "LOGO_TESTTYPE_VACCINATION" = "TIL - Pass";

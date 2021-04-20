@@ -8,6 +8,7 @@ import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
+import de.contagio.webapp.repository.mongodb.TeststationRepository
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -25,6 +26,7 @@ class PassBuilder(
     private val passInfoRepository: PassInfoRepository,
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
+    private val teststationRepository: TeststationRepository,
     private val contagioProperties: ContagioProperties
 ) {
 
@@ -54,18 +56,24 @@ class PassBuilder(
             testType
         )
 
-        val passImage = PassImage.build(image.bytes, image.contentType, passInfo)
+        val teststation = teststationRepository.findById(teststationId)
 
-        return build(passInfo, passImage)
+        if (teststation.isPresent) {
+            val passImage = PassImage.build(image.bytes, image.contentType, passInfo)
+
+            return build(passInfo, teststation.get(), passImage)
+        }
+
+        return null
     }
 
 
-    fun build(passInfo: PassInfo, passImage: PassImage): PassInfo? {
+    fun build(passInfo: PassInfo, teststation: Teststation, passImage: PassImage): PassInfo? {
         val passInfo1 = passInfo.copy(
             validUntil = LocalDateTime.now().plusHours(12)
         )
 
-        val pkpass = buildPkPass(passInfo1, passImage)
+        val pkpass = buildPkPass(passInfo1, teststation, passImage)
 
         return if (pkpass != null) {
             val passInfo2 = passInfo1.copy(
@@ -84,45 +92,47 @@ class PassBuilder(
 
     fun buildPkPass(
         passInfo: PassInfo,
+        teststation: Teststation,
         passImage: PassImage,
         passType: PassType = PassType.GENERIC,
         templateName: String? = null
     ): ByteArray? {
         val createPass = CreatePass(
-            teamIdentifier = contagioProperties.teamIdentifier,
-            passTypeIdentifier = contagioProperties.passTypeId,
+            teamIdentifier = contagioProperties.pass.teamIdentifier,
+            passTypeIdentifier = contagioProperties.pass.passTypeId,
             authenticationToken = passInfo.authToken,
             baseUrl = contagioProperties.baseUrl
         )
 
         val createPassParameter = CreatePassParameter(
-            organisationName = contagioProperties.passOrganisationName,
-            description = contagioProperties.passDescription,
-            logoText = contagioProperties.passLogoText,
+            organisationName = contagioProperties.pass.organisationName,
+            description = contagioProperties.pass.description,
+            logoText = contagioProperties.pass.logoText,
             passType = passType
         )
 
         return createPass.buildSignedPassPayload(
-            contagioProperties.passResourcesDir,
-            contagioProperties.keyName,
-            contagioProperties.privateKeyPassword,
-            templateName ?: contagioProperties.templateName,
+            contagioProperties.pass.resourcesDir,
+            contagioProperties.pass.keyName,
+            contagioProperties.pass.privateKeyPassword,
+            templateName ?: contagioProperties.pass.templateName,
             passImage,
-            createPass.build(passInfo, createPassParameter)
+            passType,
+            createPass.build(passInfo,teststation, createPassParameter)
         )
     }
 
     fun sign(pass: Pass): ByteArray? {
         var result: ByteArray? = null
-        val keyStoreFile = PassBuilder::class.java.getResourceAsStream("/contagio-sign.p12")
+        val keyStoreFile = PassBuilder::class.java.getResourceAsStream(contagioProperties.sign.keystore)
 
         if (keyStoreFile != null) {
             try {
 
                 val keyStore = KeyStore.getInstance("PKCS12")
-                val keyStorePassword = "contagio".toCharArray()
+                val keyStorePassword = contagioProperties.sign.password.toCharArray()
                 keyStore.load(keyStoreFile, keyStorePassword)
-                val privateKey = keyStore.getKey("contagiosign", keyStorePassword) as PrivateKey
+                val privateKey = keyStore.getKey(contagioProperties.sign.keyname, keyStorePassword) as PrivateKey
                 logger.debug("sign(): privateKey=${Hex.encodeHexString(privateKey.encoded)}")
 
                 val md: MessageDigest = MessageDigest.getInstance("SHA-256")

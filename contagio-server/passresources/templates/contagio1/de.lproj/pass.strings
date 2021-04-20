@@ -3,21 +3,23 @@
 "EMAIL" = "E-Mail";
 "PHONENO" = "Telefonnummer";
 "TESTSTATIONID" = "Teststation ID";
+"TESTSTATION" = "Teststation";
+"TESTSTATIONADDRESS" = "Adresse";
 "TESTERID" = "Tester ID";
 "TESTRESULT" = "Testresultat";
 "TESTTYPE" = "Test";
 "VACCINATION" = "Impfung";
 "SHOWPASSURL" = "Pass anzeigen";
 
-"TESTRESULT_UNKNOWN" = "-";
-"TESTRESULT_POSITIVE" = "Positiv";
-"TESTRESULT_NEGATIVE" = "Negativ";
+"TESTRESULT_UNKNOWN" = "ausstehend";
+"TESTRESULT_POSITIVE" = "positiv";
+"TESTRESULT_NEGATIVE" = "negativ";
 
 "TESTTYPE_RAPIDTEST" = "Schnelltest";
 "TESTTYPE_PCRTEST" = "PCR-Test";
 "TESTTYPE_VACCINATION" = "Impfung";
 
-
+"LOGO_TESTTYPE" = "TIL - Pass";
 "LOGO_TESTTYPE_RAPIDTEST" = "TIL - Pass";
 "LOGO_TESTTYPE_PCRTEST" = "TIL - Pass";
 "LOGO_TESTTYPE_VACCINATION" = "TIL - Pass";

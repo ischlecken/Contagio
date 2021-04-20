@@ -4,6 +4,7 @@ package de.contagio.webapp.controller
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.util.UIDGenerator
+import de.contagio.webapp.repository.mongodb.TeststationRepository
 import de.contagio.webapp.restcontroller.pkpassMediatype
 import de.contagio.webapp.service.PassBuilder
 import org.slf4j.LoggerFactory
@@ -21,7 +22,8 @@ private var logger = LoggerFactory.getLogger(CreatePassController::class.java)
 @ApiIgnore
 @Controller
 open class CreatePassController(
-    private val passBuilder: PassBuilder
+    private val passBuilder: PassBuilder,
+    private val teststationRepository: TeststationRepository
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -59,18 +61,22 @@ open class CreatePassController(
             testResult,
             testType,
         ).copy(
-            validUntil = LocalDateTime.now().plusDays(1)
+            validUntil = LocalDateTime.now().plusDays(if( testType == TestType.VACCINATION ) 10 else 3)
         )
 
         val passImage = PassImage.build(image.bytes, image.contentType, passInfo)
-        val pkPass = passBuilder.buildPkPass(passInfo, passImage, passType, templateName)
+        val teststation = teststationRepository.findById(teststationId)
 
-        if (pkPass != null)
-            return ResponseEntity
-                .ok()
-                .header("Content-Disposition", "attachment; filename=\"${passInfo.passId}.pkpass\"")
-                .contentType(pkpassMediatype)
-                .body(pkPass)
+        if (teststation.isPresent) {
+            val pkPass = passBuilder.buildPkPass(passInfo, teststation.get(), passImage, passType, templateName)
+
+            if (pkPass != null)
+                return ResponseEntity
+                    .ok()
+                    .header("Content-Disposition", "attachment; filename=\"${passInfo.passId}.pkpass\"")
+                    .contentType(pkpassMediatype)
+                    .body(pkPass)
+        }
 
         return ResponseEntity.badRequest().build()
     }

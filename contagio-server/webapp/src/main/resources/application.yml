@@ -41,17 +41,23 @@ spring:
 
 
 contagio:
-  teamIdentifier: 4V27BGKSLA
-  passTypeId: "pass.de.contagio.stt"
-  keyName: "pass"
-  privateKeyPassword: "1234"
-  templateName: "contagio1"
-  passResourcesDir: "/opt/contagio-server"
   baseUrl: "https://www.contagio.de"
 
-  passOrganisationName: "Contagio"
-  passDescription: "Contagio - Dein Pass in die Freiheit"
-  passLogoText: "Testen Impfen Machen"
+  pass:
+    teamIdentifier: 4V27BGKSLA
+    passTypeId: "pass.de.contagio.stt"
+    keyName: "pass"
+    privateKeyPassword: "1234"
+    templateName: "contagio1"
+    resourcesDir: "/opt/contagio-server"
+    organisationName: "Contagio"
+    description: "Contagio - Dein Pass in die Freiheit"
+    logoText: "Testen Impfen Machen"
+
+  sign:
+    keystore: "/contagio-sign.p12"
+    keyname: "contagiosign"
+    password: "contagio"
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"

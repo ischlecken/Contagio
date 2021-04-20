@@ -30,6 +30,7 @@ class CreatePassTest {
                 teststationId = "1",
                 testerId = "1"
             ),
+            Teststation(id = "1","Teststation",address = Address(city="Blacity",zipcode = "1234")),
             CreatePassParameter(
                 organisationName = "hugo",
                 description = "bla",

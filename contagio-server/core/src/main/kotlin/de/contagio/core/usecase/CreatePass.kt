@@ -26,12 +26,13 @@ import javax.imageio.ImageIO
 
 private val logger = LoggerFactory.getLogger(CreatePass::class.java)
 
-//private val dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
-private val dateTimeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+02:00'")
+// DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
+private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+02:00'")
 
 class ContagioPassTemplate(
     pathToTemplateDirectory: String?,
-    private val passImage: PassImage
+    private val passImage: PassImage,
+    private val passType: PassType
 ) : PKPassTemplateFolder(pathToTemplateDirectory) {
 
     override fun provisionPassAtDirectory(tempPassDir: File?) {
@@ -39,14 +40,28 @@ class ContagioPassTemplate(
 
         super.provisionPassAtDirectory(tempPassDir)
 
-        val inputImage : BufferedImage = ImageIO.read(ByteArrayInputStream(passImage.data))
-        val resizedImage = resizeImage(inputImage, 90, 90)
-        val resizedImage2x = resizeImage(inputImage, 180, 180)
+        val inputImage: BufferedImage = ImageIO.read(ByteArrayInputStream(passImage.data))
 
-        FileUtils.writeByteArrayToFile(File(tempPassDir, "thumbnail.png"), resizedImage)
-        FileUtils.writeByteArrayToFile(File(tempPassDir, "thumbnail@2x.png"), resizedImage2x)
+        when (passType) {
+            PassType.COUPON -> {
+                createImages(tempPassDir, inputImage, 375, 144, "strip")
+            }
+            PassType.EVENT -> {
+                createImages(tempPassDir, inputImage, 90, 90, "thumbnail")
+                createImages(tempPassDir, inputImage, 180, 220, "background")
+            }
+            else -> {
+                createImages(tempPassDir, inputImage, 90, 90, "thumbnail")
+            }
+        }
+    }
 
-        //FileUtils.writeByteArrayToFile(File(tempPassDir, "thumbnail.png"), passImage.data)
+    private fun createImages(tempPassDir: File?, inputImage: BufferedImage, width: Int, height: Int, name: String) {
+        val resizedImage = resizeImage(inputImage, width, height)
+        val resizedImage2x = resizeImage(inputImage, 2 * width, 2 * height)
+
+        FileUtils.writeByteArrayToFile(File(tempPassDir, "$name.png"), resizedImage)
+        FileUtils.writeByteArrayToFile(File(tempPassDir, "$name@2x.png"), resizedImage2x)
     }
 
 
@@ -83,10 +98,10 @@ class CreatePass(
     private val baseUrl: String
 ) {
 
-    fun build(passInfo: PassInfo, createPassParameter: CreatePassParameter): PKPass {
+    fun build(passInfo: PassInfo, teststation: Teststation, createPassParameter: CreatePassParameter): PKPass {
         val pass = PKPass()
 
-        val validUntilFormatted = passInfo.validUntil?.format(dateTimeFormatter1)
+        val validUntilFormatted = passInfo.validUntil?.format(dateTimeFormatter)
 
         pass.passTypeIdentifier = this.passTypeIdentifier
         pass.teamIdentifier = this.teamIdentifier
@@ -98,17 +113,13 @@ class CreatePass(
         if (passInfo.validUntil != null)
             pass.expirationDate = Date.from(passInfo.validUntil.atZone(ZoneId.systemDefault()).toInstant())
 
-        pass.labelColor = "rgb(255, 255, 255)"
-        pass.foregroundColor = "rgb(242, 55, 55)"
-        when (passInfo.testResult) {
-            TestResultType.UNKNOWN -> pass.backgroundColor = "rgb(242, 121, 55)"
-            TestResultType.NEGATIVE -> pass.backgroundColor = "rgb(105, 150, 17)"
-            TestResultType.POSITIVE -> pass.backgroundColor = "rgb(242, 55, 55)"
-        }
+        pass.labelColor = "rgb(5, 175, 190)"
+        pass.foregroundColor = "rgb(255, 255, 255)"
+        pass.backgroundColor = "rgb(208, 38, 0)"
 
         pass.organizationName = createPassParameter.organisationName
         pass.description = createPassParameter.description
-        pass.logoText = "LOGO_TESTTYPE_${passInfo.testType.name}"
+        pass.logoText = "LOGO_TESTTYPE"
 
         pass.addBarcode("$baseUrl/showpass?serialNumber=${passInfo.serialNumber}")
 
@@ -119,26 +130,34 @@ class CreatePass(
             PassType.STORE -> PKStoreCard()
         }
 
-        if (passInfo.testType == TestType.VACCINATION)
-            generic.headerFields = listOf(PKField("testType", null, "VACCINATION"))
+        generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
+        when (createPassParameter.passType) {
+            PassType.COUPON -> generic.primaryFields = listOf(
+                PKField("testResult", "TESTRESULT_${passInfo.testResult.name}", "")
+            )
+            else -> generic.primaryFields = listOf(
+                PKField("fullName", "FULLNAME", passInfo.person.fullName)
+            )
+        }
+
+        val secondaryFields = mutableListOf<PKField>()
+        if (createPassParameter.passType == PassType.COUPON)
+            secondaryFields.add(PKField("fullName", "FULLNAME", passInfo.person.fullName))
         else
-            generic.headerFields = listOf(PKField("testResult", "TESTRESULT", "TESTRESULT_${passInfo.testResult.name}"))
+            secondaryFields.add(PKField("testResult", "TESTRESULT", "TESTRESULT_${passInfo.testResult.name}"))
 
-        generic.primaryFields = listOf(
-            PKField("fullName", "FULLNAME", passInfo.person.fullName),
-        )
-
-        if (validUntilFormatted != null) {
+        if (validUntilFormatted != null && passInfo.testResult != TestResultType.UNKNOWN) {
             val validUntilField = PKField("validUntil", "VALIDUNTIL", validUntilFormatted)
             validUntilField.dateStyle = PKDateStyle.PKDateStyleMedium
             validUntilField.timeStyle = PKDateStyle.PKDateStyleShort
             validUntilField.isRelative = true
 
-            generic.secondaryFields = listOf(validUntilField)
+            secondaryFields.add(validUntilField)
         }
 
         val auxiliaryFields = mutableListOf<PKField>()
-        auxiliaryFields.add(PKField("teststationId", "TESTSTATIONID", passInfo.teststationId))
+        auxiliaryFields.add(PKField("teststation", "TESTSTATION", teststation.name))
+        auxiliaryFields.add(PKField("teststationAddress", "TESTSTATIONADDRESS", teststation.address.fullAddress))
 
         val backFields = mutableListOf<PKField>()
         if (!passInfo.person.email.isNullOrEmpty())
@@ -147,6 +166,7 @@ class CreatePass(
         if (!passInfo.person.phoneNo.isNullOrEmpty())
             backFields.add(PKField("phoneNo", "PHONENO", passInfo.person.phoneNo))
 
+        backFields.add(PKField("teststationId", "TESTSTATIONID", passInfo.teststationId))
         backFields.add(PKField("testerId", "TESTERID", passInfo.testerId))
 
         if (validUntilFormatted != null) {
@@ -166,6 +186,7 @@ class CreatePass(
 
         backFields.add(PKField("terms", "TERMSCONDITIONS", "TERMSCONDITIONS_VALUE"))
 
+        generic.secondaryFields = secondaryFields
         generic.auxiliaryFields = auxiliaryFields
         generic.backFields = backFields
 
@@ -187,6 +208,7 @@ class CreatePass(
         privateKeyPassword: String,
         templateName: String,
         passImage: PassImage,
+        passType: PassType,
         pass: PKPass
     ): ByteArray? {
         val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCA.cer"
@@ -208,7 +230,7 @@ class CreatePass(
 
                 result = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(
                     pass,
-                    ContagioPassTemplate(pathToTemplateDirectory, passImage),
+                    ContagioPassTemplate(pathToTemplateDirectory, passImage, passType),
                     pkSigningInformation
                 )
             } else {
