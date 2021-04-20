@@ -11,7 +11,7 @@ spring:
       uri: "mongodb://dvm1:27017"
 
 contagio:
-  baseUrl: "https://www.contagio.de:13013"
+  baseUrl: "https://efau.local:13013"
 
   pass:
     resourcesDir: "./passresources"

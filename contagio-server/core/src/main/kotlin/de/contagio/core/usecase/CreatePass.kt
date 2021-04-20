@@ -130,7 +130,11 @@ class CreatePass(
             PassType.STORE -> PKStoreCard()
         }
 
-        generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
+        if( passInfo.issueStatus == IssueStatus.SIGNED)
+          generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
+        else
+            generic.headerFields = listOf(PKField("issueStatus", null, "ISSUESTATUS_${passInfo.issueStatus.name}"))
+
         when (createPassParameter.passType) {
             PassType.COUPON -> generic.primaryFields = listOf(
                 PKField("testResult", "TESTRESULT_${passInfo.testResult.name}", "")
@@ -157,7 +161,6 @@ class CreatePass(
 
         val auxiliaryFields = mutableListOf<PKField>()
         auxiliaryFields.add(PKField("teststation", "TESTSTATION", teststation.name))
-        auxiliaryFields.add(PKField("teststationAddress", "TESTSTATIONADDRESS", teststation.address.fullAddress))
 
         val backFields = mutableListOf<PKField>()
         if (!passInfo.person.email.isNullOrEmpty())

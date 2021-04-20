@@ -36,14 +36,20 @@
             <td>
               <form method="post">
                 <input type="hidden" name="serialnumber" th:value="${p.serialNumber}"/>
-                <button class="btn btn-danger" name="command" value="delete" type="submit"><span th:title="#{command.delete}"><i class="fas fa-trash-alt"></i></span>
+                <button class="btn btn-danger" name="command" value="delete" type="submit"><span th:title="#{command.delete}"><i
+                  class="fas fa-trash-alt"></i></span>
                 </button>
-                <button class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i class="fas fa-undo"></i></span>
-                </button>
-                <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i class="fas fa-user-minus"></i></span>
-                </button>
-                <button class="btn btn-warning" name="command" value="positive" type="submit"><span th:title="#{command.positive}"><i class="fas fa-user-plus"></i></span>
-                </button>
+                <th:block th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED}">
+                  <button class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i
+                    class="fas fa-undo"></i></span>
+                  </button>
+                  <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i
+                    class="fas fa-user-minus"></i></span>
+                  </button>
+                  <button class="btn btn-warning" name="command" value="positive" type="submit"><span th:title="#{command.positive}"><i
+                    class="fas fa-user-plus"></i></span>
+                  </button>
+                </th:block>
               </form>
 
 

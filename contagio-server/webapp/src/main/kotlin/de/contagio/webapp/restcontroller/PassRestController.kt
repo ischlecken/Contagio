@@ -8,6 +8,7 @@ import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
 import de.contagio.webapp.service.PassBuilder
+import de.contagio.webapp.service.PassService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -16,7 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDateTime
 
 private var logger = LoggerFactory.getLogger(PassRestController::class.java)
 
@@ -28,13 +28,14 @@ open class PassRestController(
     private val passInfoRepository: PassInfoRepository,
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
+    private val passService: PassService,
     private val passBuilder: PassBuilder
 ) {
 
 
     @GetMapping("/info")
     open fun getPasses(pageable: Pageable): Page<PassInfo> {
-        logger.debug("getAllPass()")
+        logger.debug("getAllPassInfo()")
 
         return passInfoRepository.findAll(pageable)
     }
@@ -60,44 +61,30 @@ open class PassRestController(
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
-        logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult, teststationId=$teststationId testerId=$testerId)")
-        logger.debug("  image.size=${image.size}")
 
-        return passBuilder.build(
+        val cpr = passService.createPassAndSave(
             image,
-            firstName,
-            lastName,
-            phoneNo,
-            email,
-            teststationId,
-            testerId,
-            testResult,
-            testType
-        )?.let {
-            ResponseEntity.status(HttpStatus.CREATED).body(it)
-        } ?: ResponseEntity.badRequest().build()
+            firstName, lastName,
+            phoneNo, email,
+            teststationId, testerId,
+            testResult, testType
+        )
+
+        return if (cpr.pkPass != null)
+            ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
+        else
+            ResponseEntity.badRequest().build()
     }
 
     @PatchMapping("/info")
-    open fun patchPass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfo> {
-        val result = passInfoRepository.findById(updatePassRequest.serialNumber)
-        if (result.isPresent) {
-            var r = result.get()
+    open fun updatePass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfo> {
 
-            if (updatePassRequest.testResult != null)
-                r = r.copy(testResult = updatePassRequest.testResult)
+        val passInfo = passService.updatePass(updatePassRequest)
 
-            if (updatePassRequest.validUntil != null)
-                r = r.copy(validUntil = updatePassRequest.validUntil)
-
-            r = passInfoRepository.save(r.copy(modified = LocalDateTime.now(), version = r.version + 1))
-
-            logger.debug("patchPass($updatePassRequest): $r")
-
-            return ResponseEntity.ok(r)
-        }
-
-        return ResponseEntity.notFound().build()
+        return if (passInfo != null)
+            ResponseEntity.ok(passInfo)
+        else
+            ResponseEntity.notFound().build()
     }
 
 
@@ -123,14 +110,13 @@ open class PassRestController(
             return ResponseEntity.notFound().build()
 
         return if (signature == true) {
-            val signature = passBuilder.sign(result.get())
+            val s = passBuilder.sign(result.get())
 
-            if( signature!=null )
-                ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(signature)
+            if (s != null)
+                ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)
             else
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-        }
-        else
+        } else
             ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
     }
 
