@@ -4,6 +4,7 @@ import de.contagio.core.domain.entity.*
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface PassInfoRepository : MongoRepository<PassInfo, String> {
+    fun findByDeviceLibraryIdentifier(deviceLibraryIdentifier: String): Collection<PassInfo>
 }
 
 

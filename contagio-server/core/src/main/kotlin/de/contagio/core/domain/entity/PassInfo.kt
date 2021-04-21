@@ -151,7 +151,9 @@ data class PassInfo(
     val passId: String? = null,
     val validUntil: LocalDateTime? = null,
     val installed: LocalDateTime? = null,
-    val version: Int = 0
+    val version: Int = 0,
+    val deviceLibraryIdentifier: String? = null,
+    val pushToken: String? = null
 ) {
     companion object {
         fun build(

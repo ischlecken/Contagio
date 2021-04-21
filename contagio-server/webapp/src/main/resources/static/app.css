@@ -137,11 +137,12 @@ footer p.version {
 
 .showpass .passimage {
     text-align: center;
+    margin-bottom: 2rem;
 }
 
 .showpass .passimg {
-    width: 240px;
-    height: 240px;
+    width: 360px;
+    height: 360px;
 }
 
 a.addtowallet {

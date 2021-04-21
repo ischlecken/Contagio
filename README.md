@@ -1,12 +1,11 @@
 # Contagio Client
 
-* **contagio-client**
+* **Teststation iOS App**
 * **contagio-server**
 
 # Contagio Server
 
 ## Spring Boot Konfigurieren für https
-
 ```
 openssl pkcs12 -export -in www-contagio-de.crt -inkey www-contagio-de.key -out www-contagio-de.p12 -name contagio -CAfile contagioRootCA.crt -caname root
 keytool -importkeystore -deststorepass contagio123 -destkeypass contagio123 -destkeystore contagio.jks -srckeystore www-contagio-de.p12 -srcstoretype PKCS12 -srcstorepass contagio123 -alias contagio
@@ -31,3 +30,6 @@ docker run -d --name mongodb -p 27017:27017 mongo:4.4.4
 # Links
 PKPass Validator
 https://pkpassvalidator.com/
+
+JPasskit
+https://github.com/drallgood/jpasskit

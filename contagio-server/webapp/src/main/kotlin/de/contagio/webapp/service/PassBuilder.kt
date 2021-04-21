@@ -38,7 +38,10 @@ class PassBuilder(
             organisationName = contagioProperties.pass.organisationName,
             description = contagioProperties.pass.description,
             logoText = contagioProperties.pass.logoText,
-            passType = passType
+            passType = passType,
+            labelColor = contagioProperties.pass.labelColor,
+            foregroundColor = contagioProperties.pass.foregroundColor,
+            backgroundColor = contagioProperties.pass.backgroundColor
         )
 
         return createPass.buildSignedPassPayload(

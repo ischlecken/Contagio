@@ -51,8 +51,11 @@ contagio:
     templateName: "contagio1"
     resourcesDir: "/opt/contagio-server"
     organisationName: "Contagio"
-    description: "Contagio - Dein Pass in die Freiheit"
-    logoText: "Testen Impfen Machen"
+    description: "TIL - Dein Pass in die Freiheit"
+    logoText: "LOGO_TESTTYPE"
+    labelColor: "rgb(5, 175, 190)"
+    foregroundColor: "rgb(255, 255, 255)"
+    backgroundColor: "rgb(208, 38, 0)"
 
   sign:
     keystore: "/contagio-sign.p12"

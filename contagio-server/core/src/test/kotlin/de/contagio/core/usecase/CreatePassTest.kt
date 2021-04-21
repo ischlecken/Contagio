@@ -34,7 +34,10 @@ class CreatePassTest {
             CreatePassParameter(
                 organisationName = "hugo",
                 description = "bla",
-                logoText = "fasel"
+                logoText = "fasel",
+                labelColor = "rgb(5, 175, 190)",
+                foregroundColor = "rgb(255, 255, 255)",
+                backgroundColor = "rgb(208, 38, 0)"
             )
         )
 

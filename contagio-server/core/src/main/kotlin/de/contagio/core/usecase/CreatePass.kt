@@ -88,7 +88,10 @@ data class CreatePassParameter(
     val organisationName: String,
     val description: String,
     val logoText: String,
-    val passType: PassType = PassType.GENERIC
+    val passType: PassType = PassType.GENERIC,
+    val labelColor: String,
+    val foregroundColor: String,
+    val backgroundColor: String
 )
 
 class CreatePass(
@@ -113,13 +116,13 @@ class CreatePass(
         if (passInfo.validUntil != null)
             pass.expirationDate = Date.from(passInfo.validUntil.atZone(ZoneId.systemDefault()).toInstant())
 
-        pass.labelColor = "rgb(5, 175, 190)"
-        pass.foregroundColor = "rgb(255, 255, 255)"
-        pass.backgroundColor = "rgb(208, 38, 0)"
+        pass.labelColor = createPassParameter.labelColor
+        pass.foregroundColor = createPassParameter.foregroundColor
+        pass.backgroundColor = createPassParameter.backgroundColor
 
         pass.organizationName = createPassParameter.organisationName
         pass.description = createPassParameter.description
-        pass.logoText = "LOGO_TESTTYPE"
+        pass.logoText = createPassParameter.logoText
 
         pass.addBarcode("$baseUrl/showpass?serialNumber=${passInfo.serialNumber}")
 
@@ -130,8 +133,8 @@ class CreatePass(
             PassType.STORE -> PKStoreCard()
         }
 
-        if( passInfo.issueStatus == IssueStatus.SIGNED)
-          generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
+        if (passInfo.issueStatus == IssueStatus.SIGNED)
+            generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
         else
             generic.headerFields = listOf(PKField("issueStatus", null, "ISSUESTATUS_${passInfo.issueStatus.name}"))
 
@@ -183,7 +186,7 @@ class CreatePass(
             PKField(
                 "showPassUrl",
                 "SHOWPASSURL",
-                "https://efeu.local:13013/showpass?serialNumber=${passInfo.serialNumber}"
+                "${baseUrl}/showpass?serialNumber=${passInfo.serialNumber}"
             )
         )
 
