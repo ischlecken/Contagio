@@ -48,7 +48,6 @@ class PassBuilder(
         )
 
         return createPass.buildSignedPassPayload(
-            contagioProperties.pass.resourcesDir,
             contagioProperties.pass.keyName,
             contagioProperties.pass.privateKeyPassword,
             passImage,

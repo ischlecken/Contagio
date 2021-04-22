@@ -178,15 +178,14 @@ class CreatePass(
     }
 
     fun buildSignedPassPayload(
-        resourcesBaseDirPath: String,
         keyName: String,
         privateKeyPassword: String,
         passImage: PassImage,
         passType: PassType,
         pass: PKPass
     ): ByteArray? {
-        val appleWWDRCA = "$resourcesBaseDirPath/certs/AppleWWDRCA.cer"
-        val privateKeyPath = "$resourcesBaseDirPath/certs/$keyName.p12"
+        val appleWWDRCA = "certs/AppleWWDRCA.cer"
+        val privateKeyPath = "certs/$keyName.p12"
         var result: ByteArray? = null
 
         try {

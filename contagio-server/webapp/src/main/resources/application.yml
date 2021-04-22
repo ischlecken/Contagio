@@ -48,7 +48,6 @@ contagio:
     passTypeId: "pass.de.contagio.stt"
     keyName: "pass"
     privateKeyPassword: "1234"
-    resourcesDir: "/opt/contagio-server"
     organisationName: "Contagio"
     description: "TIL - Dein Pass in die Freiheit"
     logoText: "LOGO_TESTTYPE"

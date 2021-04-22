@@ -12,7 +12,3 @@ spring:
 
 contagio:
   baseUrl: "https://efeu.fritz.box:13013"
-
-  pass:
-    resourcesDir: "./passresources"
-

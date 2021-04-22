@@ -17,7 +17,6 @@ data class PassProperties(
     val passTypeId: String,
     val keyName: String,
     val privateKeyPassword: String,
-    val resourcesDir: String,
 
     val labelColor: String,
     val foregroundColor: String,
