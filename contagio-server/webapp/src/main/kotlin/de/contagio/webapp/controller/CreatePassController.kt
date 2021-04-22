@@ -40,8 +40,7 @@ open class CreatePassController(private val passService: PassService) {
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType,
-        @RequestParam passType: PassType,
-        @RequestParam templateName: String?
+        @RequestParam passType: PassType
     ): ResponseEntity<ByteArray> {
 
         logger.debug("createPass(command=$command)")
@@ -61,7 +60,7 @@ open class CreatePassController(private val passService: PassService) {
                     phoneNo, email,
                     teststationId, testerId,
                     testResult, testType,
-                    passType, templateName
+                    passType
                 )
 
                 if (cpr.pkPass != null && cpr.pkPass.isNotEmpty())
@@ -79,7 +78,8 @@ open class CreatePassController(private val passService: PassService) {
                     firstName, lastName,
                     phoneNo, email,
                     teststationId, testerId,
-                    testResult, testType
+                    testResult, testType,
+                    passType
                 )
 
                 val headers = HttpHeaders()

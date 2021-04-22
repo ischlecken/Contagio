@@ -8,81 +8,19 @@ import de.brendamour.jpasskit.passes.PKEventTicket
 import de.brendamour.jpasskit.passes.PKGenericPass
 import de.brendamour.jpasskit.passes.PKStoreCard
 import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil
-import de.brendamour.jpasskit.signing.PKPassTemplateFolder
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil
 import de.contagio.core.domain.entity.*
-import net.coobird.thumbnailator.Thumbnails
-import org.apache.commons.io.FileUtils
 import org.slf4j.LoggerFactory
-import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import javax.imageio.ImageIO
 
 private val logger = LoggerFactory.getLogger(CreatePass::class.java)
 
 // DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
 private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+02:00'")
 
-class ContagioPassTemplate(
-    pathToTemplateDirectory: String?,
-    private val passImage: PassImage,
-    private val passType: PassType
-) : PKPassTemplateFolder(pathToTemplateDirectory) {
-
-    override fun provisionPassAtDirectory(tempPassDir: File?) {
-        logger.debug("tempPassDir= $tempPassDir")
-
-        super.provisionPassAtDirectory(tempPassDir)
-
-        val inputImage: BufferedImage = ImageIO.read(ByteArrayInputStream(passImage.data))
-
-        when (passType) {
-            PassType.COUPON -> {
-                createImages(tempPassDir, inputImage, 375, 144, "strip")
-            }
-            PassType.EVENT -> {
-                createImages(tempPassDir, inputImage, 90, 90, "thumbnail")
-                createImages(tempPassDir, inputImage, 180, 220, "background")
-            }
-            else -> {
-                createImages(tempPassDir, inputImage, 90, 90, "thumbnail")
-            }
-        }
-    }
-
-    private fun createImages(tempPassDir: File?, inputImage: BufferedImage, width: Int, height: Int, name: String) {
-        val resizedImage = resizeImage(inputImage, width, height)
-        val resizedImage2x = resizeImage(inputImage, 2 * width, 2 * height)
-
-        FileUtils.writeByteArrayToFile(File(tempPassDir, "$name.png"), resizedImage)
-        FileUtils.writeByteArrayToFile(File(tempPassDir, "$name@2x.png"), resizedImage2x)
-    }
-
-
-    @Throws(java.lang.Exception::class)
-    fun resizeImage(originalImage: BufferedImage, targetWidth: Int, targetHeight: Int): ByteArray? {
-        val outputStream = ByteArrayOutputStream()
-
-        Thumbnails.of(originalImage)
-            .size(targetWidth, targetHeight)
-            .outputFormat("PNG")
-            .outputQuality(1.0)
-            .toOutputStream(outputStream)
-
-        val result = outputStream.toByteArray()
-
-        logger.debug("resizeImage($targetWidth,$targetHeight):${result.size}")
-
-        return result
-    }
-
-}
 
 data class CreatePassParameter(
     val organisationName: String,
@@ -212,7 +150,6 @@ class CreatePass(
         resourcesBaseDirPath: String,
         keyName: String,
         privateKeyPassword: String,
-        templateName: String,
         passImage: PassImage,
         passType: PassType,
         pass: PKPass
@@ -230,15 +167,10 @@ class CreatePass(
                 )
 
             if (pass.isValid) {
-                val pathToTemplateDirectory = "$resourcesBaseDirPath/templates/$templateName"
+                val cpt = ContagioPassTemplate(passImage, passType)
+                cpt.build()
 
-                logger.debug("using pass templates from $pathToTemplateDirectory...")
-
-                result = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(
-                    pass,
-                    ContagioPassTemplate(pathToTemplateDirectory, passImage, passType),
-                    pkSigningInformation
-                )
+                result = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pass, cpt, pkSigningInformation)
             } else {
                 logger.debug("pass is NOT valid: ${pass.validationErrors}")
             }

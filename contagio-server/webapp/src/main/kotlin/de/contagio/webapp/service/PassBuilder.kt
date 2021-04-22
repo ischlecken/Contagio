@@ -24,8 +24,7 @@ class PassBuilder(
         passInfo: PassInfo,
         teststation: Teststation,
         passImage: PassImage,
-        passType: PassType = PassType.GENERIC,
-        templateName: String? = null
+        passType: PassType = PassType.GENERIC
     ): ByteArray? {
         val createPass = CreatePass(
             teamIdentifier = contagioProperties.pass.teamIdentifier,
@@ -48,7 +47,6 @@ class PassBuilder(
             contagioProperties.pass.resourcesDir,
             contagioProperties.pass.keyName,
             contagioProperties.pass.privateKeyPassword,
-            templateName ?: contagioProperties.pass.templateName,
             passImage,
             passType,
             createPass.build(passInfo, teststation, createPassParameter)

@@ -76,8 +76,7 @@ open class PassService(
                     updatedPassInfo,
                     teststation.get(),
                     passImage.get(),
-                    PassType.COUPON,
-                    contagioProperties.pass.templateName
+                    PassType.COUPON
                 )?.let {
                     passRepository.save(pass.get().copy(data = it))
                     passInfoRepository.save(updatedPassInfo)
@@ -100,8 +99,7 @@ open class PassService(
         testerId: String,
         testResult: TestResultType,
         testType: TestType,
-        passType: PassType,
-        templateName: String?
+        passType: PassType
     ): CreatePassResponse {
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
@@ -128,8 +126,7 @@ open class PassService(
                 passInfo,
                 teststation.get(),
                 result.passImage,
-                passType,
-                templateName
+                passType
             )?.let {
                 result = result.copy(pkPass = it)
             }
@@ -147,7 +144,8 @@ open class PassService(
         teststationId: String,
         testerId: String,
         testResult: TestResultType,
-        testType: TestType
+        testType: TestType,
+        passType: PassType = PassType.COUPON
     ): CreatePassResponse {
 
         var cpr = createPass(
@@ -160,8 +158,7 @@ open class PassService(
             testerId,
             testResult,
             testType,
-            passType = PassType.COUPON,
-            templateName = contagioProperties.pass.templateName
+            passType
         )
 
         if (cpr.pkPass != null) {
