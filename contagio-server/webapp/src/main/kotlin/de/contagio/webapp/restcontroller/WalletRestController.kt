@@ -1,11 +1,15 @@
 package de.contagio.webapp.restcontroller
 
+import de.contagio.core.domain.entity.DeviceInfo
+import de.contagio.core.domain.entity.RegistrationInfo
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
 import de.contagio.webapp.model.WalletRegistration
 import de.contagio.webapp.model.properties.ContagioProperties
+import de.contagio.webapp.repository.mongodb.DeviceInfoRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
+import de.contagio.webapp.repository.mongodb.RegistrationInfoRepository
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,6 +25,8 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 open class WalletRestController(
     private val passInfoRepository: PassInfoRepository,
     private val passRepository: PassRepository,
+    private val deviceInfoRepository: DeviceInfoRepository,
+    private val registrationInfoRepository: RegistrationInfoRepository,
     private val contagioProperties: ContagioProperties
 ) {
 
@@ -38,7 +44,7 @@ open class WalletRestController(
         val pass = passInfoRepository
             .findById(serialNumber)
             .flatMap {
-                if (it.deviceLibraryIdentifier != null && !it.passId.isNullOrEmpty())
+                if (!it.passId.isNullOrEmpty())
                     passRepository.findById(it.passId!!)
                 else
                     Optional.empty()
@@ -61,11 +67,11 @@ open class WalletRestController(
         if (passTypeIdentifier != contagioProperties.pass.passTypeId)
             return ResponseEntity.badRequest().build()
 
-        val passes = passInfoRepository.findByDeviceLibraryIdentifier(deviceLibraryIdentifier)
+        val registrations = registrationInfoRepository.findByDeviceLibraryIdentifier(deviceLibraryIdentifier)
 
-        return if (passes.isNotEmpty()) {
-            val serialNumbers = passes.map { it.serialNumber }
+        val serialNumbers = registrations.map { it.serialNumber }.toList()
 
+        return if (serialNumbers.isNotEmpty()) {
             ResponseEntity.ok(WalletPasses(lastUpdated = "bla", serialNumbers = serialNumbers))
         } else
             ResponseEntity.status(HttpStatus.NO_CONTENT).build()
@@ -73,29 +79,40 @@ open class WalletRestController(
 
     @PostMapping("/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")
     open fun registerDevice(
+        @RequestBody walletRegistration: WalletRegistration,
         @PathVariable deviceLibraryIdentifier: String,
         @PathVariable passTypeIdentifier: String,
         @PathVariable serialNumber: String
     ): ResponseEntity<Void> {
-        logger.debug("registerDevice(deviceLibraryIdentifier=${deviceLibraryIdentifier},serialNumber=${serialNumber})")
+        logger.debug("registerDevice(deviceLibraryIdentifier=${deviceLibraryIdentifier}, serialNumber=${serialNumber}, pushToken=${walletRegistration.pushToken})")
 
         if (passTypeIdentifier != contagioProperties.pass.passTypeId)
             return ResponseEntity.badRequest().build()
 
-        val passInfo = passInfoRepository.findById(serialNumber)
-        val returnStatus = passInfo.map {
-            when (it.deviceLibraryIdentifier) {
-                null -> {
-                    passInfoRepository.save(it.copy(deviceLibraryIdentifier = deviceLibraryIdentifier))
+        val registrations = registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
+            deviceLibraryIdentifier,
+            serialNumber
+        )
+        var returnStatus = HttpStatus.OK
+        if( registrations.isEmpty()) {
+            registrationInfoRepository.save(
+                RegistrationInfo(
+                    deviceLibraryIdentifier = deviceLibraryIdentifier,
+                    serialNumber = serialNumber
+                )
+            )
 
-                    HttpStatus.CREATED
-                }
-                deviceLibraryIdentifier -> HttpStatus.OK
-                else -> HttpStatus.UNAUTHORIZED
-            }
+            deviceInfoRepository.save(
+                DeviceInfo(
+                    deviceLibraryIdentifier = deviceLibraryIdentifier,
+                    pushToken = walletRegistration.pushToken
+                )
+            )
+
+            returnStatus = HttpStatus.CREATED
         }
 
-        return ResponseEntity.status(returnStatus.get()).build()
+        return ResponseEntity.status(returnStatus).build()
     }
 
     @DeleteMapping("/devices/{deviceLibraryIdentifier}/registrations/{passTypeIdentifier}/{serialNumber}")
@@ -109,20 +126,15 @@ open class WalletRestController(
         if (passTypeIdentifier != contagioProperties.pass.passTypeId)
             return ResponseEntity.badRequest().build()
 
-        val passInfo = passInfoRepository.findById(serialNumber)
-        val returnStatus = passInfo.map {
-            when (it.deviceLibraryIdentifier) {
-                null -> {
-                    passInfoRepository.save(it.copy(deviceLibraryIdentifier = null, pushToken = null))
-
-                    HttpStatus.OK
-                }
-                deviceLibraryIdentifier -> HttpStatus.OK
-                else -> HttpStatus.UNAUTHORIZED
-            }
+        val registrations = registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
+            deviceLibraryIdentifier,
+            serialNumber
+        )
+        registrations.forEach {
+            registrationInfoRepository.delete(it)
         }
 
-        return ResponseEntity.status(returnStatus.get()).build()
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/log")

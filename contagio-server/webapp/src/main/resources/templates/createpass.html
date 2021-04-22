@@ -7,7 +7,9 @@
 <div class="container main createpass">
   <h1>Pass erzeugen</h1>
 
-  <form action="/createpass" method="POST" enctype="multipart/form-data">
+  <form id="createpassform" action="/createpass" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="command" id="command" value="">
+
     <div class="row">
       <div class="col-sm-12 col-lg-4">
         <div class="form-group">
@@ -29,8 +31,6 @@
           <label for="email">E-Mail</label>
           <input class="form-control" type="text" name="email" id="email" value="hugo@bla.de">
         </div>
-
-
       </div>
 
       <div class="col-sm-12 col-lg-4">
@@ -94,7 +94,9 @@
 
     <div class="row">
       <div class="col">
-        <input class="btn btn-primary" type="submit" value="Erzeugen">
+        <button class="btn btn-danger" onclick="$('.createpass #command').val('create')">Erzeugen</button>
+        <button class="btn btn-primary" onclick="$('.createpass #command').val('preview')">Vorschau</button>
+        <a href="/overview" class="btn btn-secondary">Abbrechen</a>
       </div>
     </div>
   </form>

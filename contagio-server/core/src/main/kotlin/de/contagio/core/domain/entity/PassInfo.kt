@@ -151,9 +151,7 @@ data class PassInfo(
     val passId: String? = null,
     val validUntil: LocalDateTime? = null,
     val installed: LocalDateTime? = null,
-    val version: Int = 0,
-    val deviceLibraryIdentifier: String? = null,
-    val pushToken: String? = null
+    val version: Int = 0
 ) {
     companion object {
         fun build(
@@ -183,3 +181,7 @@ data class PassInfo(
 
     val updated: LocalDateTime get() = modified ?: created
 }
+
+data class DeviceInfo(@Id val deviceLibraryIdentifier:String, val pushToken:String, val created: LocalDateTime = LocalDateTime.now())
+
+data class RegistrationInfo(val deviceLibraryIdentifier:String, val serialNumber:String, val created: LocalDateTime = LocalDateTime.now())

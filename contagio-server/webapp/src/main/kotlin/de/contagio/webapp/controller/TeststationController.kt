@@ -2,11 +2,6 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.core.domain.entity.IssueStatus
-import de.contagio.core.domain.entity.TestResultType
-import de.contagio.webapp.repository.mongodb.PassImageRepository
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
-import de.contagio.webapp.repository.mongodb.PassRepository
 import de.contagio.webapp.repository.mongodb.TeststationRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -17,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import springfox.documentation.annotations.ApiIgnore
-import java.time.LocalDateTime
 
 @ApiIgnore
 @Controller
