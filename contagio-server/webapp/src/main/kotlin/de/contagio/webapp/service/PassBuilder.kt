@@ -24,7 +24,10 @@ class PassBuilder(
         passInfo: PassInfo,
         teststation: Teststation,
         passImage: PassImage,
-        passType: PassType = PassType.GENERIC
+        passType: PassType = PassType.GENERIC,
+        labelColor: String = contagioProperties.pass.labelColor,
+        foregroundColor: String = contagioProperties.pass.foregroundColor,
+        backgroundColor: String = contagioProperties.pass.backgroundColor
     ): ByteArray? {
         val createPass = CreatePass(
             teamIdentifier = contagioProperties.pass.teamIdentifier,
@@ -38,9 +41,9 @@ class PassBuilder(
             description = contagioProperties.pass.description,
             logoText = contagioProperties.pass.logoText,
             passType = passType,
-            labelColor = contagioProperties.pass.labelColor,
-            foregroundColor = contagioProperties.pass.foregroundColor,
-            backgroundColor = contagioProperties.pass.backgroundColor
+            labelColor = labelColor,
+            foregroundColor = foregroundColor,
+            backgroundColor = backgroundColor
         )
 
         return createPass.buildSignedPassPayload(

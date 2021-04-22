@@ -99,7 +99,10 @@ open class PassService(
         testerId: String,
         testResult: TestResultType,
         testType: TestType,
-        passType: PassType
+        passType: PassType,
+        labelColor: String,
+        foregroundColor: String,
+        backgroundColor: String
     ): CreatePassResponse {
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
@@ -126,7 +129,8 @@ open class PassService(
                 passInfo,
                 teststation.get(),
                 result.passImage,
-                passType
+                passType,
+                labelColor, foregroundColor, backgroundColor
             )?.let {
                 result = result.copy(pkPass = it)
             }
@@ -145,20 +149,20 @@ open class PassService(
         testerId: String,
         testResult: TestResultType,
         testType: TestType,
-        passType: PassType = PassType.COUPON
+        passType: PassType = PassType.COUPON,
+        labelColor: String = contagioProperties.pass.labelColor,
+        foregroundColor: String = contagioProperties.pass.foregroundColor,
+        backgroundColor: String = contagioProperties.pass.backgroundColor
     ): CreatePassResponse {
 
         var cpr = createPass(
             image,
-            firstName,
-            lastName,
-            phoneNo,
-            email,
-            teststationId,
-            testerId,
-            testResult,
-            testType,
-            passType
+            firstName, lastName,
+            phoneNo, email,
+            teststationId, testerId,
+            testResult, testType,
+            passType,
+            labelColor, foregroundColor, backgroundColor
         )
 
         if (cpr.pkPass != null) {

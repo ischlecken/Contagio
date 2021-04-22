@@ -40,7 +40,10 @@ open class CreatePassController(private val passService: PassService) {
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType,
-        @RequestParam passType: PassType
+        @RequestParam passType: PassType,
+        @RequestParam labelColor: String,
+        @RequestParam foregroundColor: String,
+        @RequestParam backgroundColor: String
     ): ResponseEntity<ByteArray> {
 
         logger.debug("createPass(command=$command)")
@@ -60,7 +63,8 @@ open class CreatePassController(private val passService: PassService) {
                     phoneNo, email,
                     teststationId, testerId,
                     testResult, testType,
-                    passType
+                    passType,
+                    labelColor, foregroundColor, backgroundColor
                 )
 
                 if (cpr.pkPass != null && cpr.pkPass.isNotEmpty())
@@ -79,7 +83,8 @@ open class CreatePassController(private val passService: PassService) {
                     phoneNo, email,
                     teststationId, testerId,
                     testResult, testType,
-                    passType
+                    passType,
+                    labelColor, foregroundColor, backgroundColor
                 )
 
                 val headers = HttpHeaders()
