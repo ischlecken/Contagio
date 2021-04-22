@@ -2,7 +2,6 @@ package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.usecase.CreatePass
-import de.contagio.core.usecase.CreatePassParameter
 import de.contagio.webapp.model.properties.ContagioProperties
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
@@ -37,6 +36,8 @@ class PassBuilder(
         )
 
         val createPassParameter = CreatePassParameter(
+            passInfo = passInfo,
+            teststation = teststation,
             organisationName = contagioProperties.pass.organisationName,
             description = contagioProperties.pass.description,
             logoText = contagioProperties.pass.logoText,
@@ -52,7 +53,7 @@ class PassBuilder(
             contagioProperties.pass.privateKeyPassword,
             passImage,
             passType,
-            createPass.build(passInfo, teststation, createPassParameter)
+            createPass.build(createPassParameter)
         )
     }
 

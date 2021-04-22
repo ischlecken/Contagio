@@ -21,17 +21,6 @@ private val logger = LoggerFactory.getLogger(CreatePass::class.java)
 // DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT)
 private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+02:00'")
 
-
-data class CreatePassParameter(
-    val organisationName: String,
-    val description: String,
-    val logoText: String,
-    val passType: PassType = PassType.GENERIC,
-    val labelColor: String,
-    val foregroundColor: String,
-    val backgroundColor: String
-)
-
 class CreatePass(
     private val teamIdentifier: String,
     private val passTypeIdentifier: String,
@@ -39,30 +28,8 @@ class CreatePass(
     private val baseUrl: String
 ) {
 
-    fun build(passInfo: PassInfo, teststation: Teststation, createPassParameter: CreatePassParameter): PKPass {
-        val pass = PKPass()
-
-        val validUntilFormatted = passInfo.validUntil?.format(dateTimeFormatter)
-
-        pass.passTypeIdentifier = this.passTypeIdentifier
-        pass.teamIdentifier = this.teamIdentifier
-        pass.serialNumber = passInfo.serialNumber
-        pass.webServiceURL = URL("$baseUrl/co_v1/wallet/")
-        pass.authenticationToken = this.authenticationToken
-        pass.isSharingProhibited = true
-
-        if (passInfo.validUntil != null)
-            pass.expirationDate = Date.from(passInfo.validUntil.atZone(ZoneId.systemDefault()).toInstant())
-
-        pass.labelColor = createPassParameter.labelColor
-        pass.foregroundColor = createPassParameter.foregroundColor
-        pass.backgroundColor = createPassParameter.backgroundColor
-
-        pass.organizationName = createPassParameter.organisationName
-        pass.description = createPassParameter.description
-        pass.logoText = createPassParameter.logoText
-
-        pass.addBarcode("$baseUrl/showpass?serialNumber=${passInfo.serialNumber}")
+    fun build(createPassParameter: CreatePassParameter): PKPass {
+        val pass = initCorePass(createPassParameter)
 
         val generic = when (createPassParameter.passType) {
             PassType.GENERIC -> PKGenericPass()
@@ -71,68 +38,11 @@ class CreatePass(
             PassType.STORE -> PKStoreCard()
         }
 
-        if (passInfo.issueStatus == IssueStatus.SIGNED)
-            generic.headerFields = listOf(PKField("testType", null, "TESTTYPE_${passInfo.testType.name}"))
-        else
-            generic.headerFields = listOf(PKField("issueStatus", null, "ISSUESTATUS_${passInfo.issueStatus.name}"))
-
-        when (createPassParameter.passType) {
-            PassType.COUPON -> generic.primaryFields = listOf(
-                PKField("testResult", "TESTRESULT_${passInfo.testResult.name}", "")
-            )
-            else -> generic.primaryFields = listOf(
-                PKField("fullName", "FULLNAME", passInfo.person.fullName)
-            )
-        }
-
-        val secondaryFields = mutableListOf<PKField>()
-        if (createPassParameter.passType == PassType.COUPON)
-            secondaryFields.add(PKField("fullName", "FULLNAME", passInfo.person.fullName))
-        else
-            secondaryFields.add(PKField("testResult", "TESTRESULT", "TESTRESULT_${passInfo.testResult.name}"))
-
-        if (validUntilFormatted != null && passInfo.testResult != TestResultType.UNKNOWN) {
-            val validUntilField = PKField("validUntil", "VALIDUNTIL", validUntilFormatted)
-            validUntilField.dateStyle = PKDateStyle.PKDateStyleMedium
-            validUntilField.timeStyle = PKDateStyle.PKDateStyleShort
-            validUntilField.isRelative = true
-
-            secondaryFields.add(validUntilField)
-        }
-
-        val auxiliaryFields = mutableListOf<PKField>()
-        auxiliaryFields.add(PKField("teststation", "TESTSTATION", teststation.name))
-
-        val backFields = mutableListOf<PKField>()
-        if (!passInfo.person.email.isNullOrEmpty())
-            backFields.add(PKField("email", "EMAIL", passInfo.person.email))
-
-        if (!passInfo.person.phoneNo.isNullOrEmpty())
-            backFields.add(PKField("phoneNo", "PHONENO", passInfo.person.phoneNo))
-
-        backFields.add(PKField("teststationId", "TESTSTATIONID", passInfo.teststationId))
-        backFields.add(PKField("testerId", "TESTERID", passInfo.testerId))
-
-        if (validUntilFormatted != null) {
-            val validUntilField1 = PKField("validUntil1", "VALIDUNTIL", validUntilFormatted)
-            validUntilField1.dateStyle = PKDateStyle.PKDateStyleMedium
-            validUntilField1.timeStyle = PKDateStyle.PKDateStyleShort
-            backFields.add(validUntilField1)
-        }
-
-        backFields.add(
-            PKField(
-                "showPassUrl",
-                "SHOWPASSURL",
-                "${baseUrl}/showpass?serialNumber=${passInfo.serialNumber}"
-            )
-        )
-
-        backFields.add(PKField("terms", "TERMSCONDITIONS", "TERMSCONDITIONS_VALUE"))
-
-        generic.secondaryFields = secondaryFields
-        generic.auxiliaryFields = auxiliaryFields
-        generic.backFields = backFields
+        generic.headerFields = createHeaderFields(createPassParameter)
+        generic.primaryFields = createPrimaryFields(createPassParameter)
+        generic.secondaryFields = createSecondaryFields(createPassParameter)
+        generic.auxiliaryFields = createAuxiliaryFields(createPassParameter)
+        generic.backFields = createBackfields(createPassParameter)
 
         when (createPassParameter.passType) {
             PassType.GENERIC -> pass.generic = generic
@@ -144,6 +54,127 @@ class CreatePass(
         logger.debug("CreatePass() pass=$pass")
 
         return pass
+    }
+
+    private fun initCorePass(createPassParameter: CreatePassParameter): PKPass {
+        val pass = PKPass()
+
+        pass.passTypeIdentifier = this.passTypeIdentifier
+        pass.teamIdentifier = this.teamIdentifier
+        pass.serialNumber = createPassParameter.passInfo.serialNumber
+        pass.webServiceURL = URL("$baseUrl/co_v1/wallet/")
+        pass.authenticationToken = this.authenticationToken
+        pass.isSharingProhibited = true
+
+        if (createPassParameter.passInfo.validUntil != null)
+            pass.expirationDate =
+                Date.from(createPassParameter.passInfo.validUntil.atZone(ZoneId.systemDefault()).toInstant())
+
+        pass.labelColor = createPassParameter.labelColor
+        pass.foregroundColor = createPassParameter.foregroundColor
+        pass.backgroundColor = createPassParameter.backgroundColor
+
+        pass.organizationName = createPassParameter.organisationName
+        pass.description = createPassParameter.description
+        pass.logoText = createPassParameter.logoText
+
+        pass.addBarcode("$baseUrl/showpass?serialNumber=${createPassParameter.passInfo.serialNumber}")
+
+        return pass
+    }
+
+    private fun createHeaderFields(createPassParameter: CreatePassParameter): List<PKField> {
+        val fields = mutableListOf<PKField>()
+
+        if (createPassParameter.passInfo.issueStatus == IssueStatus.SIGNED)
+            fields.add(PKField("testType", null, "TESTTYPE_${createPassParameter.passInfo.testType.name}"))
+        else
+            fields.add(PKField("issueStatus", null, "ISSUESTATUS_${createPassParameter.passInfo.issueStatus.name}"))
+
+        return fields
+    }
+
+    private fun createPrimaryFields(createPassParameter: CreatePassParameter): List<PKField> {
+        val fields = mutableListOf<PKField>()
+
+        when (createPassParameter.passType) {
+            PassType.COUPON -> fields.add(
+                PKField("testResult", "TESTRESULT_${createPassParameter.passInfo.testResult.name}", "")
+            )
+            else -> fields.add(
+                PKField("fullName", "FULLNAME", createPassParameter.passInfo.person.fullName)
+            )
+        }
+
+        return fields
+    }
+
+    private fun createSecondaryFields(createPassParameter: CreatePassParameter): List<PKField> {
+        val fields = mutableListOf<PKField>()
+
+        if (createPassParameter.passType == PassType.COUPON)
+            fields.add(PKField("fullName", "FULLNAME", createPassParameter.passInfo.person.fullName))
+        else
+            fields.add(
+                PKField(
+                    "testResult",
+                    "TESTRESULT",
+                    "TESTRESULT_${createPassParameter.passInfo.testResult.name}"
+                )
+            )
+
+        val validUntilFormatted = createPassParameter.passInfo.validUntil?.format(dateTimeFormatter)
+        if (validUntilFormatted != null && createPassParameter.passInfo.testResult != TestResultType.UNKNOWN) {
+            val validUntilField = PKField("validUntil", "VALIDUNTIL", validUntilFormatted)
+            validUntilField.dateStyle = PKDateStyle.PKDateStyleMedium
+            validUntilField.timeStyle = PKDateStyle.PKDateStyleShort
+            validUntilField.isRelative = true
+
+            fields.add(validUntilField)
+        }
+
+        return fields
+    }
+
+    private fun createAuxiliaryFields(createPassParameter: CreatePassParameter): List<PKField> {
+        val fields = mutableListOf<PKField>()
+
+        fields.add(PKField("teststation", "TESTSTATION", createPassParameter.teststation.name))
+
+        return fields
+    }
+
+    private fun createBackfields(createPassParameter: CreatePassParameter): List<PKField> {
+        val validUntilFormatted = createPassParameter.passInfo.validUntil?.format(dateTimeFormatter)
+
+        val fields = mutableListOf<PKField>()
+        if (!createPassParameter.passInfo.person.email.isNullOrEmpty())
+            fields.add(PKField("email", "EMAIL", createPassParameter.passInfo.person.email))
+
+        if (!createPassParameter.passInfo.person.phoneNo.isNullOrEmpty())
+            fields.add(PKField("phoneNo", "PHONENO", createPassParameter.passInfo.person.phoneNo))
+
+        fields.add(PKField("teststationId", "TESTSTATIONID", createPassParameter.passInfo.teststationId))
+        fields.add(PKField("testerId", "TESTERID", createPassParameter.passInfo.testerId))
+
+        if (validUntilFormatted != null) {
+            val validUntilField1 = PKField("validUntil1", "VALIDUNTIL", validUntilFormatted)
+            validUntilField1.dateStyle = PKDateStyle.PKDateStyleMedium
+            validUntilField1.timeStyle = PKDateStyle.PKDateStyleShort
+            fields.add(validUntilField1)
+        }
+
+        fields.add(
+            PKField(
+                "showPassUrl",
+                "SHOWPASSURL",
+                "${baseUrl}/showpass?serialNumber=${createPassParameter.passInfo.serialNumber}"
+            )
+        )
+
+        fields.add(PKField("terms", "TERMSCONDITIONS", "TERMSCONDITIONS_VALUE"))
+
+        return fields
     }
 
     fun buildSignedPassPayload(

@@ -185,3 +185,16 @@ data class PassInfo(
 data class DeviceInfo(@Id val deviceLibraryIdentifier:String, val pushToken:String, val created: LocalDateTime = LocalDateTime.now())
 
 data class RegistrationInfo(val deviceLibraryIdentifier:String, val serialNumber:String, val created: LocalDateTime = LocalDateTime.now())
+
+
+data class CreatePassParameter(
+    val passInfo: PassInfo,
+    val teststation: Teststation,
+    val organisationName: String,
+    val description: String,
+    val logoText: String,
+    val passType: PassType = PassType.GENERIC,
+    val labelColor: String,
+    val foregroundColor: String,
+    val backgroundColor: String
+)

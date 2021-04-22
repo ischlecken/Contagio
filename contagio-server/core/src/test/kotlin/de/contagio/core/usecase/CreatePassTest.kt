@@ -18,20 +18,24 @@ class CreatePassTest {
 
         val person = Person(firstName = "Hugo", lastName = "Schlecken")
         val pass = createPass.build(
-            PassInfo(
-                serialNumber = "123",
-                person = person,
-                passId = "123",
-                imageId = "456",
-                authToken = "abc",
-                testResult = TestResultType.NEGATIVE,
-                testType = TestType.RAPIDTEST,
-                issueStatus = IssueStatus.CREATED,
-                teststationId = "1",
-                testerId = "1"
-            ),
-            Teststation(id = "1","Teststation",address = Address(city="Blacity",zipcode = "1234")),
             CreatePassParameter(
+                passInfo = PassInfo(
+                    serialNumber = "123",
+                    person = person,
+                    passId = "123",
+                    imageId = "456",
+                    authToken = "abc",
+                    testResult = TestResultType.NEGATIVE,
+                    testType = TestType.RAPIDTEST,
+                    issueStatus = IssueStatus.CREATED,
+                    teststationId = "1",
+                    testerId = "1"
+                ),
+                teststation = Teststation(
+                    id = "1",
+                    "Teststation",
+                    address = Address(city = "Blacity", zipcode = "1234")
+                ),
                 organisationName = "hugo",
                 description = "bla",
                 logoText = "fasel",
