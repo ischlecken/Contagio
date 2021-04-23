@@ -3,6 +3,12 @@
 * **Teststation iOS App**
 * **contagio-server**
 
+# Starten
+mit docker-compose
+```
+docker-compose -p contagio up -d
+```
+
 # Contagio Server
 
 ## Spring Boot Konfigurieren für https

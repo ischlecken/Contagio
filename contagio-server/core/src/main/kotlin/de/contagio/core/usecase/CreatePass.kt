@@ -184,8 +184,8 @@ class CreatePass(
         passType: PassType,
         pass: PKPass
     ): ByteArray? {
-        val appleWWDRCA = "certs/AppleWWDRCA.cer"
         val privateKeyPath = "certs/$keyName.p12"
+        val appleWWDRCA = "certs/AppleWWDRCA.cer"
         var result: ByteArray? = null
 
         try {

@@ -3,16 +3,19 @@ services:
   mongodb:
     image: mongo:4.4.4
     ports:
-      - "13014:13014"
+      - "13014:27017"
+    volumes:
+    - mongo-data:/data/db
   server:
     build:
       context: ./contagio-server
-      dockerfile: Dockerfile-server
+      dockerfile: Dockerfile
     depends_on:
       - mongodb
     ports:
       - "13013:13013"
     environment:
       ACTIVE_PROFILE: stt
-      MONGODB_URI: mongodb://mongodb:13014
-  
+      MONGODB_URI: mongodb://mongodb:27017
+volumes:
+  mongo-data:

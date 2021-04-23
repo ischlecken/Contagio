@@ -2,12 +2,15 @@
 
 package de.contagio.webapp.controller
 
+import de.brendamour.jpasskit.util.CertUtils
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.webapp.restcontroller.pkpassMediatype
 import de.contagio.webapp.service.PassService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -25,8 +28,19 @@ private var logger = LoggerFactory.getLogger(CreatePassController::class.java)
 @Controller
 open class CreatePassController(private val passService: PassService) {
 
+    @Value("classpath:certs/pass.p12")
+    private lateinit var passKeystore: Resource
+
     @GetMapping("/createpass")
-    open fun createPass() = "createpass"
+    open fun createPass(): String {
+        logger.debug("createPass()")
+        logger.debug("  passKeystore=${passKeystore.url} ${passKeystore.filename}")
+
+        val passUrl = CertUtils::class.java.classLoader.getResource("certs/pass.p12")
+        logger.debug("  passUrl=${passUrl}")
+
+        return "createpass"
+    }
 
     @PostMapping("/createpass")
     open fun createPass(
@@ -45,8 +59,6 @@ open class CreatePassController(private val passService: PassService) {
         @RequestParam foregroundColor: String,
         @RequestParam backgroundColor: String
     ): ResponseEntity<ByteArray> {
-
-        logger.debug("createPass(command=$command)")
 
         if (command.isEmpty() || !(command == "preview" || command == "create")) {
             val headers = HttpHeaders()
