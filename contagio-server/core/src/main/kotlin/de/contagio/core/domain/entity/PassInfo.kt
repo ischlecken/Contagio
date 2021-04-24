@@ -3,6 +3,9 @@ package de.contagio.core.domain.entity
 import de.contagio.core.domain.port.IUIDGenerator
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 enum class TestResultType {
     UNKNOWN, POSITIVE, NEGATIVE
@@ -180,11 +183,20 @@ data class PassInfo(
     }
 
     val updated: LocalDateTime get() = modified ?: created
+    val updatedUTC get() = ZonedDateTime.ofInstant(updated, ZoneOffset.of("+02:00"), ZoneId.of("GMT"))
 }
 
-data class DeviceInfo(@Id val deviceLibraryIdentifier:String, val pushToken:String, val created: LocalDateTime = LocalDateTime.now())
+data class DeviceInfo(
+    @Id val deviceLibraryIdentifier: String,
+    val pushToken: String,
+    val created: LocalDateTime = LocalDateTime.now()
+)
 
-data class RegistrationInfo(val deviceLibraryIdentifier:String, val serialNumber:String, val created: LocalDateTime = LocalDateTime.now())
+data class RegistrationInfo(
+    val deviceLibraryIdentifier: String,
+    val serialNumber: String,
+    val created: LocalDateTime = LocalDateTime.now()
+)
 
 
 data class CreatePassParameter(

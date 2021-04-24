@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -30,19 +31,21 @@ open class WalletRestController(
     private val contagioProperties: ContagioProperties
 ) {
 
-    @PostMapping("/passes/{passTypeIdentifier}/{serialNumber}")
+    private val lastModifiedDateTimeFormatter =
+        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
+
+    @GetMapping("/passes/{passTypeIdentifier}/{serialNumber}")
     open fun getPass(
-        @RequestBody walletRegistration: WalletRegistration,
         @PathVariable passTypeIdentifier: String,
         @PathVariable serialNumber: String
     ): ResponseEntity<ByteArray> {
-        logger.debug("getPass(serialNumber=${serialNumber}): pushToken=${walletRegistration.pushToken}")
+        logger.debug("getPass(serialNumber=${serialNumber})")
 
         if (passTypeIdentifier != contagioProperties.pass.passTypeId)
             return ResponseEntity.badRequest().build()
 
-        val pass = passInfoRepository
-            .findById(serialNumber)
+        val passInfo = passInfoRepository.findById(serialNumber)
+        val pass = passInfo
             .flatMap {
                 if (!it.passId.isNullOrEmpty())
                     passRepository.findById(it.passId!!)
@@ -50,9 +53,17 @@ open class WalletRestController(
                     Optional.empty()
             }
 
-        return if (pass.isPresent)
-            ResponseEntity.ok().contentType(pkpassMediatype).body(pass.get().data)
-        else
+        return if (pass.isPresent) {
+            val lastModified = lastModifiedDateTimeFormatter.format(passInfo.get().updatedUTC)
+
+            logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
+
+            ResponseEntity
+                .ok()
+                .header("Last-Modified", lastModified)
+                .contentType(pkpassMediatype)
+                .body(pass.get().data)
+        } else
             ResponseEntity.notFound().build()
     }
 
@@ -94,7 +105,7 @@ open class WalletRestController(
             serialNumber
         )
         var returnStatus = HttpStatus.OK
-        if( registrations.isEmpty()) {
+        if (registrations.isEmpty()) {
             registrationInfoRepository.save(
                 RegistrationInfo(
                     deviceLibraryIdentifier = deviceLibraryIdentifier,
@@ -139,7 +150,7 @@ open class WalletRestController(
 
     @PostMapping("/log")
     open fun logErrors(@RequestBody walletLog: WalletLog): ResponseEntity<Void> {
-        logger.debug("logErrors(walletLog=$walletLog)")
+        logger.debug("logErrors(${walletLog.logs})")
 
         return ResponseEntity.ok().build()
     }
