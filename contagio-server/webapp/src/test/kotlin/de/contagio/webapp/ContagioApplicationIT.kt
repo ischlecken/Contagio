@@ -5,8 +5,8 @@ import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-@SpringBootTest
-@ActiveProfiles(profiles = ["buildinfo","integrationtest"])
+//@SpringBootTest
+//@ActiveProfiles(profiles = ["buildinfo","integrationtest"])
 class ContagioApplicationIT {
 
     @Test

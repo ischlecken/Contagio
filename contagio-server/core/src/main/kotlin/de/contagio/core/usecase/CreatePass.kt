@@ -100,7 +100,7 @@ class CreatePass(
 
         when (createPassParameter.passType) {
             PassType.COUPON -> fields.add(
-                PKField("testResult", "TESTRESULT_${createPassParameter.passInfo.testResult.name}", "")
+                PKField("testResult", "TESTRESULT", "TESTRESULT_${createPassParameter.passInfo.testResult.name}")
             )
             else -> fields.add(
                 PKField("fullName", "FULLNAME", createPassParameter.passInfo.person.fullName)

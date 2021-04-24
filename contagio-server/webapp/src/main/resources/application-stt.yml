@@ -8,7 +8,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: "mongodb://dvm1:27017"
+      uri: "mongodb://dvm1:13014"
 
 contagio:
   baseUrl: "https://efeu.fritz.box:13013"
