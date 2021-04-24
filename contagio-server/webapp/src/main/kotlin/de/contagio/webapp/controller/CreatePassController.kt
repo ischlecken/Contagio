@@ -2,15 +2,11 @@
 
 package de.contagio.webapp.controller
 
-import de.brendamour.jpasskit.util.CertUtils
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.webapp.restcontroller.pkpassMediatype
 import de.contagio.webapp.service.PassService
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,26 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 import springfox.documentation.annotations.ApiIgnore
 
-
-private var logger = LoggerFactory.getLogger(CreatePassController::class.java)
-
 @ApiIgnore
 @Controller
 open class CreatePassController(private val passService: PassService) {
 
-    @Value("classpath:certs/pass.p12")
-    private lateinit var passKeystore: Resource
+
 
     @GetMapping("/createpass")
-    open fun createPass(): String {
-        logger.debug("createPass()")
-        logger.debug("  passKeystore=${passKeystore.url} ${passKeystore.filename}")
-
-        val passUrl = CertUtils::class.java.classLoader.getResource("certs/pass.p12")
-        logger.debug("  passUrl=${passUrl}")
-
-        return "createpass"
-    }
+    open fun createPass()=  "createpass"
 
     @PostMapping("/createpass")
     open fun createPass(
@@ -82,7 +66,7 @@ open class CreatePassController(private val passService: PassService) {
                 if (cpr.pkPass != null && cpr.pkPass.isNotEmpty())
                     ResponseEntity
                         .ok()
-                        .header("Content-Disposition", "attachment; filename=\"${cpr.passInfo.passId}.pkpass\"")
+                        .header("Content-Disposition", "attachment; filename=\"preview.pkpass\"")
                         .contentType(pkpassMediatype)
                         .body(cpr.pkPass)
                 else

@@ -11,6 +11,7 @@ import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil
 import de.contagio.core.domain.entity.*
 import org.slf4j.LoggerFactory
+import java.io.InputStream
 import java.net.URL
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -178,21 +179,20 @@ class CreatePass(
     }
 
     fun buildSignedPassPayload(
-        keyName: String,
-        privateKeyPassword: String,
+        keystore: InputStream,
+        keystorePassword: String,
         passImage: PassImage,
         passType: PassType,
-        pass: PKPass
+        pass: PKPass,
+        appleWWDRCA: InputStream
     ): ByteArray? {
-        val privateKeyPath = "certs/$keyName.p12"
-        val appleWWDRCA = "certs/AppleWWDRCA.cer"
         var result: ByteArray? = null
 
         try {
             val pkSigningInformation =
                 PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                    privateKeyPath,
-                    privateKeyPassword,
+                    keystore,
+                    keystorePassword,
                     appleWWDRCA
                 )
 

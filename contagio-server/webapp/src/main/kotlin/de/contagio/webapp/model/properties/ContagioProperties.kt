@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 data class SignProperties(
-    val keystore: String,
     val keyname: String,
     val password: String
 )
@@ -15,8 +14,7 @@ data class PassProperties(
     val logoText: String,
     val teamIdentifier: String,
     val passTypeId: String,
-    val keyName: String,
-    val privateKeyPassword: String,
+    val keystorePassword: String,
 
     val labelColor: String,
     val foregroundColor: String,
