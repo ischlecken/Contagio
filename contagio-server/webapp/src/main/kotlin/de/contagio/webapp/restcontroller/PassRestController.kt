@@ -7,7 +7,7 @@ import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
-import de.contagio.webapp.service.PassBuilder
+import de.contagio.webapp.service.PassBuilderService
 import de.contagio.webapp.service.PassService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -29,7 +29,7 @@ open class PassRestController(
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
     private val passService: PassService,
-    private val passBuilder: PassBuilder
+    private val passBuilderService: PassBuilderService
 ) {
 
 
@@ -110,7 +110,7 @@ open class PassRestController(
             return ResponseEntity.notFound().build()
 
         return if (signature == true) {
-            val s = passBuilder.sign(result.get())
+            val s = passBuilderService.sign(result.get())
 
             if (s != null)
                 ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)

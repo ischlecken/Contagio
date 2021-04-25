@@ -4,12 +4,15 @@
 * **contagio-server**
 
 # Starten
-mit docker-compose
+Mit Docker Compose MongoDB und Server starten
 ```
 docker-compose -p contagio up -d
 ```
 
 # Contagio Server
+
+##
+Beschreibung fehlt, wie man an das passende Zertifikat kommt zum Signieren des Passes
 
 ## Spring Boot Konfigurieren für https
 ```
@@ -30,7 +33,17 @@ auf macos /etc/hosts editieren
 ## Mongodb
 MongoDb in Dockercontainer starten
 ```
-docker run -d --name mongodb -p 27017:27017 mongo:4.4.4
+docker-compose -p contagio up -d mongodb
+```
+
+MongoDb in Dockercontainer stoppen
+```
+docker-compose -p contagio down
+```
+
+MongoDb in Dockercontainer stoppen und Daten löschen
+```
+docker-compose -p contagio down -v
 ```
 
 # Links

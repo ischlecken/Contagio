@@ -5,10 +5,7 @@ import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassResponse
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
-import de.contagio.webapp.repository.mongodb.PassImageRepository
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
-import de.contagio.webapp.repository.mongodb.PassRepository
-import de.contagio.webapp.repository.mongodb.TeststationRepository
+import de.contagio.webapp.repository.mongodb.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -22,8 +19,9 @@ open class PassService(
     private val passInfoRepository: PassInfoRepository,
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
-    private val passBuilder: PassBuilder,
+    private val passBuilderService: PassBuilderService,
     private val teststationRepository: TeststationRepository,
+    private val testerRepository: TesterRepository,
     private val contagioProperties: ContagioProperties
 ) {
 
@@ -45,11 +43,11 @@ open class PassService(
     }
 
     open fun negative(serialnumber: String) {
-        updateTestResult(serialnumber, TestResultType.NEGATIVE, IssueStatus.SIGNED)
+        updateTestResult(serialnumber, TestResultType.NEGATIVE, IssueStatus.ISSUED)
     }
 
     open fun positive(serialnumber: String) {
-        updateTestResult(serialnumber, TestResultType.POSITIVE, IssueStatus.SIGNED)
+        updateTestResult(serialnumber, TestResultType.POSITIVE, IssueStatus.ISSUED)
     }
 
     private fun updateTestResult(
@@ -71,12 +69,13 @@ open class PassService(
             val pass = passRepository.findById(passInfo.passId!!)
             val passImage = passImageRepository.findById(passInfo.imageId)
             val teststation = teststationRepository.findById(passInfo.teststationId)
-            if (teststation.isPresent && passImage.isPresent && pass.isPresent) {
-                passBuilder.buildPkPass(
+            val tester = testerRepository.findById(passInfo.testerId)
+            if (teststation.isPresent && tester.isPresent && passImage.isPresent && pass.isPresent) {
+                passBuilderService.buildPkPass(
+                    passImage.get(),
                     updatedPassInfo,
                     teststation.get(),
-                    passImage.get(),
-                    PassType.COUPON
+                    tester.get()
                 )?.let {
                     passRepository.save(pass.get().copy(data = it))
                     passInfoRepository.save(updatedPassInfo)
@@ -107,15 +106,22 @@ open class PassService(
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        val passInfo = PassInfo.build(
-            uidGenerator,
-            firstName, lastName,
-            phoneNo, email,
-            teststationId, testerId,
-            testResult, testType,
-        ).copy(
-            validUntil = LocalDateTime.now().plusDays(if (testType == TestType.VACCINATION) 10 else 3),
-            issueStatus = IssueStatus.SIGNED
+        val passInfo = PassInfo(
+            serialNumber = uidGenerator.generate(),
+            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
+            imageId = uidGenerator.generate(),
+            authToken = uidGenerator.generate(),
+            testResult = testResult,
+            testType = testType,
+            passType = passType,
+            issueStatus = IssueStatus.CREATED,
+            teststationId = teststationId,
+            testerId = testerId,
+            description = contagioProperties.pass.description,
+            logoText = contagioProperties.pass.logoText,
+            labelColor = labelColor,
+            foregroundColor = foregroundColor,
+            backgroundColor = backgroundColor
         )
 
         var result = CreatePassResponse(
@@ -124,13 +130,13 @@ open class PassService(
         )
 
         val teststation = teststationRepository.findById(teststationId)
-        if (teststation.isPresent) {
-            passBuilder.buildPkPass(
+        val tester = testerRepository.findById(testerId)
+        if (teststation.isPresent && tester.isPresent) {
+            passBuilderService.buildPkPass(
+                result.passImage,
                 passInfo,
                 teststation.get(),
-                result.passImage,
-                passType,
-                labelColor, foregroundColor, backgroundColor
+                tester.get()
             )?.let {
                 result = result.copy(pkPass = it)
             }
@@ -166,7 +172,12 @@ open class PassService(
         )
 
         if (cpr.pkPass != null) {
-            cpr = cpr.copy(passInfo = cpr.passInfo.copy(passId = uidGenerator.generate()))
+            cpr = cpr.copy(
+                passInfo = cpr.passInfo.copy(
+                    passId = uidGenerator.generate(),
+                    issueStatus = IssueStatus.ISSUED
+                )
+            )
 
             passRepository.save(Pass(id = cpr.passInfo.passId!!, data = cpr.pkPass!!))
             passImageRepository.save(cpr.passImage)
@@ -185,7 +196,7 @@ open class PassService(
         val result = passInfoRepository.findById(updatePassRequest.serialNumber)
 
         if (result.isPresent && updatePassRequest.testResult != null) {
-            return updateTestResult(updatePassRequest.serialNumber, updatePassRequest.testResult, IssueStatus.SIGNED)
+            return updateTestResult(updatePassRequest.serialNumber, updatePassRequest.testResult, IssueStatus.ISSUED)
         }
 
         return null

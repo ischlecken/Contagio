@@ -1,7 +1,7 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
-import de.contagio.core.usecase.CreatePass
+import de.contagio.core.usecase.PassBuilder
 import de.contagio.webapp.model.properties.ContagioProperties
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ import javax.crypto.Cipher
 private var logger = LoggerFactory.getLogger(PassBuilder::class.java)
 
 @Service
-class PassBuilder(
+class PassBuilderService(
     private val contagioProperties: ContagioProperties
 ) {
     @Value("classpath:certs/pass.p12")
@@ -29,41 +29,38 @@ class PassBuilder(
     private lateinit var contagioSignKeystore: Resource
 
     fun buildPkPass(
+        passImage: PassImage,
         passInfo: PassInfo,
         teststation: Teststation,
-        passImage: PassImage,
-        passType: PassType = PassType.GENERIC,
-        labelColor: String = contagioProperties.pass.labelColor,
-        foregroundColor: String = contagioProperties.pass.foregroundColor,
-        backgroundColor: String = contagioProperties.pass.backgroundColor
+        tester: Tester,
     ): ByteArray? {
-        val createPass = CreatePass(
+
+        val passCoreInfo = PassCoreInfo(
             teamIdentifier = contagioProperties.pass.teamIdentifier,
             passTypeIdentifier = contagioProperties.pass.passTypeId,
             authenticationToken = passInfo.authToken,
-            baseUrl = contagioProperties.baseUrl
+            baseUrl = contagioProperties.baseUrl,
+            organisationName = contagioProperties.pass.organisationName,
         )
 
-        val createPassParameter = CreatePassParameter(
+        val passSigningInfo = PassSigningInfo(
+            keystore = passKeystore.inputStream,
+            keystorePassword = contagioProperties.pass.keystorePassword,
+            appleWWDRCA = appleWWDRCA.inputStream
+        )
+
+        val passBuilderInfo = PassBuilderInfo(
+            passCoreInfo = passCoreInfo,
+            passSigningInfo = passSigningInfo,
+            passImage = passImage,
             passInfo = passInfo,
             teststation = teststation,
-            organisationName = contagioProperties.pass.organisationName,
-            description = contagioProperties.pass.description,
-            logoText = contagioProperties.pass.logoText,
-            passType = passType,
-            labelColor = labelColor,
-            foregroundColor = foregroundColor,
-            backgroundColor = backgroundColor
+            tester = tester
         )
 
-        return createPass.buildSignedPassPayload(
-            passKeystore.inputStream,
-            contagioProperties.pass.keystorePassword,
-            passImage,
-            passType,
-            createPass.build(createPassParameter),
-            appleWWDRCA.inputStream
-        )
+        val passBuilderResult = PassBuilder(passBuilderInfo).build()
+
+        return passBuilderResult.pass
     }
 
     fun sign(pass: Pass): ByteArray? {

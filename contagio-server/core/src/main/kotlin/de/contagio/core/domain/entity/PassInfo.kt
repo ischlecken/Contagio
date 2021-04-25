@@ -1,6 +1,5 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IUIDGenerator
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -21,36 +20,13 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, SIGNED, EXPIRED, REVOKED, REFUSED, PENDING, FAILED, UNKNOWN
+    CREATED, ISSUED, EXPIRED, REVOKED, REFUSED
 }
 
 
-data class GeoPosition(
-    val latitude: String,
-    val longitude: String
-)
-
-data class Address(
-    val city: String,
-    val zipcode: String,
-    val street: String? = null,
-    val hno: String? = null,
-    val position: GeoPosition? = null,
-) {
-    val fullAddress: String
-        get() = "$zipcode $city, $street $hno"
+enum class PassInstallationStatus {
+    PENDING, INSTALLED, REMOVED
 }
-
-data class Person(
-    val firstName: String,
-    val lastName: String,
-    val phoneNo: String? = null,
-    val email: String? = null
-) {
-    val fullName: String
-        get() = "$firstName $lastName"
-}
-
 
 data class PassImage(
     @Id val id: String,
@@ -123,22 +99,6 @@ data class Pass(
 }
 
 
-data class Teststation(
-    @Id val id: String,
-    val name: String,
-    val address: Address,
-    val created: LocalDateTime = LocalDateTime.now()
-)
-
-
-data class Tester(
-    @Id val id: String,
-    val teststationId: String,
-    val person: Person,
-    val created: LocalDateTime = LocalDateTime.now()
-)
-
-
 data class PassInfo(
     @Id val serialNumber: String,
     val person: Person,
@@ -149,64 +109,23 @@ data class PassInfo(
     val testResult: TestResultType,
     val testType: TestType,
     val issueStatus: IssueStatus,
-    val created: LocalDateTime = LocalDateTime.now(),
-    val modified: LocalDateTime? = null,
-    val passId: String? = null,
-    val validUntil: LocalDateTime? = null,
-    val installed: LocalDateTime? = null,
-    val version: Int = 0
-) {
-    companion object {
-        fun build(
-            uidGenerator: IUIDGenerator,
-            firstName: String,
-            lastName: String,
-            phoneNo: String,
-            email: String?,
-            teststationId: String,
-            testerId: String,
-            testResult: TestResultType,
-            testType: TestType
-        ): PassInfo {
-            return PassInfo(
-                serialNumber = uidGenerator.generate(),
-                person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
-                imageId = uidGenerator.generate(),
-                authToken = uidGenerator.generate(),
-                testResult = testResult,
-                testType = testType,
-                issueStatus = IssueStatus.CREATED,
-                testerId = testerId,
-                teststationId = teststationId
-            )
-        }
-    }
-
-    val updated: LocalDateTime get() = modified ?: created
-    val updatedUTC get() = ZonedDateTime.ofInstant(updated, ZoneOffset.of("+02:00"), ZoneId.of("GMT"))
-}
-
-data class DeviceInfo(
-    @Id val deviceLibraryIdentifier: String,
-    val pushToken: String,
-    val created: LocalDateTime = LocalDateTime.now()
-)
-
-data class RegistrationInfo(
-    val deviceLibraryIdentifier: String,
-    val serialNumber: String,
-    val created: LocalDateTime = LocalDateTime.now()
-)
-
-
-data class CreatePassParameter(
-    val passInfo: PassInfo,
-    val teststation: Teststation,
-    val organisationName: String,
+    val passType: PassType,
     val description: String,
     val logoText: String,
-    val passType: PassType = PassType.GENERIC,
     val labelColor: String,
     val foregroundColor: String,
-    val backgroundColor: String
-)
+    val backgroundColor: String,
+    val passId: String? = null,
+    val passInstallationStatus: PassInstallationStatus = PassInstallationStatus.PENDING,
+    val version: Int = 0,
+    val created: LocalDateTime = LocalDateTime.now(),
+    val modified: LocalDateTime? = null,
+    val validUntil: LocalDateTime? = null,
+    val passInstalled: LocalDateTime? = null,
+    val passRemoved: LocalDateTime? = null
+
+) {
+    val updated: LocalDateTime get() = modified ?: created
+    val updatedUTC: ZonedDateTime get() = ZonedDateTime.ofInstant(updated, ZoneOffset.of("+02:00"), ZoneId.of("GMT"))
+}
+

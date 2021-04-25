@@ -6,6 +6,7 @@
 "TESTSTATION" = "Teststation";
 "TESTSTATIONADDRESS" = "Address";
 "TESTERID" = "Tester ID";
+"TESTERNAME" = "Tester Name";
 "TESTRESULT" = "Testresult";
 "TESTTYPE" = "Test";
 "VACCINATION" = "Vaccination";
@@ -20,13 +21,10 @@
 "TESTTYPE_VACCINATION" = "Vaccination";
 
 "ISSUESTATUS_CREATED" = "created";
-"ISSUESTATUS_SIGNED" = "issued";
+"ISSUESTATUS_ISSUED" = "issued";
 "ISSUESTATUS_EXPIRED" = "expired";
 "ISSUESTATUS_REVOKED" = "revoked";
 "ISSUESTATUS_REFUSED" = "refused";
-"ISSUESTATUS_PENDING" = "pending";
-"ISSUESTATUS_FAILED" = "failed";
-"ISSUESTATUS_UNKNOWN" = "unknown";
 
 "LOGO_TESTTYPE" = "TIL - Pass";
 "LOGO_TESTTYPE_RAPIDTEST" = "TIL - Pass";

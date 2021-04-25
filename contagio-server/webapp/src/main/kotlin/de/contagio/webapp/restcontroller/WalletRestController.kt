@@ -2,6 +2,7 @@ package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.entity.DeviceInfo
 import de.contagio.core.domain.entity.RegistrationInfo
+import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
 import de.contagio.webapp.model.WalletRegistration
@@ -30,6 +31,8 @@ open class WalletRestController(
     private val registrationInfoRepository: RegistrationInfoRepository,
     private val contagioProperties: ContagioProperties
 ) {
+
+    private val uidGenerator = UIDGenerator()
 
     private val lastModifiedDateTimeFormatter =
         DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
@@ -113,6 +116,7 @@ open class WalletRestController(
         if (registrations.isEmpty()) {
             registrationInfoRepository.save(
                 RegistrationInfo(
+                    id = uidGenerator.generate(),
                     deviceLibraryIdentifier = deviceLibraryIdentifier,
                     serialNumber = serialNumber
                 )
@@ -149,11 +153,11 @@ open class WalletRestController(
                 deviceLibraryIdentifier,
                 serialNumber
             )
-            /*
+
             registrations.forEach {
-                registrationInfoRepository.delete(it)
+                registrationInfoRepository.deleteById(it.id)
             }
-             */
+
         } catch (ex: Exception) {
             logger.error("Exception while unregister ${serialNumber}", ex)
         }
