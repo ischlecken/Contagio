@@ -12,6 +12,7 @@ RUN mvn -fn -Dmaven.test.failure.ignore=true clean install
 FROM openjdk:11.0.10-jdk
 LABEL maintainer="stefan.t42@gmx.de"
 LABEL description="The Contagio Server"
+LABEL org.opencontainers.image.source="https://github.com/ischlecken/contagio"
 
 COPY --from=0 webapp/target/contagio-server.jar /opt/contagio-server/contagio-server.jar
 COPY ./docker-entrypoint.sh /opt/contagio-server/docker-entrypoint.sh
