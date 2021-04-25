@@ -19,7 +19,7 @@ class TeststationEngine {
         
         let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
         
-        mcr.cert.updateIssueStatus(issueStatus:.pending)
+        mcr.cert.updateIssueStatus(issueStatus:.created)
         mcr.cert.managedObjectContext?.saveContext()
         
         let updatePassRequest = UpdatePassRequest(
@@ -44,7 +44,7 @@ class TeststationEngine {
                             return
                         }
                         
-                        cert.updateIssueStatus(issueStatus: .failed)
+                        cert.updateIssueStatus(issueStatus: .refused)
                         context.saveContext()
                     }
                 
@@ -77,7 +77,7 @@ class TeststationEngine {
         
         let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
         
-        certificate.updateIssueStatus(issueStatus:.pending)
+        certificate.updateIssueStatus(issueStatus:.created)
         certificate.managedObjectContext?.saveContext()
         
         let createPassRequest = CreatePassRequest(
@@ -108,7 +108,7 @@ class TeststationEngine {
                             return
                         }
                         
-                        cert.updateIssueStatus(issueStatus: .failed)
+                        cert.updateIssueStatus(issueStatus: .refused)
                         context.saveContext()
                     }
                 

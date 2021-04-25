@@ -18,16 +18,14 @@ enum CertificateType:Int8, CaseIterable {
 
 enum CertificateIssueStatus:Int8, CaseIterable {
     case created=0
-    case pending=1
-    case signed=2
-    case refused=3
-    case failed=4
-    case revoked=5
-    case expired=6
+    case issued=1
+    case refused=2
+    case revoked=3
+    case expired=4
     case unknown=42
     
     func isFinished() -> Bool {
-        return self == CertificateIssueStatus.signed || self == CertificateIssueStatus.refused || self == CertificateIssueStatus.failed
+        return self != CertificateIssueStatus.created
     }
 }
 

@@ -3,10 +3,11 @@
 "certificatestatus_2" = "positiv";
 
 "certificateissuestatus_0" = "erzeugt";
-"certificateissuestatus_1" = "ausstehend";
-"certificateissuestatus_2" = "ausgestellt";
-"certificateissuestatus_3" = "abgelehnt";
-"certificateissuestatus_4" = "fehlgeschlagen";
+"certificateissuestatus_1" = "ausgestellt";
+"certificateissuestatus_2" = "abgelehnt";
+"certificateissuestatus_3" = "zurückgezogen";
+"certificateissuestatus_4" = "ausgelaufen";
+
 
 "certificatetype_0" = "Schnelltest";
 "certificatetype_1" = "PCR-Test";

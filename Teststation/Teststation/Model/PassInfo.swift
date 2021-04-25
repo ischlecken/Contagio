@@ -51,26 +51,20 @@ enum TestType: String, CaseIterable, Codable {
 
 enum IssueStatus: String, CaseIterable, Codable {
     case CREATED = "CREATED"
-    case SIGNED = "SIGNED"
+    case ISSUED = "ISSUED"
     case EXPIRED = "EXPIRED"
     case REVOKED = "REVOKED"
     case REFUSED = "REFUSED"
-    case PENDING = "PENDING"
-    case FAILED = "FAILED"
     case UNKNOWN = "UNKNOWN"
     
     static func fromCertificateIssueStatus(issueStatus: CertificateIssueStatus) -> IssueStatus {
         switch issueStatus {
         case .created:
             return .CREATED
-        case .pending:
-            return .PENDING
-        case .signed:
-            return .SIGNED
+        case .issued:
+            return .ISSUED
         case .refused:
             return .REFUSED
-        case .failed:
-            return .FAILED
         case .revoked:
             return .REVOKED
         case .expired:
@@ -84,14 +78,10 @@ enum IssueStatus: String, CaseIterable, Codable {
         switch self {
         case .CREATED:
             return .created
-        case .PENDING:
-            return .pending
-        case .SIGNED:
-            return .signed
+        case .ISSUED:
+            return .issued
         case .REFUSED:
             return .refused
-        case .FAILED:
-            return .failed
         case .REVOKED:
             return .revoked
         case .EXPIRED:

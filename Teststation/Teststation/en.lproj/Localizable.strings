@@ -3,10 +3,10 @@
 "certificatestatus_2" = "positive";
 
 "certificateissuestatus_0" = "created";
-"certificateissuestatus_1" = "pending";
-"certificateissuestatus_2" = "issued";
-"certificateissuestatus_3" = "refused";
-"certificateissuestatus_4" = "failed";
+"certificateissuestatus_1" = "issued";
+"certificateissuestatus_2" = "refused";
+"certificateissuestatus_3" = "revoked";
+"certificateissuestatus_4" = "expired";
 
 "certificatetype_0" = "Rapid Test";
 "certificatetype_1" = "PCR Test";

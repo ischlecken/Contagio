@@ -2,8 +2,8 @@ import Foundation
 import Combine
 
 enum ContagioAPI {
-    static let contagioBaseURL = "https://efeu.local:13013/co_v1"
-    
+    //static let contagioBaseURL = "https://efeu.local:13013/co_v1"
+    static let contagioBaseURL = "https://contagio.sloppy.zone/co_v1"
     
     static func getTeststations() -> AnyPublisher<[Teststation], TeststationError> {
         let url = URL(string: "\(contagioBaseURL)/teststations")!
