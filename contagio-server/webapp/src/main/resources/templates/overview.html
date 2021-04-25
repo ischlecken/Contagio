@@ -50,6 +50,11 @@
                     class="fas fa-user-plus"></i></span>
                   </button>
                 </th:block>
+                <th:block th:if="${p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).REVOKED}">
+                  <button class="btn btn-danger" name="command" value="issue" type="submit"><span th:title="#{command.issue}"><i
+                    class="fas fa-undo"></i></span>
+                  </button>
+                </th:block>
               </form>
 
 

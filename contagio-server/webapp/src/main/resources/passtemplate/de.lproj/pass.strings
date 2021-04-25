@@ -6,8 +6,8 @@
 "TESTSTATION" = "Teststation";
 "TESTSTATIONADDRESS" = "Adresse";
 "TESTERID" = "Tester ID";
-"TESTERNAME" = "Tester Name";
-"TESTRESULT" = "Testresultat";
+"TESTERNAME" = "Name des Tester";
+"TESTRESULT" = "Testergebnis";
 "TESTTYPE" = "Test";
 "VACCINATION" = "Impfung";
 "SHOWPASSURL" = "Pass anzeigen";

@@ -38,16 +38,28 @@ open class PassService(
         }
     }
 
+    open fun issue(serialnumber: String) {
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            updateTestResult(serialnumber, passInfo.testResult, IssueStatus.ISSUED)
+        }
+    }
+
     open fun revoke(serialnumber: String) {
-        updateTestResult(serialnumber, TestResultType.UNKNOWN, IssueStatus.REVOKED)
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            updateTestResult(serialnumber, passInfo.testResult, IssueStatus.REVOKED)
+        }
     }
 
     open fun negative(serialnumber: String) {
-        updateTestResult(serialnumber, TestResultType.NEGATIVE, IssueStatus.ISSUED)
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            updateTestResult(serialnumber, TestResultType.NEGATIVE, passInfo.issueStatus)
+        }
     }
 
     open fun positive(serialnumber: String) {
-        updateTestResult(serialnumber, TestResultType.POSITIVE, IssueStatus.ISSUED)
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            updateTestResult(serialnumber, TestResultType.POSITIVE, passInfo.issueStatus)
+        }
     }
 
     private fun updateTestResult(
