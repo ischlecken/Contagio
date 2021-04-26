@@ -21,10 +21,17 @@ data class PassProperties(
     val backgroundColor: String,
 )
 
+data class UserProperties(
+    val name: String,
+    val password: String,
+    val roles: Collection<String>
+)
+
 @ConstructorBinding
 @ConfigurationProperties(prefix = "contagio")
 data class ContagioProperties(
     val baseUrl: String,
     val pass: PassProperties,
-    val sign: SignProperties
+    val sign: SignProperties,
+    val users: List<UserProperties>
 )

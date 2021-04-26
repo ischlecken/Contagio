@@ -16,6 +16,7 @@
 	<logger name="org.springframework.cache" level="DEBUG" />
 
 	<logger name="org.thymeleaf" level="WARN" />
+	<logger name="org.thymeleaf.extras.springsecurity5" level="DEBUG" />
 
 	<logger name="de.contagio" level="DEBUG" />
 

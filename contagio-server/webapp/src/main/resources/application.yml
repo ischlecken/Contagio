@@ -39,11 +39,6 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
-  security:
-    user:
-      name: con
-      password: con123
-
 contagio:
   baseUrl: "https://www.contagio.de"
 
@@ -61,6 +56,21 @@ contagio:
   sign:
     keyname: "contagiosign"
     password: "contagio"
+
+  users:
+    - name: conuser
+      password: conuser123
+      roles:
+        - USER
+    - name: conadmin
+      password: conadmin123
+      roles:
+        - USER
+        - ADMIN
+    - name: conapi
+      password: conapi123
+      roles:
+        - API
 
   bpRestapi:
     baseurl: "http://localhost:8080/restapi/api/gy/"

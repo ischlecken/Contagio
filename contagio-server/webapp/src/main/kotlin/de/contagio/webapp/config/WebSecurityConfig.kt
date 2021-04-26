@@ -1,5 +1,7 @@
 package de.contagio.webapp.config
 
+import de.contagio.webapp.model.properties.ContagioProperties
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -8,27 +10,33 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 
+private val logger = LoggerFactory.getLogger(WebSecurityConfig::class.java)
 
 @Configuration
 @EnableWebSecurity
-open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+open class WebSecurityConfig(private val contagioProperties: ContagioProperties) : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
         val encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 
-        auth
-            .inMemoryAuthentication()
-            .withUser("contagiouser")
-            .password(encoder.encode("contagiouser123"))
-            .roles("USER")
-            .and()
-            .withUser("contagioadmin")
-            .password(encoder.encode("contagioadmin123"))
-            .roles("USER", "ADMIN")
-            .and()
-            .withUser("contagioapi")
-            .password(encoder.encode("contagioapi123"))
-            .roles("API")
+        var authManagerBuilder = auth.inMemoryAuthentication()
+
+        for (i in contagioProperties.users.indices) {
+            val it = contagioProperties.users[i]
+            val roles = it.roles.toTypedArray()
+
+            logger.debug("known user $it.name")
+
+            val userBuilder = authManagerBuilder
+                .withUser(it.name)
+                .password(encoder.encode(it.password))
+                .roles(*roles)
+
+            if (i < contagioProperties.users.size - 1)
+                authManagerBuilder = userBuilder.and()
+        }
+
+
     }
 
     override fun configure(http: HttpSecurity) {
@@ -65,6 +73,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     override fun configure(web: WebSecurity) {
-        web.debug(true)
+        web.debug(false)
     }
 }
