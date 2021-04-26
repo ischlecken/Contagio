@@ -1,0 +1,4 @@
+// contagio API
+CONTAGIOAPI_BASEURL = https:/$()/efeu.local:13013/co_v1
+CONTAGIOAPI_USERNAME = conapi
+CONTAGIOAPI_PASSWORD = conapi123

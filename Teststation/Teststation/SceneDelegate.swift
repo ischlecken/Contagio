@@ -12,7 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         teststationState.loadTeststationInfo()
         teststationState.loadTesterInfo()
-        teststationState.mockLogin()
+        //teststationState.mockLogin()
 
         let contentView = ContentView()
             .environment(\.managedObjectContext, context)

@@ -69,5 +69,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CONTAGIOAPI_BASEURL</key>
+	<string>$(CONTAGIOAPI_BASEURL)</string>
+	<key>CONTAGIOAPI_USERNAME</key>
+	<string>$(CONTAGIOAPI_USERNAME)</string>
+	<key>CONTAGIOAPI_PASSWORD</key>
+	<string>$(CONTAGIOAPI_PASSWORD)</string>
 </dict>
 </plist>

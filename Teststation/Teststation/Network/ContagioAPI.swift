@@ -2,14 +2,12 @@ import Foundation
 import Combine
 
 enum ContagioAPI {
-    //static let contagioBaseURL = "https://efeu.local:13013/co_v1"
-    static let contagioBaseURL = "https://contagio.sloppy.zone/co_v1"
     
     static func getTeststations() -> AnyPublisher<[Teststation], TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/teststations")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/teststations")!
         
         return createUrlSession()
-            .dataTaskPublisher(for: URLRequest(url: url))
+            .dataTaskPublisher(for: createURLRequest(url:url))
             .tryMap { response -> Data in
                 guard
                     let httpURLResponse = response.response as? HTTPURLResponse,
@@ -25,10 +23,10 @@ enum ContagioAPI {
     }
     
     static func getTester() -> AnyPublisher<[Tester], TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/tester")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/tester")!
         
         return createUrlSession()
-            .dataTaskPublisher(for: URLRequest(url: url))
+            .dataTaskPublisher(for: createURLRequest(url:url))
             .tryMap { response -> Data in
                 guard
                     let httpURLResponse = response.response as? HTTPURLResponse,
@@ -45,10 +43,10 @@ enum ContagioAPI {
     
     
     static func allPass() -> AnyPublisher<[PassInfo], TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/pass")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass")!
         
         return createUrlSession()
-            .dataTaskPublisher(for: URLRequest(url: url))
+            .dataTaskPublisher(for: createURLRequest(url:url))
             .tryMap { response -> Data in
                 guard
                     let httpURLResponse = response.response as? HTTPURLResponse,
@@ -65,9 +63,9 @@ enum ContagioAPI {
     
     
     static func createPass(createPassRequest: CreatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/pass/info")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/info")!
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest = createURLRequest(url:url)
         
         urlRequest.httpMethod = "POST"
         let boundary = "Boundary-" + UUID().uuidString
@@ -97,9 +95,9 @@ enum ContagioAPI {
     }
     
     static func updatePass(updatePassRequest: UpdatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/pass/info")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/info")!
         
-        var urlRequest = URLRequest(url: url)
+        var urlRequest = createURLRequest(url:url)
         urlRequest.httpMethod = "PATCH"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let payload = try createJsonEncoder().encode(updatePassRequest)
@@ -127,10 +125,10 @@ enum ContagioAPI {
     }
     
     static func getPass(passId: String) throws -> AnyPublisher<Data, TeststationError> {
-        let url = URL(string: "\(contagioBaseURL)/pass/\(passId)")!
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/\(passId)")!
         
         return createUrlSession()
-            .dataTaskPublisher(for:  URLRequest(url: url))
+            .dataTaskPublisher(for: createURLRequest(url:url))
             .tryMap { response -> Data in
                 guard
                     let httpURLResponse = response.response as? HTTPURLResponse,
@@ -169,4 +167,19 @@ enum ContagioAPI {
         
         return result;
     }
+    
+    
+    private static func createURLRequest(url:URL)  -> URLRequest {
+        var urlRequest = URLRequest(url: url)
+        
+        guard let credentials = "\(EnvConfig.contagioapiUsername):\(EnvConfig.contagioapiPassword)".data(using: .utf8)?.base64EncodedString()
+        else {
+            return urlRequest
+        }
+        
+        urlRequest.addValue("Basic \(credentials)", forHTTPHeaderField: "Authorization")
+        
+        return urlRequest
+    }
+    
 }
