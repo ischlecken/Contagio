@@ -12,7 +12,7 @@
     <parent>
         <groupId>de.contagio</groupId>
         <artifactId>contagio-aggregate</artifactId>
-        <version>210421-SNAPSHOT</version>
+        <version>210426-SNAPSHOT</version>
     </parent>
 
     <dependencies>

@@ -108,13 +108,26 @@ footer p.version {
     height: 1.8rem;
 }
 
+.navbar-text {
+    color: white;
+}
+
+.userinfo {
+    font-size: large;
+}
+
+.userinfo .username {
+    margin-left: 1rem;
+}
+
 .errorpage {
     padding: 1rem 0;
     text-align: center;
 }
 
 .errorpage > img {
-    height: 300px;
+    height: 200px;
+    margin-top: 5rem;
 }
 
 .errorpage .detailerrorinfo {

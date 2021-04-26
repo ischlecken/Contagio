@@ -7,7 +7,7 @@
 
     <groupId>de.contagio</groupId>
     <artifactId>contagio-aggregate</artifactId>
-    <version>210421-SNAPSHOT</version>
+    <version>210426-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Contagio - Project Aggregate</name>
     <description>der Testzertifikatkontrollserver</description>
@@ -63,6 +63,12 @@
                 <groupId>de.brendamour</groupId>
                 <artifactId>jpasskit</artifactId>
                 <version>0.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.thymeleaf.extras</groupId>
+                <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+                <version>3.0.4.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

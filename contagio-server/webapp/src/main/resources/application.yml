@@ -39,6 +39,10 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
+  security:
+    user:
+      name: con
+      password: con123
 
 contagio:
   baseUrl: "https://www.contagio.de"
