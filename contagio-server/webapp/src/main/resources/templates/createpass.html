@@ -53,12 +53,13 @@
         </div>
 
         <div class="form-group">
-          <label for="teststationId">Teststation ID</label>
-          <input class="form-control" type="text" name="teststationId" id="teststationId" value="1">
-        </div>
-        <div class="form-group">
-          <label for="testerId">Tester ID</label>
-          <input class="form-control" type="text" name="testerId" id="testerId" value="1">
+          <label for="testerId">Tester</label>
+          <select class="form-control" name="testerId" id="testerId">
+            <option th:each="ti : ${testerInfo}"
+                    th:value="${ti.key}"
+                    th:text="${ti.value.displayInfo}">Tester Info
+            </option>
+          </select>
         </div>
       </div>
 

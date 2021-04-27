@@ -23,6 +23,16 @@
         <dependency>
             <groupId>de.brendamour</groupId>
             <artifactId>jpasskit</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.turo</groupId>
+                    <artifactId>pushy</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.eatthepath</groupId>
+            <artifactId>pushy</artifactId>
         </dependency>
 
         <dependency>
