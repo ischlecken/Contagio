@@ -33,4 +33,6 @@ interface RegistrationInfoRepository : MongoRepository<RegistrationInfo, String>
     ): Collection<RegistrationInfo>
 
     fun findByDeviceLibraryIdentifier(deviceLibraryIdentifier: String): Collection<RegistrationInfo>
+
+    fun findBySerialNumber(serialNumber: String): Collection<RegistrationInfo>
 }

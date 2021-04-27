@@ -35,3 +35,5 @@
 
 "TERMSCONDITIONS" = "Terms & conditions";
 "TERMSCONDITIONS_VALUE" = "This ticket may cause happiness and good cheer! Free lei with ticket.";
+
+"VALIDUNTIL_CHANGED %@" = "valid until changed to %@";

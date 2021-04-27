@@ -22,7 +22,10 @@ open class PassService(
     private val passBuilderService: PassBuilderService,
     private val teststationRepository: TeststationRepository,
     private val testerRepository: TesterRepository,
-    private val contagioProperties: ContagioProperties
+    private val contagioProperties: ContagioProperties,
+    private val deviceInfoRepository: DeviceInfoRepository,
+    private val registrationInfoRepository: RegistrationInfoRepository,
+    private val pushNotificationService: PushNotificationService
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -41,24 +44,32 @@ open class PassService(
     open fun issue(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.ISSUED)
+
+            notifyDevice(serialnumber)
         }
     }
 
     open fun revoke(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.REVOKED)
+
+            notifyDevice(serialnumber)
         }
     }
 
     open fun negative(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, TestResultType.NEGATIVE, passInfo.issueStatus)
+
+            notifyDevice(serialnumber)
         }
     }
 
     open fun positive(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, TestResultType.POSITIVE, passInfo.issueStatus)
+
+            notifyDevice(serialnumber)
         }
     }
 
@@ -212,5 +223,21 @@ open class PassService(
         }
 
         return null
+    }
+
+    open fun notifyDevice(serialnumber: String) {
+        registrationInfoRepository.findBySerialNumber(serialnumber).forEach {
+            deviceInfoRepository.findById(it.deviceLibraryIdentifier).ifPresent { deviceInfo ->
+                logger.debug("found push token ${deviceInfo.pushToken} for serialnumber $serialnumber...")
+
+                pushNotificationService.sendPushNotificationAsync(deviceInfo.pushToken)
+                    ?.thenApply {
+                        logger.debug("  apns-id=${it.apnsId}")
+                        logger.debug("  isAccepted=${it.isAccepted}")
+                        logger.debug("  rejectionReason=${it.rejectionReason}")
+                    }
+
+            }
+        }
     }
 }

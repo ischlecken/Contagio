@@ -2,6 +2,7 @@ package de.contagio.core.usecase
 
 import de.brendamour.jpasskit.PKField
 import de.brendamour.jpasskit.PKPass
+import de.brendamour.jpasskit.enums.PKDataDetectorType
 import de.brendamour.jpasskit.enums.PKDateStyle
 import de.brendamour.jpasskit.passes.PKCoupon
 import de.brendamour.jpasskit.passes.PKEventTicket
@@ -160,6 +161,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             validUntilField.dateStyle = PKDateStyle.PKDateStyleMedium
             validUntilField.timeStyle = PKDateStyle.PKDateStyleShort
             validUntilField.isRelative = true
+            validUntilField.changeMessage = "Neues Ablaufdatum ist %@"
 
             fields.add(validUntilField)
         }
@@ -181,20 +183,16 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
 
             val validUntilFormatted = this.validUntil?.format(dateTimeFormatter)
 
-            if (!this.person.email.isNullOrEmpty())
-                fields.add(PKField("email", "EMAIL", this.person.email))
-
-            if (!this.person.phoneNo.isNullOrEmpty())
-                fields.add(PKField("phoneNo", "PHONENO", this.person.phoneNo))
+            val showPassUrl = PKField(
+                "showPassUrl",
+                "SHOWPASSURL",
+                "${passBuilderInfo.passCoreInfo.baseUrl}/showpass?serialNumber=${this.serialNumber}"
+            )
+            showPassUrl.dataDetectorTypes = listOf(PKDataDetectorType.PKDataDetectorTypeLink)
+            fields.add(showPassUrl)
 
             fields.add(PKField("testtype", "TESTTYPE", "TESTTYPE_${this.testType}"))
             fields.add(PKField("testresult", "TESTRESULT", "TESTRESULT_${this.testResult}"))
-            fields.add(PKField("issueStatus", "ISSUESTATUS", "ISSUESTATUS_${this.issueStatus}"))
-            fields.add(PKField("teststationName", "TESTSTATIONNAME", passBuilderInfo.teststation.name))
-            fields.add(PKField("teststationId", "TESTSTATIONID", this.teststationId))
-            fields.add(PKField("testerName", "TESTERNAME", passBuilderInfo.tester.person.fullName))
-            fields.add(PKField("testerId", "TESTERID", passBuilderInfo.tester.id))
-
             if (validUntilFormatted != null) {
                 val validUntilField1 = PKField("validUntil1", "VALIDUNTIL", validUntilFormatted)
                 validUntilField1.dateStyle = PKDateStyle.PKDateStyleMedium
@@ -202,13 +200,18 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
                 fields.add(validUntilField1)
             }
 
-            fields.add(
-                PKField(
-                    "showPassUrl",
-                    "SHOWPASSURL",
-                    "${passBuilderInfo.passCoreInfo.baseUrl}/showpass?serialNumber=${this.serialNumber}"
-                )
-            )
+            fields.add(PKField("teststationName", "TESTSTATIONNAME", passBuilderInfo.teststation.name))
+            fields.add(PKField("testerName", "TESTERNAME", passBuilderInfo.tester.person.fullName))
+
+            if (!this.person.email.isNullOrEmpty())
+                fields.add(PKField("email", "EMAIL", this.person.email))
+
+            if (!this.person.phoneNo.isNullOrEmpty()) {
+                val emailField = PKField("phoneNo", "PHONENO", this.person.phoneNo)
+                emailField.dataDetectorTypes = listOf(PKDataDetectorType.PKDataDetectorTypePhoneNumber)
+                fields.add(emailField)
+            }
+
 
             fields.add(PKField("terms", "TERMSCONDITIONS", "TERMSCONDITIONS_VALUE"))
 

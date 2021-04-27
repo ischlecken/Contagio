@@ -34,5 +34,6 @@
 "LOGO_TESTTYPE_VACCINATION" = "TIL - Pass";
 
 "TERMSCONDITIONS" = "Allgemeine Geschäftsbedingungen";
-"TERMSCONDITIONS_VALUE" = "Bitte verhalten Sie sich ruhig, hier gibt es nichts zu sehen :-)";
+"TERMSCONDITIONS_VALUE" = "Bleiben Sie gesund. Und verzweifeln Sie ruhig, aber zweifeln Sie nicht.";
 
+"VALIDUNTIL_CHANGED %@" = "Gültigkeit hat sich geändert auf %@";
