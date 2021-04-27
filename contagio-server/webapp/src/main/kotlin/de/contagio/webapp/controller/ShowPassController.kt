@@ -2,7 +2,7 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.core.usecase.SearchPassInfo
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +12,7 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class ShowPassController(
-    private val passInfoRepository: PassInfoRepository
+    private val searchPassInfo: SearchPassInfo
 ) {
 
     @GetMapping("/showpass")
@@ -20,21 +20,13 @@ open class ShowPassController(
         model: Model,
         @RequestParam serialNumber: String,
         @RequestParam showDetails: Boolean?
-    ): String {
-
-        val passInfo = passInfoRepository.findById(serialNumber)
-
-        if (passInfo.isPresent) {
+    ) = searchPassInfo
+        .execute(serialNumber)?.let {
             model.addAttribute("pageType", "showpass")
-            model.addAttribute("passInfo", passInfo.get())
-
+            model.addAttribute("extendedPassInfo", it)
             model.addAttribute("showDetails", showDetails ?: false)
 
-            return "showpass"
-        }
-
-        return "redirect:/overview"
-    }
-
+            "showpass"
+        } ?: "redirect:/overview"
 
 }

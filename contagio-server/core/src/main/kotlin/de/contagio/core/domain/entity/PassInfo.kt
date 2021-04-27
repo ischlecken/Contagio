@@ -129,3 +129,7 @@ data class PassInfo(
     val updatedUTC: ZonedDateTime get() = ZonedDateTime.ofInstant(updated, ZoneOffset.of("+02:00"), ZoneId.of("GMT"))
 }
 
+data class ExtendedPassInfo(
+    val passInfo: PassInfo,
+    val testerTeststation: TesterTeststation
+)

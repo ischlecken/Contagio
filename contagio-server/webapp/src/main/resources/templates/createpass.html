@@ -37,18 +37,20 @@
         <div class="form-group">
           <label for="testResult">Testresult</label>
           <select class="form-control" name="testResult" id="testResult">
-            <option value="UNKNOWN">ausstehend</option>
-            <option value="NEGATIVE">negativ</option>
-            <option value="POSITIVE">positiv</option>
+            <option th:each="tr : ${testResultType}"
+                    th:value="${tr}"
+                    th:text="#{testResultType.__${tr}__}">Testresult
+            </option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="testType">Testtyp</label>
           <select class="form-control" name="testType" id="testType">
-            <option value="RAPIDTEST">Schnelltest</option>
-            <option value="PCRTEST">PCR Test</option>
-            <option value="VACCINATION">Impfung</option>
+            <option th:each="tt : ${testType}"
+                    th:value="${tt}"
+                    th:text="#{testType.__${tt}__}">Test Type
+            </option>
           </select>
         </div>
 
@@ -61,16 +63,21 @@
             </option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="datei">Datei</label>
+          <input class="form-control" id="datei" type="file" name="image">
+        </div>
       </div>
 
       <div class="col-sm-12 col-lg-4">
         <div class="form-group">
           <label for="passType">Passtype</label>
           <select class="form-control" name="passType" id="passType">
-            <option value="GENERIC">Allgemein</option>
-            <option value="COUPON">Gutschein</option>
-            <option value="EVENT">Eintrittskarte</option>
-            <option value="STORE">Kundenkarte</option>
+            <option th:each="pt : ${passType}"
+                    th:value="${pt}"
+                    th:text="#{passType.__${pt}__}">PassType
+            </option>
           </select>
         </div>
 
@@ -87,10 +94,7 @@
           <input class="form-control" type="text" name="backgroundColor" id="backgroundColor" value="rgb(208, 38, 0)">
         </div>
 
-        <div class="form-group">
-          <label for="datei">Datei</label>
-          <input class="form-control" id="datei" type="file" name="image">
-        </div>
+
       </div>
     </div>
 

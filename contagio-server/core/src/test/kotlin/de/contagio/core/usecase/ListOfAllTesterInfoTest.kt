@@ -13,11 +13,11 @@ class ListOfAllTesterInfoTest {
 
     @Test
     fun emptyTeststationEmptyTester_isEmpty() {
-        val findAllTeststation = IFindAllTeststation { ->
+        val findAllTeststation = IFindAllTeststation {
             emptyList()
         }
 
-        val findAllTester = IFindAllTester { ->
+        val findAllTester = IFindAllTester {
             emptyList()
         }
 
@@ -28,11 +28,11 @@ class ListOfAllTesterInfoTest {
 
     @Test
     fun emptyTeststationWithOneTester_isEmpty() {
-        val findAllTeststation = IFindAllTeststation { ->
+        val findAllTeststation = IFindAllTeststation {
             emptyList()
         }
 
-        val findAllTester = IFindAllTester { ->
+        val findAllTester = IFindAllTester {
             listOf(
                 Tester(
                     id = "1",
@@ -49,7 +49,7 @@ class ListOfAllTesterInfoTest {
 
     @Test
     fun oneTeststationWithNotMatchingTester_isEmpty() {
-        val findAllTeststation = IFindAllTeststation { ->
+        val findAllTeststation = IFindAllTeststation {
             listOf(
                 Teststation(
                     id = "0",
@@ -59,7 +59,7 @@ class ListOfAllTesterInfoTest {
             )
         }
 
-        val findAllTester = IFindAllTester { ->
+        val findAllTester = IFindAllTester {
             listOf(
                 Tester(
                     id = "1",
@@ -76,7 +76,7 @@ class ListOfAllTesterInfoTest {
 
     @Test
     fun oneTeststationWithMatchingTester_expectedDisplayname() {
-        val findAllTeststation = IFindAllTeststation { ->
+        val findAllTeststation = IFindAllTeststation {
             listOf(
                 Teststation(
                     id = "1",
@@ -86,7 +86,7 @@ class ListOfAllTesterInfoTest {
             )
         }
 
-        val findAllTester = IFindAllTester { ->
+        val findAllTester = IFindAllTester {
             listOf(
                 Tester(
                     id = "1",

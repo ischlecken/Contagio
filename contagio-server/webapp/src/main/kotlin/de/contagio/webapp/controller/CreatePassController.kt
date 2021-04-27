@@ -2,14 +2,12 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
-import de.contagio.core.domain.port.IFindAllTester
-import de.contagio.core.domain.port.IFindAllTeststation
 import de.contagio.core.usecase.ListOfAllTesterInfo
-import de.contagio.webapp.repository.mongodb.TesterRepository
-import de.contagio.webapp.repository.mongodb.TeststationRepository
+import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.webapp.restcontroller.pkpassMediatype
 import de.contagio.webapp.service.PassService
 import org.springframework.http.HttpHeaders
@@ -27,18 +25,19 @@ import springfox.documentation.annotations.ApiIgnore
 @Controller
 open class CreatePassController(
     private val passService: PassService,
-    private val findAllTeststation: IFindAllTeststation,
-    private val findAllTester: IFindAllTester,
-    private val testerRepository: TesterRepository,
-    private val teststationRepository: TeststationRepository
+    private val listOfAllTesterInfo: ListOfAllTesterInfo,
+    private val searchTesterWithTeststation: SearchTesterWithTeststation
 ) {
 
     @GetMapping("/createpass")
     open fun createPass(model: Model): String {
-        val listOfAllTesterInfo = ListOfAllTesterInfo(findAllTeststation, findAllTester)
-
         model.addAttribute("pageType", "createpass")
         model.addAttribute("testerInfo", listOfAllTesterInfo.execute())
+
+        model.addAttribute("testResultType", TestResultType.values())
+        model.addAttribute("testType", TestType.values())
+        model.addAttribute("issueStatus", IssueStatus.values())
+        model.addAttribute("passType", PassType.values())
 
         return "createpass"
     }
@@ -67,16 +66,8 @@ open class CreatePassController(
             return ResponseEntity(headers, HttpStatus.FOUND)
         }
 
-        var teststationId: String? = null
-        val tester = testerRepository.findById(testerId)
-        if (tester.isPresent) {
-            teststationRepository.findById(tester.get().teststationId).ifPresent {
-                teststationId = it.id
-            }
-        }
-
-        if (teststationId == null)
-            return ResponseEntity.badRequest().build()
+        val teststationId = searchTesterWithTeststation.execute(testerId)?.teststation?.id
+            ?: return ResponseEntity.badRequest().build()
 
         return when (command) {
             "preview" -> {
@@ -84,7 +75,7 @@ open class CreatePassController(
                     image,
                     firstName, lastName,
                     phoneNo, email,
-                    teststationId!!, testerId,
+                    teststationId, testerId,
                     testResult, testType,
                     passType,
                     labelColor, foregroundColor, backgroundColor
@@ -104,7 +95,7 @@ open class CreatePassController(
                     image,
                     firstName, lastName,
                     phoneNo, email,
-                    teststationId!!, testerId,
+                    teststationId, testerId,
                     testResult, testType,
                     passType,
                     labelColor, foregroundColor, backgroundColor

@@ -67,6 +67,7 @@ contagio:
       roles:
         - USER
         - ADMIN
+        - API
     - name: conapi
       password: conapi123
       roles:

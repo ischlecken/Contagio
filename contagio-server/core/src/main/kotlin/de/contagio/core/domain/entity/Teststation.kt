@@ -1,11 +1,7 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IUIDGenerator
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 
 data class Teststation(
@@ -23,3 +19,14 @@ data class Tester(
     val created: LocalDateTime = LocalDateTime.now()
 )
 
+
+data class TesterTeststation(
+    val tester: Tester,
+    val teststation: Teststation
+)
+
+
+data class TesterInfo(
+    val displayInfo: String,
+    val testerTeststation: TesterTeststation,
+)

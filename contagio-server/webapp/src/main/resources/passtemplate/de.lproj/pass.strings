@@ -4,6 +4,7 @@
 "PHONENO" = "Telefonnummer";
 "TESTSTATIONID" = "Teststation ID";
 "TESTSTATION" = "Teststation";
+"TESTSTATIONNAME" = "Teststation";
 "TESTSTATIONADDRESS" = "Adresse";
 "TESTERID" = "Tester ID";
 "TESTERNAME" = "Name des Tester";
@@ -20,6 +21,7 @@
 "TESTTYPE_PCRTEST" = "PCR-Test";
 "TESTTYPE_VACCINATION" = "Impfung";
 
+"ISSUESTATUS" = "Ausstellungsstatus";
 "ISSUESTATUS_CREATED" = "erzeugt";
 "ISSUESTATUS_ISSUED" = "ausgestellt";
 "ISSUESTATUS_EXPIRED" = "ausgelaufen";
