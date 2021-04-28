@@ -30,7 +30,7 @@
       "apps": [
         {
           "id": "contagio",
-          "image": "ghcr.io/ischlecken/contagio:210425.2",
+          "image": "ghcr.io/ischlecken/contagio:210428.1",
           "instances": 1,
           "mem": 512,
           "domain": {

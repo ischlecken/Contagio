@@ -226,20 +226,25 @@ open class PassService(
         val result = passInfoRepository.findById(updatePassRequest.serialNumber)
 
         if (result.isPresent && updatePassRequest.testResult != null) {
-            return updateTestResult(
+            val passInfo = updateTestResult(
                 updatePassRequest.serialNumber,
                 updatePassRequest.testResult,
                 IssueStatus.ISSUED,
                 updatePassRequest.validUntil
             )
+
+            if (passInfo != null)
+                notifyDevice(updatePassRequest.serialNumber)
+
+            return passInfo
         }
 
         return null
     }
 
     open fun notifyDevice(serialnumber: String) {
-        registrationInfoRepository.findBySerialNumber(serialnumber).forEach {
-            deviceInfoRepository.findById(it.deviceLibraryIdentifier).ifPresent { deviceInfo ->
+        registrationInfoRepository.findBySerialNumber(serialnumber).forEach { registrationInfo ->
+            deviceInfoRepository.findById(registrationInfo.deviceLibraryIdentifier).ifPresent { deviceInfo ->
                 logger.debug("found push token ${deviceInfo.pushToken} for serialnumber $serialnumber...")
 
                 pushNotificationService.sendPushNotificationAsync(deviceInfo.pushToken)
