@@ -8,4 +8,4 @@ spring:
       uri: "mongodb://mongodb.database.contagio:27017"
 
 contagio:
-  baseUrl: "https://contagio.sloppy.zone"
+  baseUrl: "https://til.sloppy.zone"

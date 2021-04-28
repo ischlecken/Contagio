@@ -58,6 +58,11 @@ a.nav-link:hover {
     color: white;
 }
 
+.nav-item.active {
+    text-decoration: underline;
+}
+
+
 li {
     list-style-type: none;
 }
@@ -114,6 +119,7 @@ footer p.version {
 
 .userinfo {
     font-size: large;
+    margin-left: auto;
 }
 
 .userinfo .username {

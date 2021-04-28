@@ -20,10 +20,9 @@ open class WebMvcConfig(
 
 
     @Bean
-    @Suppress("UnnecessaryVariable")
     open fun localeResolver(): LocaleResolver {
         val slr = SessionLocaleResolver()
-        slr.setDefaultLocale(Locale.GERMANY)
+        //slr.setDefaultLocale(Locale.GERMANY)
 
         return slr
     }

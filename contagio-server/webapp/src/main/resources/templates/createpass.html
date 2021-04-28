@@ -5,7 +5,7 @@
 <nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
 
 <div class="container main createpass">
-  <h1>Pass erzeugen</h1>
+  <h1 th:text="#{createpass.title}">Pass erzeugen</h1>
 
   <form id="createpassform" action="/createpass" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="command" id="command" value="">
@@ -13,29 +13,29 @@
     <div class="row">
       <div class="col-sm-12 col-lg-4">
         <div class="form-group">
-          <label for="firstName">Vorname</label>
+          <label for="firstName" th:text="#{field.firstname}">Vorname</label>
           <input class="form-control" type="text" name="firstName" id="firstName" value="Hugo">
         </div>
 
         <div class="form-group">
-          <label for="lastName">Nachname</label>
+          <label for="lastName" th:text="#{field.lastname}">Nachname</label>
           <input class="form-control" type="text" name="lastName" id="lastName" value="Müller">
         </div>
 
         <div class="form-group">
-          <label for="phoneNo">Telefonnummer</label>
+          <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
           <input class="form-control" type="text" name="phoneNo" id="phoneNo" value="08912345">
         </div>
 
         <div class="form-group">
-          <label for="email">E-Mail</label>
+          <label for="email" th:text="#{field.email}">E-Mail</label>
           <input class="form-control" type="text" name="email" id="email" value="hugo@bla.de">
         </div>
       </div>
 
       <div class="col-sm-12 col-lg-4">
         <div class="form-group">
-          <label for="testResult">Testresult</label>
+          <label for="testResult" th:text="#{field.testresult}">Testresult</label>
           <select class="form-control" name="testResult" id="testResult">
             <option th:each="tr : ${testResultType}"
                     th:value="${tr}"
@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-group">
-          <label for="testType">Testtyp</label>
+          <label for="testType" th:text="#{field.testtype}">Testtyp</label>
           <select class="form-control" name="testType" id="testType">
             <option th:each="tt : ${testType}"
                     th:value="${tt}"
@@ -55,7 +55,7 @@
         </div>
 
         <div class="form-group">
-          <label for="testerId">Tester</label>
+          <label for="testerId" th:text="#{field.tester}">Tester</label>
           <select class="form-control" name="testerId" id="testerId">
             <option th:each="ti : ${testerInfo}"
                     th:value="${ti.key}"
@@ -65,14 +65,14 @@
         </div>
 
         <div class="form-group">
-          <label for="datei">Datei</label>
+          <label for="datei" th:text="#{field.image}">Datei</label>
           <input class="form-control" id="datei" type="file" name="image">
         </div>
       </div>
 
       <div class="col-sm-12 col-lg-4">
         <div class="form-group">
-          <label for="passType">Passtype</label>
+          <label for="passType" th:text="#{field.passtype}">Passtype</label>
           <select class="form-control" name="passType" id="passType">
             <option th:each="pt : ${passType}"
                     th:value="${pt}"
@@ -82,14 +82,14 @@
         </div>
 
         <div class="form-group">
-          <label for="labelColor">Beschriftungsfarbe</label>
+          <label for="labelColor" th:text="#{field.labelcolor}">Beschriftungsfarbe</label>
           <input class="form-control" type="text" name="labelColor" id="labelColor" value="rgb(5, 175, 190)">
         </div>
-        <div class="form-group">
+        <div class="form-group" th:text="#{field.foregroundcolor}">
           <label for="foregroundColor">Vordergrundfarbe</label>
           <input class="form-control" type="text" name="foregroundColor" id="foregroundColor" value="rgb(255, 255, 255)">
         </div>
-        <div class="form-group">
+        <div class="form-group" th:text="#{field.backgroundcolor}">
           <label for="backgroundColor">Hintergrundfarbe</label>
           <input class="form-control" type="text" name="backgroundColor" id="backgroundColor" value="rgb(208, 38, 0)">
         </div>
@@ -100,9 +100,9 @@
 
     <div class="row">
       <div class="col">
-        <button class="btn btn-danger" onclick="$('.createpass #command').val('create')">Erzeugen</button>
-        <button class="btn btn-primary" onclick="$('.createpass #command').val('preview')">Vorschau</button>
-        <a href="/overview" class="btn btn-secondary">Abbrechen</a>
+        <button th:text="#{command.createpass}" class="btn btn-danger" onclick="$('.createpass #command').val('create')">Erzeugen</button>
+        <button th:text="#{command.preview}" class="btn btn-primary" onclick="$('.createpass #command').val('preview')">Vorschau</button>
+        <a th:text="#{command.cancel}" href="/overview" class="btn btn-secondary">Abbrechen</a>
       </div>
     </div>
   </form>

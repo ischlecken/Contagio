@@ -34,7 +34,7 @@
           "instances": 1,
           "mem": 512,
           "domain": {
-            "uri": "contagio.sloppy.zone"
+            "uri": "til.sloppy.zone"
           },
           "ssl": true,
           "port_mappings": [

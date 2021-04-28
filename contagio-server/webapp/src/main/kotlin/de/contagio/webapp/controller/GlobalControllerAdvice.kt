@@ -26,8 +26,8 @@ open class GlobalControllerAdvice(
             "pageMetainfo",
             PageMetainfo(
                 title = messageTemplateService.getString("pagetitle"),
-                home = "https://www.contagio.de",
-                imprint = "Contagio (c) 2021",
+                home = "https://www.til.de",
+                imprint = "TIL (c) 2021",
                 robots = "noindex, nofollow, noarchive"
             )
         )
