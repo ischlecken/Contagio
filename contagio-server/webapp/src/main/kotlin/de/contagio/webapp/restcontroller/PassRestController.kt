@@ -3,6 +3,7 @@ package de.contagio.webapp.restcontroller
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
+import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
@@ -29,7 +30,8 @@ open class PassRestController(
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
     private val passService: PassService,
-    private val passBuilderService: PassBuilderService
+    private val passBuilderService: PassBuilderService,
+    private val searchTesterWithTeststation: SearchTesterWithTeststation
 ) {
 
 
@@ -56,24 +58,22 @@ open class PassRestController(
         @RequestParam lastName: String,
         @RequestParam phoneNo: String,
         @RequestParam email: String?,
-        @RequestParam teststationId: String,
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
 
-        val cpr = passService.createPassAndSave(
-            image,
-            firstName, lastName,
-            phoneNo, email,
-            teststationId, testerId,
-            testResult, testType
-        )
-
-        return if (cpr.pkPass != null)
-            ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
-        else
-            ResponseEntity.badRequest().build()
+        return searchTesterWithTeststation.execute(testerId)?.let {
+            passService.createPassAndSave(
+                image,
+                firstName, lastName,
+                phoneNo, email,
+                it.teststation.id, it.tester.id,
+                testResult, testType
+            )?.let { cpr ->
+                ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
+            } ?: ResponseEntity.badRequest().build()
+        } ?: ResponseEntity.badRequest().build()
     }
 
     @PatchMapping("/info")

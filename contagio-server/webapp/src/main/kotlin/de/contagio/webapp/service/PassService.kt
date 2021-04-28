@@ -67,7 +67,11 @@ open class PassService(
 
     open fun positive(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            updateTestResult(serialnumber, TestResultType.POSITIVE, passInfo.issueStatus)
+            updateTestResult(
+                serialnumber,
+                TestResultType.POSITIVE,
+                passInfo.issueStatus
+            )
 
             notifyDevice(serialnumber)
         }
@@ -76,7 +80,8 @@ open class PassService(
     private fun updateTestResult(
         serialnumber: String,
         testResult: TestResultType,
-        issueStatus: IssueStatus
+        issueStatus: IssueStatus,
+        validUtil: LocalDateTime? = null,
     ): PassInfo? {
         var result: PassInfo? = null
 
@@ -85,7 +90,9 @@ open class PassService(
                 testResult = testResult,
                 issueStatus = issueStatus,
                 modified = LocalDateTime.now(),
-                validUntil = LocalDateTime.now().plusDays(if (passInfo.testType == TestType.VACCINATION) 10 else 3),
+                validUntil = validUtil ?: LocalDateTime
+                    .now()
+                    .plusDays(if (passInfo.testType == TestType.VACCINATION) 10 else 3),
                 version = passInfo.version + 1
             )
 
@@ -219,7 +226,12 @@ open class PassService(
         val result = passInfoRepository.findById(updatePassRequest.serialNumber)
 
         if (result.isPresent && updatePassRequest.testResult != null) {
-            return updateTestResult(updatePassRequest.serialNumber, updatePassRequest.testResult, IssueStatus.ISSUED)
+            return updateTestResult(
+                updatePassRequest.serialNumber,
+                updatePassRequest.testResult,
+                IssueStatus.ISSUED,
+                updatePassRequest.validUntil
+            )
         }
 
         return null

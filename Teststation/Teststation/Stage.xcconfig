@@ -1,4 +1,4 @@
 // contagio API
-CONTAGIOAPI_BASEURL = https:/$()/contagio.sloppy.zone/co_v1
+CONTAGIOAPI_BASEURL = https:/$()/til.sloppy.zone/co_v1
 CONTAGIOAPI_USERNAME = conapi
 CONTAGIOAPI_PASSWORD = conapi123
