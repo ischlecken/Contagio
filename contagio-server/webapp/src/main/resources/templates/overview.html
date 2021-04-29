@@ -39,9 +39,13 @@
                 <button class="btn btn-danger" name="command" value="delete" type="submit"><span th:title="#{command.delete}"><i
                   class="fas fa-trash-alt"></i></span>
                 </button>
-                <th:block th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED}">
+                <th:block
+                  th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED && p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).EXPIRED}">
                   <button class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i
                     class="fas fa-undo"></i></span>
+                  </button>
+                  <button class="btn btn-danger" name="command" value="expire" type="submit"><span th:title="#{command.expire}"><i
+                    class="fas fa-clock"></i></span>
                   </button>
                   <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i
                     class="fas fa-user-minus"></i></span>
@@ -50,9 +54,10 @@
                     class="fas fa-user-plus"></i></span>
                   </button>
                 </th:block>
-                <th:block th:if="${p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).REVOKED}">
+                <th:block
+                  th:if="${p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).REVOKED || p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).EXPIRED}">
                   <button class="btn btn-danger" name="command" value="issue" type="submit"><span th:title="#{command.issue}"><i
-                    class="fas fa-undo"></i></span>
+                    class="fas fa-arrow-right"></i></span>
                   </button>
                 </th:block>
               </form>

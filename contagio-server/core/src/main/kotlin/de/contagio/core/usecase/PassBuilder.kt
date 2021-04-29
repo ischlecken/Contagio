@@ -32,7 +32,11 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
         try {
 
             if (pkpass.isValid) {
-                val cpt = ContagioPassTemplate(passBuilderInfo.passImage, passBuilderInfo.passInfo.passType)
+                val cpt = ContagioPassTemplate(
+                    passBuilderInfo.passImage,
+                    passBuilderInfo.passInfo.passType,
+                    passBuilderInfo.passInfo.issueStatus
+                )
                 cpt.build()
 
                 val pkSigningInformation =
@@ -93,7 +97,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
         with(passBuilderInfo.passInfo) {
             pass.serialNumber = this.serialNumber
 
-            if (this.issueStatus == IssueStatus.REVOKED)
+            if (this.issueStatus == IssueStatus.REVOKED || this.issueStatus == IssueStatus.EXPIRED)
                 pass.expirationDate =
                     Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())
             else if (this.validUntil != null)
@@ -125,8 +129,8 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
 
         when (passBuilderInfo.passInfo.passType) {
             PassType.COUPON -> fields.add(
-                if (passBuilderInfo.passInfo.issueStatus == IssueStatus.REVOKED)
-                    PKField("issueStatus", "ISSUESTATUS_REVOKED", "")
+                if (passBuilderInfo.passInfo.issueStatus == IssueStatus.REVOKED || passBuilderInfo.passInfo.issueStatus == IssueStatus.EXPIRED)
+                    PKField("issueStatus", "ISSUESTATUS_${passBuilderInfo.passInfo.issueStatus}", "")
                 else
                     PKField("testResult", "TESTRESULT", "TESTRESULT_${passBuilderInfo.passInfo.testResult.name}")
             )

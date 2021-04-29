@@ -1,10 +1,13 @@
 package de.contagio.core.usecase
 
 import de.brendamour.jpasskit.signing.PKPassTemplateInMemory
+import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.entity.PassImage
 import de.contagio.core.domain.entity.PassType
 import net.coobird.thumbnailator.Thumbnails
+import net.coobird.thumbnailator.filters.Colorize
 import org.slf4j.LoggerFactory
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -17,7 +20,8 @@ private val logger = LoggerFactory.getLogger(ContagioPassTemplate::class.java)
 
 class ContagioPassTemplate(
     private val passImage: PassImage,
-    private val passType: PassType
+    private val passType: PassType,
+    private val issueStatus: IssueStatus
 ) : PKPassTemplateInMemory() {
 
     fun build() {
@@ -69,11 +73,15 @@ class ContagioPassTemplate(
     private fun resizeImage(originalImage: BufferedImage, targetWidth: Int, targetHeight: Int): InputStream? {
         val outputStream = ByteArrayOutputStream()
 
-        Thumbnails.of(originalImage)
+        var thumbnailBuilder = Thumbnails.of(originalImage)
             .size(targetWidth, targetHeight)
             .outputFormat("PNG")
             .outputQuality(1.0)
-            .toOutputStream(outputStream)
+
+        if( issueStatus==IssueStatus.EXPIRED ||issueStatus==IssueStatus.REVOKED)
+            thumbnailBuilder = thumbnailBuilder.addFilter(Colorize(Color(255, 0, 0,128)))
+
+        thumbnailBuilder.toOutputStream(outputStream)
 
         val result = outputStream.toByteArray()
 

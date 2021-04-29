@@ -24,7 +24,7 @@
 "ISSUESTATUS" = "Ausstellungsstatus";
 "ISSUESTATUS_CREATED" = "erzeugt";
 "ISSUESTATUS_ISSUED" = "ausgestellt";
-"ISSUESTATUS_EXPIRED" = "ausgelaufen";
+"ISSUESTATUS_EXPIRED" = "abgelaufen";
 "ISSUESTATUS_REVOKED" = "zurückgezogen";
 "ISSUESTATUS_REFUSED" = "abgelehnt";
 

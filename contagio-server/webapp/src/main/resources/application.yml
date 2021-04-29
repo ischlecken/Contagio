@@ -73,7 +73,7 @@ contagio:
       roles:
         - API
 
-  bpRestapi:
-    baseurl: "http://localhost:8080/restapi/api/gy/"
-    user: "restapi"
-    password: "restapi123$"
+  scheduler:
+    enabled: true
+    initialDelayInMilliseconds: 20000
+    fixedDelayInMilliseconds: 60000

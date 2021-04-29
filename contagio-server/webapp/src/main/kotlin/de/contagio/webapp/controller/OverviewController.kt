@@ -50,6 +50,7 @@ open class OverviewController(
 
         when (command) {
             "delete" -> passService.delete(serialnumber)
+            "expire" -> passService.expire(serialnumber)
             "revoke" -> passService.revoke(serialnumber)
             "issue" -> passService.issue(serialnumber)
             "negative" -> passService.negative(serialnumber)

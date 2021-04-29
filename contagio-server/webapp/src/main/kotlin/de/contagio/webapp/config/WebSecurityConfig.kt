@@ -61,15 +61,6 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
             .and().httpBasic().realmName("contagio")
             .and().cors()
             .and().csrf().disable()
-
-        /*
-        http
-                .authorizeRequests().antMatchers("**").permitAll()
-                .and().cors()
-                .and().csrf().disable()
-
-         */
-
     }
 
     override fun configure(web: WebSecurity) {

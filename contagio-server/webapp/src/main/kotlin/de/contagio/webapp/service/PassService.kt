@@ -49,6 +49,14 @@ open class PassService(
         }
     }
 
+    open fun expire(serialnumber: String) {
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            updateTestResult(serialnumber, passInfo.testResult, IssueStatus.EXPIRED)
+
+            notifyDevice(serialnumber)
+        }
+    }
+
     open fun revoke(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.REVOKED)
@@ -81,18 +89,23 @@ open class PassService(
         serialnumber: String,
         testResult: TestResultType,
         issueStatus: IssueStatus,
-        validUtil: LocalDateTime? = null,
+        validUntil: LocalDateTime? = null,
     ): PassInfo? {
         var result: PassInfo? = null
 
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+
+            val newValidUntil = when {
+                issueStatus == IssueStatus.EXPIRED -> LocalDateTime.now()
+                validUntil !=null -> validUntil
+                else -> LocalDateTime.now().plusHours(if (passInfo.testType == TestType.VACCINATION) 24*364 else 1)
+            }
+
             val updatedPassInfo = passInfo.copy(
                 testResult = testResult,
                 issueStatus = issueStatus,
                 modified = LocalDateTime.now(),
-                validUntil = validUtil ?: LocalDateTime
-                    .now()
-                    .plusDays(if (passInfo.testType == TestType.VACCINATION) 10 else 3),
+                validUntil = newValidUntil,
                 version = passInfo.version + 1
             )
 
