@@ -3,6 +3,7 @@ package de.contagio.webapp.restcontroller
 import de.contagio.core.domain.entity.DeviceInfo
 import de.contagio.core.domain.entity.RegistrationInfo
 import de.contagio.core.domain.port.IFindPass
+import de.contagio.core.usecase.SearchPassesSinceLastUpdate
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -28,7 +31,8 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 open class WalletRestController(
     private val findPass: IFindPass,
     private val deviceInfoRepository: DeviceInfoRepository,
-    private val registrationInfoRepository: RegistrationInfoRepository
+    private val registrationInfoRepository: RegistrationInfoRepository,
+    private val searchPassesSinceLastUpdate: SearchPassesSinceLastUpdate
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -65,13 +69,30 @@ open class WalletRestController(
         @PathVariable passTypeIdentifier: String,
         @RequestParam passesUpdatedSince: String?
     ): ResponseEntity<WalletPasses> {
-        logger.debug("getPasses(deviceLibraryIdentifier=${deviceLibraryIdentifier},passesUpdatedSince=${passesUpdatedSince})")
 
-        val registrations = registrationInfoRepository.findByDeviceLibraryIdentifier(deviceLibraryIdentifier)
-        val serialNumbers = registrations.map { it.serialNumber }.toList()
+        logger.debug("getPasses(deviceLibraryIdentifier=${deviceLibraryIdentifier}, passesUpdatedSince=${passesUpdatedSince})")
+
+        var serialNumbers = searchPassesSinceLastUpdate
+            .execute(deviceLibraryIdentifier)
+            .sortedByDescending {
+                it.updated
+            }
+
+        if (passesUpdatedSince != null) {
+            val updatedSince = LocalDateTime.ofEpochSecond(passesUpdatedSince.toLong(), 0, ZoneOffset.UTC)
+
+            serialNumbers = serialNumbers.filter {
+                it.updated.isAfter(updatedSince)
+            }
+        }
 
         return if (serialNumbers.isNotEmpty()) {
-            ResponseEntity.ok(WalletPasses(lastUpdated = "bla", serialNumbers = serialNumbers))
+            ResponseEntity.ok(
+                WalletPasses(
+                    lastUpdated = serialNumbers.first().updated.toEpochSecond(ZoneOffset.UTC).toString(),
+                    serialNumbers = serialNumbers.map { it.serialNumber }
+                )
+            )
         } else
             ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }

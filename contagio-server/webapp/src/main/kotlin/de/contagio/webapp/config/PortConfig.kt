@@ -1,10 +1,7 @@
 package de.contagio.webapp.config
 
 import de.contagio.core.domain.port.*
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
-import de.contagio.webapp.repository.mongodb.PassRepository
-import de.contagio.webapp.repository.mongodb.TesterRepository
-import de.contagio.webapp.repository.mongodb.TeststationRepository
+import de.contagio.webapp.repository.mongodb.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.*
@@ -14,7 +11,8 @@ open class PortConfig(
     private val passInfoRepository: PassInfoRepository,
     private val passRepository: PassRepository,
     private val testerRepository: TesterRepository,
-    private val teststationRepository: TeststationRepository
+    private val teststationRepository: TeststationRepository,
+    private val registrationInfoRepository: RegistrationInfoRepository
 ) {
 
     @Bean
@@ -86,4 +84,15 @@ open class PortConfig(
         }
     }
 
+    @Bean
+    open fun findRegisteredSerialNumbers(): IFindRegisteredSerialNumbers {
+        return IFindRegisteredSerialNumbers { deviceLibraryIdentifier ->
+
+            registrationInfoRepository
+                .findByDeviceLibraryIdentifier(deviceLibraryIdentifier)
+                .map {
+                    it.serialNumber
+                }
+        }
+    }
 }
