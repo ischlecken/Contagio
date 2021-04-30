@@ -9,7 +9,8 @@ import de.contagio.webapp.repository.mongodb.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 
 private var logger = LoggerFactory.getLogger(PassService::class.java)
@@ -85,26 +86,50 @@ open class PassService(
         }
     }
 
+    open fun installed(serialnumber: String) {
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            passInfoRepository.save(
+                passInfo.copy(
+                    passInstallationStatus = PassInstallationStatus.INSTALLED,
+                    passInstalled = Instant.now(),
+                )
+            )
+        }
+    }
+
+    open fun removed(serialnumber: String) {
+        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+            passInfoRepository.save(
+                passInfo.copy(
+                    passInstallationStatus = PassInstallationStatus.REMOVED,
+                    passInstalled = Instant.now(),
+                    passRemoved = Instant.now()
+                )
+            )
+        }
+    }
+
     private fun updateTestResult(
         serialnumber: String,
         testResult: TestResultType,
         issueStatus: IssueStatus,
-        validUntil: LocalDateTime? = null,
+        validUntil: Instant? = null,
     ): PassInfo? {
         var result: PassInfo? = null
 
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
 
             val newValidUntil = when {
-                issueStatus == IssueStatus.EXPIRED -> LocalDateTime.now()
-                validUntil !=null -> validUntil
-                else -> LocalDateTime.now().plusHours(if (passInfo.testType == TestType.VACCINATION) 24*364 else 1)
+                issueStatus == IssueStatus.EXPIRED -> Instant.now()
+                validUntil != null -> validUntil
+                else -> Instant.now()
+                    .plus(if (passInfo.testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
             }
 
             val updatedPassInfo = passInfo.copy(
                 testResult = testResult,
                 issueStatus = issueStatus,
-                modified = LocalDateTime.now(),
+                modified = Instant.now(),
                 validUntil = newValidUntil,
                 version = passInfo.version + 1
             )

@@ -95,4 +95,14 @@ open class PortConfig(
                 }
         }
     }
+
+    @Bean
+    open fun findRegistrations(): IFindRegistrations {
+        return IFindRegistrations { deviceLibraryIdentifier, serialNumber ->
+            registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
+                deviceLibraryIdentifier,
+                serialNumber
+            )
+        }
+    }
 }

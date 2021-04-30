@@ -5,7 +5,6 @@ import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 
@@ -36,7 +35,7 @@ open class BackgroundProcessingService(
     override suspend fun process() {
         logger.debug("BackgroundProcessingService begins...")
 
-        val now = LocalDateTime.now()
+        val now = Instant.now()
         val passInfos = passInfoRepository.findByIssueStatusNotEqual(IssueStatus.EXPIRED)
 
         passInfos.forEach { passInfo ->

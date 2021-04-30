@@ -1,27 +1,23 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.DeviceInfo
-import de.contagio.core.domain.entity.RegistrationInfo
 import de.contagio.core.domain.port.IFindPass
+import de.contagio.core.domain.port.IFindPassInfo
+import de.contagio.core.domain.port.IFindRegistrations
 import de.contagio.core.usecase.SearchPassesSinceLastUpdate
-import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
 import de.contagio.webapp.model.WalletRegistration
-import de.contagio.webapp.repository.mongodb.DeviceInfoRepository
-import de.contagio.webapp.repository.mongodb.RegistrationInfoRepository
+import de.contagio.webapp.service.WalletService
 import de.contagio.webapp.service.validate.ValidateApplePass
 import de.contagio.webapp.service.validate.ValidatePassTypeIdentifier
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.servlet.http.HttpServletRequest
-
 
 private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 
@@ -30,12 +26,11 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 @RequestMapping("$WALLET/v1")
 open class WalletRestController(
     private val findPass: IFindPass,
-    private val deviceInfoRepository: DeviceInfoRepository,
-    private val registrationInfoRepository: RegistrationInfoRepository,
+    private val findPassInfo: IFindPassInfo,
+    private val findRegistrations: IFindRegistrations,
+    private val walletService: WalletService,
     private val searchPassesSinceLastUpdate: SearchPassesSinceLastUpdate
 ) {
-
-    private val uidGenerator = UIDGenerator()
 
     private val lastModifiedDateTimeFormatter =
         DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
@@ -50,7 +45,7 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return findPass.execute(serialNumber)?.let {
-            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfo.updatedUTC)
+            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfo.updated)
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 
@@ -79,9 +74,12 @@ open class WalletRestController(
             }
 
         if (passesUpdatedSince != null) {
-            val updatedSince = LocalDateTime.ofEpochSecond(passesUpdatedSince.toLong(), 0, ZoneOffset.UTC)
+            val updatedSince = Instant.ofEpochSecond(passesUpdatedSince.toLong() + 1)
+            logger.debug("updatedSince=$updatedSince")
 
             serialNumbers = serialNumbers.filter {
+                logger.debug("  updated=${it.updated}")
+
                 it.updated.isAfter(updatedSince)
             }
         }
@@ -89,7 +87,7 @@ open class WalletRestController(
         return if (serialNumbers.isNotEmpty()) {
             ResponseEntity.ok(
                 WalletPasses(
-                    lastUpdated = serialNumbers.first().updated.toEpochSecond(ZoneOffset.UTC).toString(),
+                    lastUpdated = serialNumbers.first().updated.epochSecond.toString(),
                     serialNumbers = serialNumbers.map { it.serialNumber }
                 )
             )
@@ -108,31 +106,15 @@ open class WalletRestController(
     ): ResponseEntity<Void> {
         logger.debug("registerDevice(deviceLibraryIdentifier=${deviceLibraryIdentifier}, serialNumber=${serialNumber}, pushToken=${walletRegistration.pushToken})")
 
-        val registrations = registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
-            deviceLibraryIdentifier,
-            serialNumber
-        )
-        var returnStatus = HttpStatus.OK
-        if (registrations.isEmpty()) {
-            registrationInfoRepository.save(
-                RegistrationInfo(
-                    id = uidGenerator.generate(),
-                    deviceLibraryIdentifier = deviceLibraryIdentifier,
-                    serialNumber = serialNumber
-                )
-            )
+        if (findPassInfo.execute(serialNumber) == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
-            deviceInfoRepository.save(
-                DeviceInfo(
-                    deviceLibraryIdentifier = deviceLibraryIdentifier,
-                    pushToken = walletRegistration.pushToken
-                )
-            )
+        return if (findRegistrations.execute(deviceLibraryIdentifier, serialNumber).isEmpty()) {
+            walletService.register(deviceLibraryIdentifier, serialNumber, walletRegistration.pushToken)
 
-            returnStatus = HttpStatus.CREATED
-        }
-
-        return ResponseEntity.status(returnStatus).build()
+            ResponseEntity.status(HttpStatus.CREATED).build()
+        } else
+            ResponseEntity.ok().build()
     }
 
     @ValidateApplePass
@@ -145,21 +127,10 @@ open class WalletRestController(
     ): ResponseEntity<Void> {
         logger.debug("unregisterDevice(deviceLibraryIdentifier=${deviceLibraryIdentifier},serialNumber=${serialNumber})")
 
-        try {
-            val registrations = registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
-                deviceLibraryIdentifier,
-                serialNumber
-            )
-
-            registrations.forEach {
-                registrationInfoRepository.deleteById(it.id)
-            }
-
-        } catch (ex: Exception) {
-            logger.error("Exception while unregister $serialNumber", ex)
-        }
-
-        return ResponseEntity.ok().build()
+        return if (walletService.unregister(deviceLibraryIdentifier, serialNumber))
+            ResponseEntity.ok().build()
+        else
+            ResponseEntity.notFound().build()
     }
 
     @PostMapping("/log")

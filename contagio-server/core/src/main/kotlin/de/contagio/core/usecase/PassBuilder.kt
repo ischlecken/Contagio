@@ -13,14 +13,13 @@ import de.brendamour.jpasskit.signing.PKSigningInformationUtil
 import de.contagio.core.domain.entity.*
 import org.slf4j.LoggerFactory
 import java.net.URL
-import java.time.LocalDateTime
+import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 private val logger = LoggerFactory.getLogger(PassBuilder::class.java)
-
-private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+02:00'")
+private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+00:00'")
 
 class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
 
@@ -98,11 +97,9 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             pass.serialNumber = this.serialNumber
 
             if (this.issueStatus == IssueStatus.REVOKED || this.issueStatus == IssueStatus.EXPIRED)
-                pass.expirationDate =
-                    Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())
+                pass.expirationDate = Date.from(Instant.now())
             else if (this.validUntil != null)
-                pass.expirationDate =
-                    Date.from(this.validUntil.atZone(ZoneId.systemDefault()).toInstant())
+                pass.expirationDate = Date.from(this.validUntil)
 
             pass.labelColor = this.labelColor
             pass.foregroundColor = this.foregroundColor
@@ -156,7 +153,8 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
                 )
             )
 
-        val validUntilFormatted = passBuilderInfo.passInfo.validUntil?.format(dateTimeFormatter)
+        val validUntilFormatted =
+            passBuilderInfo.passInfo.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
         if (validUntilFormatted != null &&
             passBuilderInfo.passInfo.testResult != TestResultType.UNKNOWN &&
             passBuilderInfo.passInfo.issueStatus == IssueStatus.ISSUED
@@ -185,7 +183,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
         return with(passBuilderInfo.passInfo) {
             val fields = mutableListOf<PKField>()
 
-            val validUntilFormatted = this.validUntil?.format(dateTimeFormatter)
+            val validUntilFormatted = this.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
 
             val showPassUrl = PKField(
                 "showPassUrl",

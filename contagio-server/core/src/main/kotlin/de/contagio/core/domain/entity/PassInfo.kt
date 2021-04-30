@@ -1,10 +1,7 @@
 package de.contagio.core.domain.entity
 
 import org.springframework.data.annotation.Id
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.*
 
 enum class TestResultType {
     UNKNOWN, POSITIVE, NEGATIVE
@@ -32,7 +29,7 @@ data class PassImage(
     @Id val id: String,
     val data: ByteArray,
     val type: String,
-    val created: LocalDateTime = LocalDateTime.now()
+    val created: Instant = Instant.now()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -75,7 +72,7 @@ data class PassImage(
 data class Pass(
     @Id val id: String,
     val data: ByteArray,
-    val created: LocalDateTime = LocalDateTime.now()
+    val created: Instant = Instant.now()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -118,15 +115,14 @@ data class PassInfo(
     val passId: String? = null,
     val passInstallationStatus: PassInstallationStatus = PassInstallationStatus.PENDING,
     val version: Int = 0,
-    val created: LocalDateTime = LocalDateTime.now(),
-    val modified: LocalDateTime? = null,
-    val validUntil: LocalDateTime? = null,
-    val passInstalled: LocalDateTime? = null,
-    val passRemoved: LocalDateTime? = null
+    val created: Instant = Instant.now(),
+    val modified: Instant? = null,
+    val validUntil: Instant? = null,
+    val passInstalled: Instant? = null,
+    val passRemoved: Instant? = null
 
 ) {
-    val updated: LocalDateTime get() = modified ?: created
-    val updatedUTC: ZonedDateTime get() = ZonedDateTime.ofInstant(updated, ZoneOffset.of("+02:00"), ZoneId.of("GMT"))
+    val updated: Instant get() = modified ?: created
 }
 
 data class ExtendedPassInfo(

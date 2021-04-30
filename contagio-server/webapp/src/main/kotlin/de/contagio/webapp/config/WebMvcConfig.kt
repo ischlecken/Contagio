@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.format.FormatterRegistry
 import org.springframework.format.datetime.DateFormatter
+import org.springframework.format.datetime.standard.InstantFormatter
 import org.springframework.web.servlet.LocaleResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration
@@ -11,11 +12,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
-import java.util.*
 
 @Configuration
 open class WebMvcConfig(
-    private val dateFormatter: DateFormatter
+    private val dateFormatter: DateFormatter,
+    private val instantFormatter: InstantFormatter
 ) : WebMvcConfigurer {
 
 
@@ -42,6 +43,7 @@ open class WebMvcConfig(
 
     override fun addFormatters(registry: FormatterRegistry) {
         registry.addFormatter(dateFormatter)
+        registry.addFormatter(instantFormatter)
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
