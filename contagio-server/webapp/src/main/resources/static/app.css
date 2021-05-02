@@ -49,6 +49,16 @@ body {
     font-family: 'Lato', sans-serif;
 }
 
+body.verify {
+    background: #d02600;
+    color: white;
+}
+
+body.verify .form-control {
+    background: #FF5E3B;
+    color: white;
+}
+
 a {
     color: #0A529D;
 }
@@ -103,6 +113,10 @@ footer p.version {
     z-index: 10;
 }
 
+.navbar.verify {
+    background: linear-gradient(0deg, #d02600 0%, #FF5E3B 100%);
+}
+
 .navbar-brand {
     color: white;
 }
@@ -151,7 +165,7 @@ footer p.version {
 .passimg {
     width: 80px;
     height: 80px;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .showpass .passimage {
@@ -159,9 +173,17 @@ footer p.version {
     margin-bottom: 2rem;
 }
 
+
 .showpass .passimg {
-    width: 360px;
+    width: 100%;
     height: 360px;
+}
+
+.verify .passimg {
+    width: 100%;
+    height: 360px;
+    box-shadow: 0 0 4em 4px gold;
+    border-radius: 1rem;
 }
 
 a.addtowallet {

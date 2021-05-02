@@ -3,13 +3,18 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <body>
 
-<nav th:fragment="menu(pagetype)" class="navbar navbar-expand-lg">
-  <a class="navbar-brand" href="/">
+<nav th:fragment="menu(pagetype)" class="navbar navbar-expand-lg" th:classappend="${pageType}">
+  <div th:if="${pagetype == 'verify'}" class="navbar-brand">
+    <img class="gy-logo" src="/mcstatic/images/icons/gylogo.png" alt="GoYellow Logo">
+    <span th:text="#{menu.verifymessage}">Contagio</span>
+  </div>
+
+  <a th:if="${pagetype != 'verify'}" class="navbar-brand" href="/">
     <img class="gy-logo" src="/mcstatic/images/icons/gylogo.png" alt="GoYellow Logo">
     <span th:text="#{menu.title}">Contagio</span>
   </a>
 
-  <th:block th:if="${pagetype} != 'verify'">
+  <th:block th:if="${pagetype != 'verify'}">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
             aria-expanded="false" aria-label="Toggle navigation">
       <i class="fas fa-bars"></i>
@@ -39,6 +44,8 @@
       <div class="navbar-text userinfo"><i class="fas fa-user"></i><span class="username" sec:authentication="name"></span></div>
     </div>
   </th:block>
+
+
 </nav>
 
 </body>

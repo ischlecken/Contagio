@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{header :: header(pagetype=${pagetype})}"><title></title></head>
-<body>
-<nav th:replace="~{menu :: menu(pagetype=${pagetype})}"></nav>
+<head th:replace="~{header :: header(pagetype=${pageType})}"><title></title></head>
+<body th:classappend="${pageType}">
+<nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container-fluid overview main">
   <h1 th:text="#{teststation.title.h1}">Übersicht über die ausgestellten Pässe</h1>
@@ -51,6 +51,6 @@
   </div>
 </div>
 
-<footer th:replace="~{footer :: footer(pagetype=${pagetype})}"></footer>
+<footer th:replace="~{footer :: footer(pagetype=${pageType})}"></footer>
 </body>
 </html>

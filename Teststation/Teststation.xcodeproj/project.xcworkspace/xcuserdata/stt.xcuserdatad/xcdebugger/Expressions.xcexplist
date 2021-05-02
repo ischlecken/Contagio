@@ -10,5 +10,11 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "closure #1 in TeststationState.loadTeststationInfo():TeststationState.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in static ContagioAPI.getTeststations():ContagioAPI.swift">
+      </ContextState>
    </ContextStates>
 </VariablesViewState>
