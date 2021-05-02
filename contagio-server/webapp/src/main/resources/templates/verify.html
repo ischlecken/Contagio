@@ -5,7 +5,7 @@
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container showpass main">
-  <h1><span th:text="#{showpass.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
+  <h1><span th:utext="#{verify.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
   </h1>
   <div class="row">
     <div class="col-12 col-lg-8 order-2 order-lg-1">
@@ -13,14 +13,18 @@
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
-            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfo.person.phoneNo}">
+            <label for="issueStatus" th:text="#{field.issuestatus}">Ausstellungsstatus</label>
+            <input class="form-control"
+                   readonly
+                   name="issueStatus"
+                   id="issueStatus"
+                   th:value="#{issueType.__${extendedPassInfo.passInfo.issueStatus}__}">
           </div>
         </div>
         <div class="col-6">
-          <div class="form-group" th:if="${extendedPassInfo.passInfo.person.email}">
-            <label for="email" th:text="#{field.email}">E-Mail</label>
-            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfo.person.email}">
+          <div class="form-group">
+            <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
+            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfo.validUntil}}">
           </div>
         </div>
       </div>
@@ -51,18 +55,14 @@
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label for="issueStatus" th:text="#{field.issuestatus}">Ausstellungsstatus</label>
-            <input class="form-control"
-                   readonly
-                   name="issueStatus"
-                   id="issueStatus"
-                   th:value="#{issueType.__${extendedPassInfo.passInfo.issueStatus}__}">
+            <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
+            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfo.person.phoneNo}">
           </div>
         </div>
         <div class="col-6">
-          <div class="form-group">
-            <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
-            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfo.validUntil}}">
+          <div class="form-group" th:if="${extendedPassInfo.passInfo.person.email}">
+            <label for="email" th:text="#{field.email}">E-Mail</label>
+            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfo.person.email}">
           </div>
         </div>
       </div>

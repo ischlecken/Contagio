@@ -33,6 +33,7 @@ open class ValidateAspect(
 
                 if (passTypeIdentifier != null &&
                     serialNumber != null &&
+                    authorization != null &&
                     isAuthorized(
                         passTypeIdentifier,
                         serialNumber,

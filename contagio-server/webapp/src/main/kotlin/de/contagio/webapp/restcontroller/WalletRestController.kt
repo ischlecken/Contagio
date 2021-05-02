@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -45,7 +46,7 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return findPass.execute(serialNumber)?.let {
-            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfo.updated)
+            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfo.updated.atZone(ZoneId.of("GMT")))
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 
