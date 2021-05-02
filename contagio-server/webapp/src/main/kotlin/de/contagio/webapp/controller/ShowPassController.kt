@@ -15,8 +15,22 @@ open class ShowPassController(
     private val searchPassInfo: SearchPassInfo
 ) {
 
+    @GetMapping("/verify")
+    open fun verify(
+        model: Model,
+        @RequestParam serialNumber: String,
+        @RequestParam showDetails: Boolean?
+    ) = searchPassInfo
+        .execute(serialNumber)?.let {
+            model.addAttribute("pageType", "verify")
+            model.addAttribute("extendedPassInfo", it)
+            model.addAttribute("showDetails", showDetails ?: false)
+
+            "verify"
+        } ?: "redirect:/overview"
+
     @GetMapping("/showpass")
-    open fun home(
+    open fun showpass(
         model: Model,
         @RequestParam serialNumber: String,
         @RequestParam showDetails: Boolean?

@@ -26,7 +26,7 @@
           <tr th:each="p : ${passInfo.content}">
             <td>
               <a th:title="#{overview.opendetails.title}" title="Passdetails öffnen"
-                 th:href="@{/showpass(serialNumber=${p.serialNumber},showDetails=true)}" th:text="${p.person.fullName}"></a>
+                 th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.person.fullName}"></a>
             </td>
             <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
             <td th:text="#{testType.__${p.testType}__}"/>

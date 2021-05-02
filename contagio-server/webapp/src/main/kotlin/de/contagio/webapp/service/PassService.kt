@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 
 private var logger = LoggerFactory.getLogger(PassService::class.java)
@@ -68,21 +67,22 @@ open class PassService(
 
     open fun negative(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            updateTestResult(serialnumber, TestResultType.NEGATIVE, passInfo.issueStatus)
 
-            notifyDevice(serialnumber)
+            if (passInfo.issueStatus.isActive()) {
+                updateTestResult(serialnumber, TestResultType.NEGATIVE, IssueStatus.ISSUED)
+
+                notifyDevice(serialnumber)
+            }
         }
     }
 
     open fun positive(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            updateTestResult(
-                serialnumber,
-                TestResultType.POSITIVE,
-                passInfo.issueStatus
-            )
+            if (passInfo.issueStatus.isActive()) {
+                updateTestResult(serialnumber, TestResultType.POSITIVE, IssueStatus.ISSUED)
 
-            notifyDevice(serialnumber)
+                notifyDevice(serialnumber)
+            }
         }
     }
 
@@ -118,22 +118,7 @@ open class PassService(
         var result: PassInfo? = null
 
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-
-            val newValidUntil = when {
-                issueStatus == IssueStatus.EXPIRED -> Instant.now()
-                validUntil != null -> validUntil
-                else -> Instant.now()
-                    .plus(if (passInfo.testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
-            }
-
-            val updatedPassInfo = passInfo.copy(
-                testResult = testResult,
-                issueStatus = issueStatus,
-                modified = Instant.now(),
-                validUntil = newValidUntil,
-                version = passInfo.version + 1
-            )
-
+            val updatedPassInfo = passInfo.update(testResult, issueStatus, validUntil)
             val pass = passRepository.findById(passInfo.passId!!)
             val passImage = passImageRepository.findById(passInfo.imageId)
             val teststation = teststationRepository.findById(passInfo.teststationId)

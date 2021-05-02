@@ -7,7 +7,7 @@
 
     <groupId>de.contagio</groupId>
     <artifactId>contagio-aggregate</artifactId>
-    <version>210429-SNAPSHOT</version>
+    <version>210501-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Contagio - Project Aggregate</name>
     <description>der Testzertifikatkontrollserver</description>

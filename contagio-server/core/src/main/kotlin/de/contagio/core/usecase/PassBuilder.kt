@@ -107,7 +107,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             pass.description = this.description
             pass.logoText = this.logoText
 
-            pass.addBarcode("${passBuilderInfo.passCoreInfo.baseUrl}/showpass?serialNumber=${this.serialNumber}")
+            pass.addBarcode("${passBuilderInfo.passCoreInfo.baseUrl}/verify?serialNumber=${this.serialNumber}")
         }
 
         return pass
@@ -188,7 +188,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             val showPassUrl = PKField(
                 "showPassUrl",
                 "SHOWPASSURL",
-                "${passBuilderInfo.passCoreInfo.baseUrl}/showpass?serialNumber=${this.serialNumber}"
+                "${passBuilderInfo.passCoreInfo.baseUrl}/verify?serialNumber=${this.serialNumber}"
             )
             showPassUrl.dataDetectorTypes = listOf(PKDataDetectorType.PKDataDetectorTypeLink)
             fields.add(showPassUrl)

@@ -46,7 +46,7 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
                 "/",
                 "/mcwj/**",
                 "/mcstatic/**",
-                "/showpass",
+                "/verify",
                 "/co_v1/pass/image/*",
                 "/co_v1/wallet/**"
             ).permitAll()

@@ -1,7 +1,8 @@
 package de.contagio.core.domain.entity
 
 import org.springframework.data.annotation.Id
-import java.time.*
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 enum class TestResultType {
     UNKNOWN, POSITIVE, NEGATIVE
@@ -17,7 +18,23 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, ISSUED, EXPIRED, REVOKED, REFUSED
+    CREATED {
+        override fun isActive() = true
+    },
+    ISSUED {
+        override fun isActive() = true
+    },
+    EXPIRED {
+        override fun isActive() = false
+    },
+    REVOKED {
+        override fun isActive() = false
+    },
+    REFUSED {
+        override fun isActive() = false
+    };
+
+    abstract fun isActive(): Boolean
 }
 
 
@@ -123,6 +140,28 @@ data class PassInfo(
 
 ) {
     val updated: Instant get() = modified ?: created
+
+    fun update(
+        testResult: TestResultType,
+        issueStatus: IssueStatus,
+        validUntil: Instant? = null
+    ): PassInfo {
+
+        val newValidUntil = when {
+            issueStatus == IssueStatus.EXPIRED -> this.validUntil
+            validUntil != null -> validUntil
+            else -> Instant.now()
+                .plus(if (testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
+        }
+
+        return this.copy(
+            testResult = testResult,
+            issueStatus = issueStatus,
+            modified = Instant.now(),
+            validUntil = newValidUntil,
+            version = this.version + 1
+        )
+    }
 }
 
 data class ExtendedPassInfo(
