@@ -43,7 +43,6 @@ struct CertificateList: View {
                         showAlert = true
                     }
                 }
-                
             }
             .listStyle(GroupedListStyle())
             .onAppear {

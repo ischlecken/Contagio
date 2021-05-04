@@ -11,6 +11,7 @@
 		3C126906261B7840006B1009 /* event.pkpass in Resources */ = {isa = PBXBuildFile; fileRef = 3C126904261B7840006B1009 /* event.pkpass */; };
 		3C12690F261B7BE5006B1009 /* PassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12690E261B7BE5006B1009 /* PassView.swift */; };
 		3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C126916261BBCCE006B1009 /* ModifyCertificate.swift */; };
+		3C462E222641B61A00D02821 /* ShowQRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C462E212641B61A00D02821 /* ShowQRView.swift */; };
 		3C56B72C2621889B0051E1CB /* TeststationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B72B2621889B0051E1CB /* TeststationSettings.swift */; };
 		3C56B73126218A020051E1CB /* TeststationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73026218A020051E1CB /* TeststationState.swift */; };
 		3C56B73726218AD40051E1CB /* CertificateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73526218AD40051E1CB /* CertificateList.swift */; };
@@ -69,6 +70,7 @@
 		3C126904261B7840006B1009 /* event.pkpass */ = {isa = PBXFileReference; lastKnownFileType = file; path = event.pkpass; sourceTree = "<group>"; };
 		3C12690E261B7BE5006B1009 /* PassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassView.swift; sourceTree = "<group>"; };
 		3C126916261BBCCE006B1009 /* ModifyCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifyCertificate.swift; sourceTree = "<group>"; };
+		3C462E212641B61A00D02821 /* ShowQRView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowQRView.swift; sourceTree = "<group>"; };
 		3C56B72B2621889B0051E1CB /* TeststationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationSettings.swift; sourceTree = "<group>"; };
 		3C56B73026218A020051E1CB /* TeststationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationState.swift; sourceTree = "<group>"; };
 		3C56B73526218AD40051E1CB /* CertificateList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateList.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 		3C92CFF826185B8F002B5284 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				3C462E212641B61A00D02821 /* ShowQRView.swift */,
 				3C9FEA0D262C8BC9007F7121 /* MessageView.swift */,
 				3C56B73526218AD40051E1CB /* CertificateList.swift */,
 				3C56B73626218AD40051E1CB /* LoginView.swift */,
@@ -438,6 +441,7 @@
 				3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
 				3C56B73126218A020051E1CB /* TeststationState.swift in Sources */,
+				3C462E222641B61A00D02821 /* ShowQRView.swift in Sources */,
 				3C9FEA0E262C8BC9007F7121 /* MessageView.swift in Sources */,
 				3C7DB458261B366B00DA85C2 /* UIImage+Extension.swift in Sources */,
 				3CB2FE61261E5599002F87B5 /* ViewModels.swift in Sources */,

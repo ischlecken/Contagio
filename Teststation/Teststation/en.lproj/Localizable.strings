@@ -18,7 +18,7 @@
 "certificaterow_status: %@ %@" = "%@ status:%@";
 "certificaterow_issuestatus: %@" = "Issue Status: %@";
 
-"certificatelist_title" = "Certificates";
+"certificatelist_title" = "Passes";
 
 "addcert_firstname" = "Firstname";
 "addcert_firstname_placeholder" = "type in firstname";
@@ -29,20 +29,21 @@
 "addcert_email" = "EMail";
 "addcert_email_placeholder" = "type in email";
 "addcert_validto" = "valid until";
-"addcert_addbutton" = "add certificate";
-"addcert_title" = "Add Certificate";
-"addcert_type" = "Certificate Type";
-"addcert_status" = "Certificate Status";
+"addcert_addbutton" = "create new pass";
+"addcert_title" = "Create Pass";
+"addcert_type" = "Pass Type";
+"addcert_status" = "Pass Status";
 "addcert_addphoto" = "Add photo";
 
-"modifycert_title" = "Modify Certificate";
+"modifycert_title" = "Modify Pass";
 "modifycert_updatebutton" = "Save Changes";
-"modifycert_deletebutton" = "Delete Certificate";
+"modifycert_deletebutton" = "Delete Pass";
 "modifycert_showpass" = "Show Pass";
 "modifycert_sendpass" = "Send Pass";
+"modifycert_showqr" = "Show QR Code";
 
-"alert_deletecertificate_title" = "delete certificate?";
-"alert_deletecertificate_message" = "do you really want to delete this certificate?";
+"alert_deletecertificate_title" = "delete Pass?";
+"alert_deletecertificate_message" = "do you really want to delete this pass?";
 "alert_deletecertificate_deletebutton" = "Delete";
 
 "sendpass.message" = "Attached is your Contagio Pass";
@@ -53,3 +54,6 @@
 "loginview_password" = "Password";
 "loginview_password_placeholder" = "Your authentication please...";
 "loginview_loginbutton" = "Login";
+
+"showqr_title" = "QR Code";
+

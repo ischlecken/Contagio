@@ -19,7 +19,7 @@
 "certificaterow_status: %@ %@" = "%@: %@";
 "certificaterow_issuestatus: %@" = "Ausstellungsstatus: %@";
 
-"certificatelist_title" = "Zertifikate";
+"certificatelist_title" = "Pässe";
 
 "addcert_firstname" = "Vorname";
 "addcert_firstname_placeholder" = "Geben Sie den Vornamen ein";
@@ -30,20 +30,21 @@
 "addcert_email" = "E-Mail";
 "addcert_email_placeholder" = "Geben Sie die E-Mail ein";
 "addcert_validto" = "Gültig bis";
-"addcert_addbutton" = "neues Zertifikat hinzufügen";
+"addcert_addbutton" = "neuen Pass erzeugen";
 "addcert_title" = "Neues Zertifikat";
-"addcert_type" = "Zertifikat Typ";
-"addcert_status" = "Zertifikat Status";
+"addcert_type" = "Pass Typ";
+"addcert_status" = "Pass Status";
 "addcert_addphoto" = "Foto hinzufügen";
 
-"modifycert_title" = "Zertifikat ändern";
+"modifycert_title" = "Pass ändern";
 "modifycert_updatebutton" = "Änderungen speichern";
-"modifycert_deletebutton" = "Zertifikat löschen";
+"modifycert_deletebutton" = "Pass löschen";
 "modifycert_showpass" = "Pass anzeigen";
 "modifycert_sendpass" = "Pass senden";
+"modifycert_showqr" = "QR Code anzeigen";
 
-"alert_deletecertificate_title" = "Zertifikat löschen";
-"alert_deletecertificate_message" = "Wollen Sie das Zertifikat wirklich löschen?";
+"alert_deletecertificate_title" = "Pass löschen";
+"alert_deletecertificate_message" = "Wollen Sie das Pass wirklich löschen?";
 "alert_deletecertificate_deletebutton" = "Löschen";
 
 "sendpass.message" = "Angefügt ist Ihr Contagio Pass. Bitte fügen Sie diesen Pass Ihrem Wallet hinzu.";
@@ -54,3 +55,5 @@
 "loginview_password" = "Passwort";
 "loginview_password_placeholder" = "Ihre Authentisierung bitte";
 "loginview_loginbutton" = "Einloggen";
+
+"showqr_title" = "QR Code";

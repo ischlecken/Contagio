@@ -21,76 +21,79 @@ struct ModifyCertificate: View {
     var body: some View {
         let statusColor = Color("backgroundcertificatestatus_\(selectedStatus)")
         
-        NavigationView {
-            List {
-                Section() {
-                    HStack {
-                        Image(uiImage:certifcatePhoto)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 120, alignment: .top)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(statusColor, lineWidth: 4))
+        
+        List {
+            Section() {
+                HStack {
+                    Image(uiImage:certifcatePhoto)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 120, alignment: .top)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(statusColor, lineWidth: 4))
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        VStack(alignment: .trailing) {
+                            Text("addcert_phonenumber").foregroundColor(Color(.gray)).font(.caption)
+                            Text(certificate.phonenumber!)
+                        }
+                        VStack(alignment: .trailing) {
+                            Text("addcert_email").foregroundColor(Color(.gray)).font(.caption)
+                            Text(certificate.email!)
+                        }
                         Spacer()
                         VStack(alignment: .trailing) {
-                            Text("\(certificate.firstname!) \(certificate.lastname!)").font(.largeTitle)
-                            Spacer()
+                            Text("addcert_type").foregroundColor(Color(.gray)).font(.caption)
                             Text("certificatetype_\(certificate.type)".localized()).font(.callout).bold()
-                            
-                            if( certificate.validuntil != nil) {
-                                HStack {
-                                    Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
-                                    Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
-                                }}
                         }
+                        if( certificate.validuntil != nil) {
+                            VStack(alignment: .trailing) {
+                                Text("addcert_validto").foregroundColor(Color(.gray)).font(.caption)
+                                Text(DateFormatter.certificate.string(from: certificate.validuntil!)).font(.caption).bold()
+                            }}
                     }
-                }
-                Section()  {
-                    VStack(alignment: .leading) {
-                        Text("addcert_status").foregroundColor(Color(.gray)).font(.caption)
-                        Picker(selection: $selectedStatus, label: Text("Certification Status")) {
-                            ForEach(status.indices) { i in
-                                Text("certificatestatus_\(status[i])".localized()).tag(i)
-                            }
-                        }.pickerStyle(SegmentedPickerStyle())
-                    }
-                }
-                Section() {
-                    VStack(alignment: .leading) {
-                        Text("addcert_phonenumber").foregroundColor(Color(.gray)).font(.caption)
-                        Text(certificate.phonenumber!)
-                    }
-                    VStack(alignment: .leading) {
-                        Text("addcert_email").foregroundColor(Color(.gray)).font(.caption)
-                        Text(certificate.email!)
-                    }
-                }
-                Section {
-                    DatePicker(selection: $validuntil, displayedComponents: [.hourAndMinute, .date]) {
-                        Text("addcert_validto").foregroundColor(Color(.gray))
-                    }
-                }
-                Section {
-                    Button(action: modifyCertificateAction) {
-                        Text("modifycert_updatebutton")
-                    }
-                }
-                
-                if( MFMessageComposeViewController.canSendText() ) {
-                    Section {
-                        Button(action: { presentMessageCompose(); } ) {
-                            Text("modifycert_sendpass")
-                        }
-                        .disabled(!passLoader.passIsLoaded)
-                    }
-                    
                 }
             }
-            .listStyle(InsetGroupedListStyle())
-            .onAppear {
-                passLoader.startLoadingPass(passid: certificate.passid)
+            Section()  {
+                VStack(alignment: .leading) {
+                    Text("addcert_status").foregroundColor(Color(.gray)).font(.caption)
+                    Picker(selection: $selectedStatus, label: Text("Certification Status")) {
+                        ForEach(status.indices) { i in
+                            Text("certificatestatus_\(status[i])".localized()).tag(i)
+                        }
+                    }.pickerStyle(SegmentedPickerStyle())
+                }
+            }
+            Section {
+                DatePicker(selection: $validuntil, displayedComponents: [.hourAndMinute, .date]) {
+                    Text("addcert_validto").foregroundColor(Color(.gray))
+                }
+            }
+            Section {
+                Button(action: modifyCertificateAction) {
+                    Text("modifycert_updatebutton")
+                }
+            }
+            Section {
+                NavigationLink(destination: ShowQRView()) {
+                    Text("modifycert_showqr")
+                }
+                .navigationTitle("\(certificate.firstname!) \(certificate.lastname!)")
+            }
+            if( MFMessageComposeViewController.canSendText() ) {
+                Section {
+                    Button(action: { presentMessageCompose(); } ) {
+                        Text("modifycert_sendpass")
+                    }
+                    .disabled(!passLoader.passIsLoaded)
+                }
             }
         }
+        .onAppear {
+            passLoader.startLoadingPass(passid: certificate.passid)
+        }
+        .listStyle(InsetGroupedListStyle())
+        
     }
     
     private class MessageDelegate: NSObject, MFMessageComposeViewControllerDelegate {
@@ -103,7 +106,7 @@ struct ModifyCertificate: View {
         guard let pass = passLoader.pass, MFMessageComposeViewController.canSendText() else {
             return
         }
-        let vc = UIApplication.shared.keyWindow?.rootViewController
+        let vc = UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController
         
         let composeVC = MFMessageComposeViewController()
         composeVC.messageComposeDelegate = messageComposeDelegate
