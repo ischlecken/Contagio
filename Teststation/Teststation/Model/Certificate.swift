@@ -35,6 +35,10 @@ extension Certificate {
         return "\(firstname ?? "") \(lastname ?? "")"
     }
     
+    func passURL() -> String {
+        return "\(EnvConfig.contagioapiPassURL)/\(passid ?? "unknown")"
+    }
+    
     func updateStatus(status:CertificateStatus) {
         self.certStatus = status
         self.certIssueStatus = CertificateIssueStatus.created

@@ -75,10 +75,11 @@ struct ModifyCertificate: View {
                 }
             }
             Section {
-                NavigationLink(destination: ShowQRView()) {
+                NavigationLink(destination: ShowQRView(certificate: certificate)) {
                     Text("modifycert_showqr")
                 }
                 .navigationTitle("\(certificate.firstname!) \(certificate.lastname!)")
+                .disabled(!passLoader.passIsLoaded)
             }
             if( MFMessageComposeViewController.canSendText() ) {
                 Section {

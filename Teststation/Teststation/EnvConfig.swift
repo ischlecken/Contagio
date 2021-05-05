@@ -40,4 +40,8 @@ public enum EnvConfig {
         }
         return password
     }()
+    
+    static let contagioapiPassURL: String = {
+        return "\(contagioapiBaseURL)/pass"
+    }()
 }
