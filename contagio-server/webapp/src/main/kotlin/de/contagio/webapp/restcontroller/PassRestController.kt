@@ -5,11 +5,13 @@ import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.webapp.model.UpdatePassRequest
+import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
 import de.contagio.webapp.service.PassBuilderService
 import de.contagio.webapp.service.PassService
+import de.contagio.webapp.service.QRCodeGeneratorService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -31,7 +33,9 @@ open class PassRestController(
     private val passRepository: PassRepository,
     private val passService: PassService,
     private val passBuilderService: PassBuilderService,
-    private val searchTesterWithTeststation: SearchTesterWithTeststation
+    private val searchTesterWithTeststation: SearchTesterWithTeststation,
+    private val qrCodeGeneratorService: QRCodeGeneratorService,
+    private val contagioProperties: ContagioProperties
 ) {
 
 
@@ -68,9 +72,10 @@ open class PassRestController(
                 image,
                 firstName, lastName,
                 phoneNo, email,
-                it.teststation.id, it.tester.id,
+                it.teststation.id,
+                it.tester.id,
                 testResult, testType
-            )?.let { cpr ->
+            ).let { cpr ->
                 ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
             } ?: ResponseEntity.badRequest().build()
         } ?: ResponseEntity.badRequest().build()
@@ -101,7 +106,7 @@ open class PassRestController(
     }
 
     @GetMapping("/{passId}")
-    open fun getPass(@PathVariable passId: String, @RequestParam signature: Boolean?): ResponseEntity<ByteArray> {
+    open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
         val result = passRepository.findById(passId)
 
         logger.debug("getPass(passId=$passId): ${result.isPresent}")
@@ -109,15 +114,47 @@ open class PassRestController(
         if (result.isEmpty)
             return ResponseEntity.notFound().build()
 
-        return if (signature == true) {
-            val s = passBuilderService.sign(result.get())
-
-            if (s != null)
-                ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)
-            else
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-        } else
-            ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
+        return ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
     }
 
+    @GetMapping("/{passId}/signature")
+    open fun getPassSignature(@PathVariable passId: String): ResponseEntity<ByteArray> {
+        val result = passRepository.findById(passId)
+
+        logger.debug("getPassSignature(passId=$passId): ${result.isPresent}")
+
+        if (result.isEmpty)
+            return ResponseEntity.notFound().build()
+
+        val s = passBuilderService.sign(result.get())
+
+        return if (s != null)
+            ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)
+        else
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+
+    }
+
+    @GetMapping("/{passId}/qrcode")
+    open fun getPassQRCode(@PathVariable passId: String): ResponseEntity<ByteArray> {
+        val result = passRepository.findById(passId)
+
+        logger.debug("getPassQRCode(passId=$passId): ${result.isPresent}")
+
+        if (result.isEmpty)
+            return ResponseEntity.notFound().build()
+
+        var qrCode: ByteArray? = null
+        try {
+            qrCode = qrCodeGeneratorService.generate("${contagioProperties.baseUrl}/co_v1/pass/$passId", 400, 400)
+        } catch (ex: Exception) {
+            logger.error("Error while generationg qrcode", ex)
+        }
+
+        return if (qrCode != null)
+            ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(qrCode)
+        else
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+
+    }
 }

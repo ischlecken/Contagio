@@ -153,6 +153,7 @@
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage">
       <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
       <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfo.passId})}"></a>
+      <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfo.passId})}">
     </div>
   </div>
 </div>
