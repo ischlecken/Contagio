@@ -37,17 +37,19 @@ class PassBuilderTest {
         )
 
         val img = PassBuilderTest::class.java.getResourceAsStream("/testimg.png")
-        val imgData = IOUtils.toByteArray(img)
+        val keystore = PassBuilderTest::class.java.getResourceAsStream("/certs/pass.p12")
+        val appleca = PassBuilderTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
+
         val passBuilderInfo = PassBuilderInfo(
             passCoreInfo = passCoreInfo,
             passSigningInfo = PassSigningInfo(
-                keystore = ByteArrayInputStream("bla".toByteArray()),
-                keystorePassword = "bla",
-                appleWWDRCA = ByteArrayInputStream("fasel".toByteArray()),
+                keystore = keystore,
+                keystorePassword = "1234",
+                appleWWDRCA = appleca,
             ),
             passImage = PassImage(
                 id = "img",
-                data = imgData,
+                data = IOUtils.toByteArray(img),
                 type = "image/png"
             ),
             passInfo = passInfo,
