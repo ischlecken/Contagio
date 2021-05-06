@@ -22,6 +22,23 @@ open class UsecaseConfig {
     ) = SearchTesterWithTeststation(findTester, findTeststation)
 
     @Bean
+    open fun searchTeststation(
+        findTeststation: IFindTeststation
+    ) = SearchTeststation(findTeststation)
+
+    @Bean
+    open fun createTeststation(
+        saveTeststation: ISaveTeststation
+    ) = CreateTeststation(saveTeststation)
+
+    @Bean
+    open fun updateTeststation(
+        findTeststation: IFindTeststation,
+        saveTeststation: ISaveTeststation
+    ) = UpdateTeststation(findTeststation, saveTeststation)
+
+
+    @Bean
     open fun searchPassInfo(
         findPassInfo: IFindPassInfo,
         searchTesterWithTeststation: SearchTesterWithTeststation

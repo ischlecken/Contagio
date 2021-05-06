@@ -8,13 +8,13 @@
   <nav th:replace="~{breadcrumb}"></nav>
 
   <h1 th:text="#{createteststation.title}">Teststation erzeugen</h1>
-  <form id="createpassform" action="/createteststation" method="POST">
+  <form id="createpassform" action="/createteststation" method="POST" th:object="${createTeststationDTO}">
 
     <div class="row">
       <div class="col">
         <div class="form-group">
           <label for="name" th:text="#{field.name}">Vorname</label>
-          <input class="form-control" type="text" name="name" id="name" placeholder="Name der Teststation">
+          <input class="form-control" type="text" th:field="*{name}" id="name" placeholder="Name der Teststation">
         </div>
       </div>
     </div>
@@ -23,25 +23,25 @@
       <div class="col-2">
         <div class="form-group">
           <label for="zipcode" th:text="#{field.zipcode}">PLZ</label>
-          <input class="form-control" type="text" name="zipcode" id="zipcode" placeholder="Postleitzahl">
+          <input class="form-control" type="text" th:field="*{zipcode}" id="zipcode" placeholder="Postleitzahl">
         </div>
       </div>
       <div class="col-4">
         <div class="form-group">
           <label for="city" th:text="#{field.city}">Stadt</label>
-          <input class="form-control" type="text" name="city" id="city" placeholder="Stadt">
+          <input class="form-control" type="text" th:field="*{city}" id="city" placeholder="Stadt">
         </div>
       </div>
       <div class="col-4">
         <div class="form-group">
           <label for="street" th:text="#{field.street}">Hausnummer</label>
-          <input class="form-control" type="text" name="street" id="street" placeholder="Straße">
+          <input class="form-control" type="text" th:field="*{street}" id="street" placeholder="Straße">
         </div>
       </div>
       <div class="col-2">
         <div class="form-group">
           <label for="hno" th:text="#{field.hno}">Hausnummer</label>
-          <input class="form-control" type="text" name="hno" id="hno" placeholder="Hausnummer">
+          <input class="form-control" type="text" th:field="*{hno}" id="hno" placeholder="Hausnummer">
         </div>
       </div>
     </div>

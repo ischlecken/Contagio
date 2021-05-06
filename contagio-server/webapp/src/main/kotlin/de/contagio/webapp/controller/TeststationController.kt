@@ -2,10 +2,13 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.core.domain.entity.Address
+import de.contagio.core.domain.entity.CreateTeststationDTO
 import de.contagio.core.domain.entity.Teststation
+import de.contagio.core.domain.entity.UpdateTeststationDTO
+import de.contagio.core.domain.port.IDeleteTeststation
+import de.contagio.core.usecase.CreateTeststation
+import de.contagio.core.usecase.UpdateTeststation
 import de.contagio.core.usecase.UrlBuilder
-import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.TeststationRepository
 import org.springframework.data.domain.PageRequest
@@ -13,22 +16,18 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import springfox.documentation.annotations.ApiIgnore
-import java.time.Instant
 
 @ApiIgnore
 @Controller
 open class TeststationController(
     private val teststationRepository: TeststationRepository,
+    private val updateTeststation: UpdateTeststation,
+    private val deleteTeststation: IDeleteTeststation,
+    private val createTeststation: CreateTeststation,
     private val urlBuilder: UrlBuilder
 ) {
-
-    private val uidGenerator = UIDGenerator()
-
     @GetMapping("/teststation")
     open fun teststation(
         model: Model,
@@ -60,13 +59,14 @@ open class TeststationController(
     @PostMapping("/teststation")
     open fun commands(
         @RequestParam teststationid: String,
-        @RequestParam command: String
+        @RequestParam command: String,
+        teststation: Teststation?
     ): String {
 
-        teststationRepository.findById(teststationid).ifPresent { teststation ->
+        teststation?.let { it ->
             when (command) {
                 "delete" -> {
-                    teststationRepository.deleteById(teststation.id)
+                    deleteTeststation.execute(it)
                 }
             }
         }
@@ -85,33 +85,28 @@ open class TeststationController(
                 Breadcrumb("CREATETESTSTATION", urlBuilder.createteststationURL, true),
             )
         )
+        model.addAttribute("createTeststationDTO", CreateTeststationDTO())
 
         return "createteststation"
     }
 
     @PostMapping("/createteststation")
     open fun createTeststation(
-        @RequestParam name: String,
-        @RequestParam zipcode: String,
-        @RequestParam city: String,
-        @RequestParam street: String,
-        @RequestParam hno: String,
+        @ModelAttribute createTeststationDTO: CreateTeststationDTO
     ): String {
 
-        teststationRepository.save(
-            Teststation(
-                id = uidGenerator.generate(),
-                name = name,
-                address = Address(city = city, zipcode = zipcode, street = street, hno = hno)
-            )
-        )
-
+        createTeststation.execute(createTeststationDTO)
 
         return "redirect:/teststation"
     }
 
-    @GetMapping("/editteststation/{id}")
-    open fun editTeststation(model: Model, @PathVariable id: String): String {
+    @GetMapping("/editteststation/{teststationid}")
+    open fun editTeststation(
+        @PathVariable teststationid: String,
+        model: Model,
+        teststation: Teststation?
+    ): String {
+
         model.addAttribute("pageType", "editteststation")
         model.addAttribute(
             "breadcrumbinfo",
@@ -122,8 +117,18 @@ open class TeststationController(
             )
         )
 
-        teststationRepository.findById(id).ifPresent {
-            model.addAttribute("teststation", it)
+        teststation?.let {
+            model.addAttribute("teststationid", teststationid)
+            model.addAttribute(
+                "updateTeststationDTO",
+                UpdateTeststationDTO(
+                    it.name,
+                    it.address.zipcode,
+                    it.address.city,
+                    it.address.street ?: "",
+                    it.address.hno ?: ""
+                )
+            )
         }
 
         return "editteststation"
@@ -132,24 +137,15 @@ open class TeststationController(
     @PostMapping("/editteststation")
     open fun editTeststation(
         @RequestParam command: String,
-        @RequestParam id: String,
-        @RequestParam name: String,
-        @RequestParam zipcode: String,
-        @RequestParam city: String,
-        @RequestParam street: String,
-        @RequestParam hno: String,
+        @RequestParam teststationid: String,
+        @ModelAttribute updateTeststationDTO: UpdateTeststationDTO,
+        teststation: Teststation?
     ): String {
 
-        teststationRepository.findById(id).ifPresent {
+        teststation?.apply {
             when (command) {
-                "delete" -> teststationRepository.deleteById(id)
-                "save" -> teststationRepository.save(
-                    it.copy(
-                        name = name,
-                        address = Address(city = city, zipcode = zipcode, street = street, hno = hno),
-                        modified = Instant.now()
-                    )
-                )
+                "delete" -> deleteTeststation.execute(this)
+                "save" -> updateTeststation.execute(this, updateTeststationDTO)
             }
         }
 

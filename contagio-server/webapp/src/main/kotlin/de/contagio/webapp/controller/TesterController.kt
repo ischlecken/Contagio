@@ -2,6 +2,7 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.domain.entity.Tester
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.TesterRepository
@@ -34,7 +35,7 @@ open class TesterController(
                 PageRequest.of(
                     pageable.pageNumber,
                     pageable.pageSize,
-                    Sort.by(Sort.Direction.DESC,  "created")
+                    Sort.by(Sort.Direction.DESC, "created")
                 )
             )
         )
@@ -54,13 +55,14 @@ open class TesterController(
     @PostMapping("/tester")
     open fun commands(
         @RequestParam testerid: String,
-        @RequestParam command: String
+        @RequestParam command: String,
+        tester: Tester?
     ): String {
 
-        testerRepository.findById(testerid).ifPresent { tester ->
+        tester?.let {
             when (command) {
                 "delete" -> {
-                    testerRepository.deleteById(tester.id)
+                    testerRepository.deleteById(it.id)
                 }
             }
         }

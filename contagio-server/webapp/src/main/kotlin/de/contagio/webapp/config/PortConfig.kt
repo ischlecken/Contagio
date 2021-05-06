@@ -15,19 +15,6 @@ open class PortConfig(
     private val registrationInfoRepository: RegistrationInfoRepository
 ) {
 
-    @Bean
-    open fun findAllTester(): IFindAllTester {
-        return IFindAllTester {
-            testerRepository.findAll()
-        }
-    }
-
-    @Bean
-    open fun findAllTeststation(): IFindAllTeststation {
-        return IFindAllTeststation {
-            teststationRepository.findAll()
-        }
-    }
 
     @Bean
     open fun findPassInfo(): IFindPassInfo {
@@ -60,6 +47,15 @@ open class PortConfig(
         }
     }
 
+
+    @Bean
+    open fun findAllTester(): IFindAllTester {
+        return IFindAllTester {
+            testerRepository.findAll()
+        }
+    }
+
+
     @Bean
     open fun findTester(): IFindTester {
         return IFindTester { id ->
@@ -72,6 +68,29 @@ open class PortConfig(
         }
     }
 
+
+    @Bean
+    open fun saveTester(): ISaveTester {
+        return ISaveTester {
+            testerRepository.save(it)
+        }
+    }
+
+    @Bean
+    open fun deleteTester(): IDeleteTester {
+        return IDeleteTester {
+            testerRepository.delete(it)
+        }
+    }
+
+
+    @Bean
+    open fun findAllTeststation(): IFindAllTeststation {
+        return IFindAllTeststation {
+            teststationRepository.findAll()
+        }
+    }
+
     @Bean
     open fun findTeststation(): IFindTeststation {
         return IFindTeststation { id ->
@@ -81,6 +100,20 @@ open class PortConfig(
                 result.get()
             else
                 null
+        }
+    }
+
+    @Bean
+    open fun saveTeststation(): ISaveTeststation {
+        return ISaveTeststation {
+            teststationRepository.save(it)
+        }
+    }
+
+    @Bean
+    open fun deleteTeststation(): IDeleteTeststation {
+        return IDeleteTeststation {
+            teststationRepository.delete(it)
         }
     }
 
