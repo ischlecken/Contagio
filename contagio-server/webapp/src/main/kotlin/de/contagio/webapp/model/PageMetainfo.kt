@@ -12,3 +12,9 @@ data class PageMetainfo(
     val imprint: String? = null,
     val links: Map<HtmlLinkType, String> = emptyMap()
 )
+
+data class Breadcrumb(
+    val display: String,
+    val url: String,
+    val active: Boolean = false
+)

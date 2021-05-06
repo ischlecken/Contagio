@@ -2,6 +2,8 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.usecase.UrlBuilder
+import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.service.ContagioInfoService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -11,7 +13,8 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class HomeController(
-    private val contagioInfoService: ContagioInfoService
+    private val contagioInfoService: ContagioInfoService,
+    private val urlBuilder: UrlBuilder
 ) {
 
     @GetMapping("/")
@@ -19,6 +22,12 @@ open class HomeController(
 
         model.addAttribute("activePassCount", contagioInfoService.activePassCount)
         model.addAttribute("pageType", "home")
+        model.addAttribute(
+            "breadcrumbinfo",
+            listOf(
+                Breadcrumb("HOME", urlBuilder.homeURL, true),
+            )
+        )
 
         return "home"
     }

@@ -5,6 +5,8 @@
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container-fluid overview main">
+  <nav th:replace="~{breadcrumb}"></nav>
+
   <h1 th:text="#{tester.title.h1}">Übersicht über die ausgestellten Pässe</h1>
   <div class="row">
     <div class="col-12">

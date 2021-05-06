@@ -5,6 +5,8 @@
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container showpass main">
+  <nav th:replace="~{breadcrumb}"></nav>
+
   <h1><span th:text="#{showpass.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
     <small class="serialno text-muted" th:text="${extendedPassInfo.passInfo.serialNumber}">serial no</small>
   </h1>

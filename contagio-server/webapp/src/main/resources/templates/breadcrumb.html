@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<body>
+
+<!--/*@thymesVar id="buildInfo" type="de.contagiowebapp.config.BuildInfo"*/-->
+<!--/*@thymesVar id="appName" type="String"*/-->
+
+<div th:fragment="breadcrumb">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li th:each="b : ${breadcrumbinfo}"
+          class="breadcrumb-item"
+          th:classappend="${b.active} ? 'active': ''"
+      >
+        <a
+          th:unless="${b.active}"
+          th:href="${b.url}"
+          href="#"
+          th:text="#{breadcrumb.__${b.display}__}">Home</a>
+        <span
+          th:if="${b.active}"
+          th:text="#{breadcrumb.__${b.display}__}">Home</span>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+</body>
+</html>

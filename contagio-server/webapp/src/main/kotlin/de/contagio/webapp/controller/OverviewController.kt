@@ -2,6 +2,8 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.usecase.UrlBuilder
+import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.service.PassService
 import org.springframework.data.domain.PageRequest
@@ -18,7 +20,8 @@ import springfox.documentation.annotations.ApiIgnore
 @Controller
 open class OverviewController(
     private val passInfoRepository: PassInfoRepository,
-    private val passService: PassService
+    private val passService: PassService,
+    private val urlBuilder: UrlBuilder
 ) {
 
     @GetMapping("/overview")
@@ -37,6 +40,14 @@ open class OverviewController(
                 )
             )
         )
+        model.addAttribute(
+            "breadcrumbinfo",
+            listOf(
+                Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("OVERVIEW", urlBuilder.overviewURL, true),
+            )
+        )
+
 
         return "overview"
     }

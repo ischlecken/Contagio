@@ -2,6 +2,8 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.usecase.UrlBuilder
+import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.TeststationRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -16,11 +18,12 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class TeststationController(
-    private val teststationRepository: TeststationRepository
+    private val teststationRepository: TeststationRepository,
+    private val urlBuilder: UrlBuilder
 ) {
 
     @GetMapping("/teststation")
-    open fun home(
+    open fun teststation(
         model: Model,
         pageable: Pageable
     ): String {
@@ -33,6 +36,14 @@ open class TeststationController(
                     pageable.pageSize,
                     Sort.by(Sort.Direction.DESC, "created")
                 )
+            )
+        )
+        model.addAttribute(
+            "breadcrumbinfo",
+            listOf(
+                Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("OVERVIEW", urlBuilder.overviewURL),
+                Breadcrumb("TESTSTATION", urlBuilder.teststationURL, true),
             )
         )
 

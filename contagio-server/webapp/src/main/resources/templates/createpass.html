@@ -5,8 +5,9 @@
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container main createpass">
-  <h1 th:text="#{createpass.title}">Pass erzeugen</h1>
+  <nav th:replace="~{breadcrumb}"></nav>
 
+  <h1 th:text="#{createpass.title}">Pass erzeugen</h1>
   <form id="createpassform" action="/createpass" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="command" id="command" value="">
 

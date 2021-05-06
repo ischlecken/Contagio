@@ -10,5 +10,12 @@ class UrlBuilder(private val baseUrl: String) {
         return "$baseUrl/co_v1/pass/$passId"
     }
 
+    val homeURL = baseUrl
+    val overviewURL = "$baseUrl/overview"
+    val showpassURL = "$baseUrl/showpass"
+    val createpassURL = "$baseUrl/createpass"
+    val testerURL = "$baseUrl/tester"
+    val teststationURL = "$baseUrl/teststation"
+
     val walletURL = "$baseUrl/co_v1/wallet/"
 }
