@@ -4,8 +4,8 @@ import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.core.usecase.SearchTesterWithTeststation
+import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
-import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
@@ -35,7 +35,7 @@ open class PassRestController(
     private val passBuilderService: PassBuilderService,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val qrCodeGeneratorService: QRCodeGeneratorService,
-    private val contagioProperties: ContagioProperties
+    private val urlBuilder: UrlBuilder
 ) {
 
 
@@ -146,7 +146,7 @@ open class PassRestController(
 
         var qrCode: ByteArray? = null
         try {
-            qrCode = qrCodeGeneratorService.generate("${contagioProperties.baseUrl}/co_v1/pass/$passId", 400, 400)
+            qrCode = qrCodeGeneratorService.generate(urlBuilder.passURL(passId), 400, 400)
         } catch (ex: Exception) {
             logger.error("Error while generationg qrcode", ex)
         }

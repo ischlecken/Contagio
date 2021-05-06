@@ -7,7 +7,6 @@ data class PassCoreInfo(
     val teamIdentifier: String,
     val passTypeIdentifier: String,
     val authenticationToken: String,
-    val baseUrl: String,
     val organisationName: String,
 )
 

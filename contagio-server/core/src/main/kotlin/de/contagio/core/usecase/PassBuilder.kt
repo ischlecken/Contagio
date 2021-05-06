@@ -21,8 +21,10 @@ import java.util.*
 private val logger = LoggerFactory.getLogger(PassBuilder::class.java)
 private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+00:00'")
 
-class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
-
+class PassBuilder(
+    private val passBuilderInfo: PassBuilderInfo,
+    private val urlBuilder: UrlBuilder
+) {
 
     fun build(): PassBuilderResult {
         var result: ByteArray? = null
@@ -51,6 +53,8 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             }
         } catch (e: Exception) {
             logger.error("Error while creating signed pass payload", e)
+
+            throw e
         }
 
         return PassBuilderResult(pkpass = pkpass, pass = result)
@@ -88,7 +92,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
         with(passBuilderInfo.passCoreInfo) {
             pass.passTypeIdentifier = this.passTypeIdentifier
             pass.teamIdentifier = this.teamIdentifier
-            pass.webServiceURL = URL("$baseUrl/co_v1/wallet/")
+            pass.webServiceURL = URL(urlBuilder.walletURL)
             pass.authenticationToken = this.authenticationToken
             pass.organizationName = this.organisationName
             pass.isSharingProhibited = true
@@ -107,7 +111,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             pass.description = this.description
             pass.logoText = this.logoText
 
-            pass.addBarcode("${passBuilderInfo.passCoreInfo.baseUrl}/verify?serialNumber=${this.serialNumber}")
+            pass.addBarcode(urlBuilder.verifyURL(this.serialNumber))
         }
 
         return pass
@@ -188,7 +192,7 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo) {
             val showPassUrl = PKField(
                 "showPassUrl",
                 "SHOWPASSURL",
-                "${passBuilderInfo.passCoreInfo.baseUrl}/verify?serialNumber=${this.serialNumber}"
+                urlBuilder.verifyURL(this.serialNumber)
             )
             showPassUrl.dataDetectorTypes = listOf(PKDataDetectorType.PKDataDetectorTypeLink)
             fields.add(showPassUrl)

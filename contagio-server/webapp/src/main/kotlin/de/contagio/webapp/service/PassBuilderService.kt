@@ -2,6 +2,7 @@ package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.usecase.PassBuilder
+import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.properties.ContagioProperties
 import org.apache.commons.codec.binary.Hex
 import org.slf4j.LoggerFactory
@@ -17,7 +18,8 @@ private var logger = LoggerFactory.getLogger(PassBuilder::class.java)
 
 @Service
 class PassBuilderService(
-    private val contagioProperties: ContagioProperties
+    private val contagioProperties: ContagioProperties,
+    private val urlBuilder: UrlBuilder
 ) {
     @Value("classpath:certs/pass.p12")
     private lateinit var passKeystore: Resource
@@ -39,7 +41,6 @@ class PassBuilderService(
             teamIdentifier = contagioProperties.pass.teamIdentifier,
             passTypeIdentifier = contagioProperties.pass.passTypeId,
             authenticationToken = passInfo.authToken,
-            baseUrl = contagioProperties.baseUrl,
             organisationName = contagioProperties.pass.organisationName,
         )
 
@@ -58,7 +59,7 @@ class PassBuilderService(
             tester = tester
         )
 
-        val passBuilderResult = PassBuilder(passBuilderInfo).build()
+        val passBuilderResult = PassBuilder(passBuilderInfo, urlBuilder).build()
 
         return passBuilderResult.pass
     }

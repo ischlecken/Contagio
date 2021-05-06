@@ -1,6 +1,7 @@
 package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
+import org.apache.commons.io.IOUtils
 import java.io.ByteArrayInputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,7 +14,6 @@ class PassBuilderTest {
             teamIdentifier = "teamid",
             passTypeIdentifier = "passTypeId",
             authenticationToken = "0123456789abcdef",
-            baseUrl = "http://bla.de",
             organisationName = "bla org"
         )
 
@@ -36,6 +36,8 @@ class PassBuilderTest {
             backgroundColor = "rgb(208, 38, 0)"
         )
 
+        val img = PassBuilderTest::class.java.getResourceAsStream("/testimg.png")
+        val imgData = IOUtils.toByteArray(img)
         val passBuilderInfo = PassBuilderInfo(
             passCoreInfo = passCoreInfo,
             passSigningInfo = PassSigningInfo(
@@ -45,7 +47,7 @@ class PassBuilderTest {
             ),
             passImage = PassImage(
                 id = "img",
-                data = byteArrayOf(0x1f, 0x1e),
+                data = imgData,
                 type = "image/png"
             ),
             passInfo = passInfo,
@@ -61,7 +63,9 @@ class PassBuilderTest {
             )
         )
 
-        val cpr = PassBuilder(passBuilderInfo).build()
+        val urlBuilder = UrlBuilder("http://bla.de")
+
+        val cpr = PassBuilder(passBuilderInfo, urlBuilder).build()
 
         assertEquals("123", cpr.pkpass.serialNumber)
         assertEquals("teamid", cpr.pkpass.teamIdentifier)
