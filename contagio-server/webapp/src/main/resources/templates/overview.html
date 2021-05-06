@@ -8,6 +8,13 @@
   <nav th:replace="~{breadcrumb}"></nav>
 
   <h1 th:text="#{overview.title.h1}">Übersicht über die ausgestellten Pässe</h1>
+
+  <div class="btn-group">
+    <a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" href="/createpass">
+      <i class="fas fa-passport"></i><span th:text="#{command.createpass}"></span>
+    </a>
+  </div>
+
   <div class="row">
     <div class="col-12">
       <div class="table-responsive">
@@ -78,7 +85,7 @@
 
       <div th:if="${passInfo.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
         <a th:href="@{/overview(size=${passInfo.size}, page=${pageNumber})}"
-           th:text=${pageNumber}
+           th:text="${pageNumber}"
            th:class="${pageNumber==passInfo.number + 1} ? active"></a>
       </div>
 

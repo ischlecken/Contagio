@@ -48,6 +48,7 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
                 "/mcstatic/**",
                 "/verify",
                 "/co_v1/pass/*",
+                "/co_v1/pass/*/qrcode",
                 "/co_v1/pass/image/*",
                 "/co_v1/wallet/**"
             ).permitAll()

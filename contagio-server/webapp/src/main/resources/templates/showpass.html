@@ -8,6 +8,7 @@
   <nav th:replace="~{breadcrumb}"></nav>
 
   <h1><span th:text="#{showpass.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
+    <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfo.passId})}"></a>
     <small class="serialno text-muted" th:text="${extendedPassInfo.passInfo.serialNumber}">serial no</small>
   </h1>
   <div class="row">
@@ -154,7 +155,6 @@
 
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage">
       <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
-      <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfo.passId})}"></a>
       <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfo.passId})}">
     </div>
   </div>

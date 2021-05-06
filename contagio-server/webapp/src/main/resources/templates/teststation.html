@@ -4,40 +4,34 @@
 <body th:classappend="${pageType}">
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
-<div class="container-fluid overview main">
+<div class="container teststation main">
   <nav th:replace="~{breadcrumb}"></nav>
 
   <h1 th:text="#{teststation.title.h1}">Übersicht über die ausgestellten Pässe</h1>
+
+  <div class="btn-group">
+    <a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" href="/createteststation">
+      <i class="fas fa-vial"></i></i><span th:text="#{command.createteststation}"></span>
+    </a>
+  </div>
   <div class="row">
     <div class="col-12">
       <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
           <tr>
-            <th th:text="#{field.id}">ID</th>
             <th th:text="#{field.name}">Name</th>
             <th th:text="#{field.address}">Address</th>
             <th th:text="#{field.created}">Erzeugt am</th>
-            <th th:text="#{field.commands}">Befehle</th>
+            <th th:text="#{field.modified}">Geändert am</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="p : ${teststation.content}">
-            <td th:text="${p.id}"/>
-            <td th:text="${p.name}"/>
+            <td><a th:href="@{/editteststation/{id}(id=${p.id})}" th:text="${p.name}"></a></td>
             <td th:text="${p.address.fullAddress}"/>
             <td th:text="${{p.created}}"/>
-
-            <td>
-              <form method="post">
-                <input type="hidden" name="teststationid" th:value="${p.id}"/>
-                <button class="btn btn-danger" name="command" value="delete" type="submit"><span th:title="#{command.delete}"><i
-                  class="fas fa-trash-alt"></i></span>
-                </button>
-              </form>
-
-
-            </td>
+            <td th:text="${{p.modified}}"/>
           </tr>
 
           </tbody>
@@ -46,7 +40,7 @@
 
       <div th:if="${teststation.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
         <a th:href="@{/teststation(size=${teststation.size}, page=${pageNumber})}"
-           th:text=${pageNumber}
+           th:text="${pageNumber}"
            th:class="${pageNumber==teststation.number + 1} ? active"></a>
       </div>
 

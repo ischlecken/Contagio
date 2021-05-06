@@ -4,7 +4,7 @@
 <body th:classappend="${pageType}">
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
-<div class="container-fluid overview main">
+<div class="container tester main">
   <nav th:replace="~{breadcrumb}"></nav>
 
   <h1 th:text="#{tester.title.h1}">Übersicht über die ausgestellten Pässe</h1>
@@ -43,7 +43,7 @@
 
       <div th:if="${tester.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
         <a th:href="@{/tester(size=${tester.size}, page=${pageNumber})}"
-           th:text=${pageNumber}
+           th:text="${pageNumber}"
            th:class="${pageNumber==tester.number + 1} ? active"></a>
       </div>
 

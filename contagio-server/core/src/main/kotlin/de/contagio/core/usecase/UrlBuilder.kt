@@ -17,5 +17,10 @@ class UrlBuilder(private val baseUrl: String) {
     val testerURL = "$baseUrl/tester"
     val teststationURL = "$baseUrl/teststation"
 
+    val createtesterURL = "$baseUrl/createtester"
+    val edittesterURL = "$baseUrl/edittester"
+    val createteststationURL = "$baseUrl/createteststation"
+    val editteststationURL = "$baseUrl/editteststation"
+
     val walletURL = "$baseUrl/co_v1/wallet/"
 }

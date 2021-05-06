@@ -27,10 +27,6 @@
           <a class="nav-link" href="/overview" th:text="#{menu.link.overview}">Overview</a>
         </li>
         <li sec:authorize="hasRole('ROLE_ADMIN')"
-            class="nav-item" th:classappend="${pageType == 'createpass'} ? 'active' : ''">
-          <a class="nav-link" href="/createpass" th:text="#{menu.link.createpass}">Neuer Pass</a>
-        </li>
-        <li sec:authorize="hasRole('ROLE_ADMIN')"
             class="nav-item"
             th:classappend="${pageType == 'teststation'} ? 'active' : ''">
           <a class="nav-link" href="/teststation" th:text="#{menu.link.teststations}">Teststations</a>

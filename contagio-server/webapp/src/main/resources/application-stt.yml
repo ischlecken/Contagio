@@ -11,4 +11,4 @@ spring:
       uri: "mongodb://dvm1:13014"
 
 contagio:
-  baseUrl: "https://efeu.fritz.box:13013"
+  baseUrl: "https://localhost:13013"

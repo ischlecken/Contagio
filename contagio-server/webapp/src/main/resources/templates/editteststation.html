@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pageType})}"><title></title></head>
+<body th:classappend="${pageType}">
+<nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
+
+<div class="container main createpass">
+  <nav th:replace="~{breadcrumb}"></nav>
+
+  <h1 th:text="#{editteststation.title}">Teststation bearbeiten</h1>
+  <form id="createpassform" action="/editteststation" method="POST" th:object="${teststation}">
+    <input type="hidden" name="id" th:value="*{id}">
+
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="name" th:text="#{field.name}">Vorname</label>
+          <input class="form-control" type="text" name="name" id="name" th:value="*{name}" placeholder="Name der Teststation">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-2">
+        <div class="form-group">
+          <label for="zipcode" th:text="#{field.zipcode}">PLZ</label>
+          <input class="form-control" type="text" name="zipcode" id="zipcode" th:value="*{address.zipcode}" placeholder="Postleitzahl">
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="city" th:text="#{field.city}">Stadt</label>
+          <input class="form-control" type="text" name="city" id="city" th:value="*{address.city}" placeholder="Stadt">
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="street" th:text="#{field.street}">Hausnummer</label>
+          <input class="form-control" type="text" name="street" id="street" th:value="*{address.street}" placeholder="Straße">
+        </div>
+      </div>
+      <div class="col-2">
+        <div class="form-group">
+          <label for="hno" th:text="#{field.hno}">Hausnummer</label>
+          <input class="form-control" type="text" name="hno" id="hno" th:value="*{address.hno}" placeholder="Hausnummer">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <button th:text="#{command.save}" class="btn btn-primary" name="command" value="save" type="submit">Save</button>
+        <button th:text="#{command.delete}" class="btn btn-danger" name="command" value="delete" type="submit">Delete</button>
+        <a th:text="#{command.cancel}" href="/teststation" class="btn btn-secondary">Abbrechen</a>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pageType})}"></footer>
+</body>
+</html>

@@ -65,6 +65,6 @@ open class TesterController(
             }
         }
 
-        return "redirect:tester"
+        return "redirect:/tester"
     }
 }

@@ -192,9 +192,9 @@ a.addtowallet {
     background-repeat: no-repeat;
     background-size: contain;
     background-image: url(images/addtowallet.svg);
-    height: 4rem;
-    display: block;
-    margin-top: 1rem;
+    width: 8rem;
+    height: 2rem;
+    display: inline-block;
 }
 
 .serialno {
