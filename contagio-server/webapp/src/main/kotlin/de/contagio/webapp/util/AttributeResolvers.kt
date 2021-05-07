@@ -34,11 +34,16 @@ class TesterAttributeResolver(
         mvContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): Any? =
-        webRequest.getParameter("testerid")?.let {
-            searchTesterWithTeststation.execute(it)
-        }
+    ): Any? {
+        var testerid = webRequest.getParameter("testerid")
 
+        if (testerid == null)
+            testerid = webRequest.pathVariables()["testerid"]
+
+        return testerid?.let {
+            searchTesterWithTeststation.execute(it)?.tester
+        }
+    }
 }
 
 

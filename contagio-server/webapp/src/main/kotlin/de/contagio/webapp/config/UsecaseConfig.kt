@@ -33,9 +33,19 @@ open class UsecaseConfig {
 
     @Bean
     open fun updateTeststation(
-        findTeststation: IFindTeststation,
         saveTeststation: ISaveTeststation
-    ) = UpdateTeststation(findTeststation, saveTeststation)
+    ) = UpdateTeststation(saveTeststation)
+
+
+    @Bean
+    open fun createTester(
+        saveTester: ISaveTester
+    ) = CreateTester(saveTester)
+
+    @Bean
+    open fun updateTester(
+        saveTester: ISaveTester
+    ) = UpdateTester(saveTester)
 
 
     @Bean

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pageType})}"><title></title></head>
+<body th:classappend="${pageType}">
+<nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
+
+<div class="container main createpass">
+  <nav th:replace="~{breadcrumb}"></nav>
+
+  <h1 th:text="#{edittester.title}">Teststation bearbeiten</h1>
+  <form id="createpassform" action="/edittester" method="POST" th:object="${updateTesterDTO}">
+    <input type="hidden" name="testerid" th:value="${testerid}">
+
+    <div class="row">
+      <div class="col-2">
+        <div class="form-group">
+          <label for="firstName" th:text="#{field.firstname}">Vorname</label>
+          <input class="form-control" type="text" id="firstName" th:field="*{firstName}" placeholder="Vorname">
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="lastName" th:text="#{field.lastname}">Nachname</label>
+          <input class="form-control" type="text" id="lastName" th:field="*{lastName}" placeholder="Nachname">
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="phoneNo" th:text="#{field.phoneno}">Telefonnr</label>
+          <input class="form-control" type="text" id="phoneNo" th:field="*{phoneNo}" placeholder="Telefonnr">
+        </div>
+      </div>
+      <div class="col-2">
+        <div class="form-group">
+          <label for="email" th:text="#{field.email}">E-Mail</label>
+          <input class="form-control" type="text" id="email" th:field="*{email}" placeholder="E-Mail">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <button th:text="#{command.save}" class="btn btn-primary" name="command" value="save" type="submit">Save</button>
+        <button th:text="#{command.delete}" class="btn btn-danger" name="command" value="delete" type="submit">Delete</button>
+        <a th:text="#{command.cancel}" href="/teststation" class="btn btn-secondary">Abbrechen</a>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pageType})}"></footer>
+</body>
+</html>

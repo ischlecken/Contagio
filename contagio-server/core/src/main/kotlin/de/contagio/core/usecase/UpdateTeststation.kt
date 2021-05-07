@@ -8,7 +8,6 @@ import de.contagio.core.domain.port.ISaveTeststation
 import java.time.Instant
 
 class UpdateTeststation(
-    private val findTeststation: IFindTeststation,
     private val saveTeststation: ISaveTeststation
 ) {
 

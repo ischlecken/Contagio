@@ -19,3 +19,20 @@ data class UpdateTeststationDTO(
     var street: String = "",
     var hno: String = "",
 ) : Serializable
+
+
+data class CreateTesterDTO(
+    val teststationId: String = "",
+    val firstName: String= "",
+    val lastName: String= "",
+    val phoneNo: String= "",
+    val email: String= ""
+) : Serializable
+
+
+data class UpdateTesterDTO(
+    val firstName: String= "",
+    val lastName: String= "",
+    val phoneNo: String= "",
+    val email: String= ""
+) : Serializable
