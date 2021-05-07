@@ -11,6 +11,7 @@ import de.contagio.core.usecase.UpdateTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.TeststationRepository
+import de.contagio.webapp.service.validate.ValidateTeststation
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -55,19 +56,17 @@ open class TeststationController(
         return "teststation"
     }
 
-
+    @ValidateTeststation
     @PostMapping("/teststation")
     open fun commands(
         @RequestParam teststationid: String,
         @RequestParam command: String,
-        teststation: Teststation?
+        teststation: Teststation
     ): String {
 
-        teststation?.let { it ->
-            when (command) {
-                "delete" -> {
-                    deleteTeststation.execute(it)
-                }
+        when (command) {
+            "delete" -> {
+                deleteTeststation.execute(teststation)
             }
         }
 
@@ -94,17 +93,17 @@ open class TeststationController(
     open fun createTeststation(
         @ModelAttribute createTeststationDTO: CreateTeststationDTO
     ): String {
-
         createTeststation.execute(createTeststationDTO)
 
         return "redirect:/teststation"
     }
 
+    @ValidateTeststation
     @GetMapping("/editteststation/{teststationid}")
     open fun editTeststation(
         @PathVariable teststationid: String,
         model: Model,
-        teststation: Teststation?
+        teststation: Teststation
     ): String {
 
         model.addAttribute("pageType", "editteststation")
@@ -117,36 +116,33 @@ open class TeststationController(
             )
         )
 
-        teststation?.let {
-            model.addAttribute("teststationid", teststationid)
-            model.addAttribute(
-                "updateTeststationDTO",
-                UpdateTeststationDTO(
-                    it.name,
-                    it.address.zipcode,
-                    it.address.city,
-                    it.address.street ?: "",
-                    it.address.hno ?: ""
-                )
+        model.addAttribute("teststationid", teststationid)
+        model.addAttribute(
+            "updateTeststationDTO",
+            UpdateTeststationDTO(
+                teststation.name,
+                teststation.address.zipcode,
+                teststation.address.city,
+                teststation.address.street ?: "",
+                teststation.address.hno ?: ""
             )
-        }
+        )
 
         return "editteststation"
     }
 
+    @ValidateTeststation
     @PostMapping("/editteststation")
     open fun editTeststation(
         @RequestParam command: String,
         @RequestParam teststationid: String,
         @ModelAttribute updateTeststationDTO: UpdateTeststationDTO,
-        teststation: Teststation?
+        teststation: Teststation
     ): String {
 
-        teststation?.apply {
-            when (command) {
-                "delete" -> deleteTeststation.execute(this)
-                "save" -> updateTeststation.execute(this, updateTeststationDTO)
-            }
+        when (command) {
+            "delete" -> deleteTeststation.execute(teststation)
+            "save" -> updateTeststation.execute(teststation, updateTeststationDTO)
         }
 
         return "redirect:/teststation"

@@ -6,6 +6,7 @@ import de.contagio.core.domain.entity.Tester
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.repository.mongodb.TesterRepository
+import de.contagio.webapp.service.validate.ValidateTester
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -52,18 +53,17 @@ open class TesterController(
     }
 
 
+    @ValidateTester
     @PostMapping("/tester")
     open fun commands(
         @RequestParam testerid: String,
         @RequestParam command: String,
-        tester: Tester?
+        tester: Tester
     ): String {
 
-        tester?.let {
-            when (command) {
-                "delete" -> {
-                    testerRepository.deleteById(it.id)
-                }
+        when (command) {
+            "delete" -> {
+                testerRepository.deleteById(tester.id)
             }
         }
 

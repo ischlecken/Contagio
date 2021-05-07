@@ -1,5 +1,7 @@
 package de.contagio.webapp.service.validate
 
+import de.contagio.core.domain.entity.Tester
+import de.contagio.core.domain.entity.Teststation
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import org.aspectj.lang.ProceedingJoinPoint
@@ -66,6 +68,44 @@ open class ValidateAspect(
                 ResponseEntity<Any>(HttpStatus.BAD_REQUEST)
         } ?: ResponseEntity<Any>(HttpStatus.BAD_REQUEST)
     }
+
+
+    @Around("@annotation(validate)")
+    @Throws(Throwable::class)
+    open fun validateTeststation(pjp: ProceedingJoinPoint, validate: ValidateTeststation): Any? {
+        return try {
+            val cc = pjp.getFirstParameterWithType<Teststation>()
+
+            if (cc != null)
+                pjp.proceed()
+            else {
+                "redirect:/teststation"
+            }
+        } catch (ex: Exception) {
+            logger.error("Exception while validating teststation:{}", ex)
+
+            throw ex
+        }
+    }
+
+    @Around("@annotation(validate)")
+    @Throws(Throwable::class)
+    open fun validateTester(pjp: ProceedingJoinPoint, validate: ValidateTester): Any? {
+        return try {
+            val cc = pjp.getFirstParameterWithType<Tester>()
+
+            if (cc != null)
+                pjp.proceed()
+            else {
+                "redirect:/tester"
+            }
+        } catch (ex: Exception) {
+            logger.error("Exception while validating tester:{}", ex)
+
+            throw ex
+        }
+    }
+
 
     private fun isAuthorized(passTypeIdentifier: String, serialNumber: String, authorization: String): Boolean {
         var result = true
