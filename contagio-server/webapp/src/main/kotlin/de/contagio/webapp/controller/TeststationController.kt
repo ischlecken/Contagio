@@ -5,16 +5,13 @@ package de.contagio.webapp.controller
 import de.contagio.core.domain.entity.CreateTeststationDTO
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.core.domain.entity.UpdateTeststationDTO
-import de.contagio.core.domain.port.IDeleteTeststation
+import de.contagio.core.domain.port.*
 import de.contagio.core.usecase.CreateTeststation
 import de.contagio.core.usecase.UpdateTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
-import de.contagio.webapp.repository.mongodb.TeststationRepository
 import de.contagio.webapp.service.validate.ValidateTeststation
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -23,7 +20,7 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class TeststationController(
-    private val teststationRepository: TeststationRepository,
+    private val findAllTeststation: IFindAllTeststation,
     private val updateTeststation: UpdateTeststation,
     private val deleteTeststation: IDeleteTeststation,
     private val createTeststation: CreateTeststation,
@@ -37,11 +34,11 @@ open class TeststationController(
         model.addAttribute("pageType", "teststation")
         model.addAttribute(
             "teststation",
-            teststationRepository.findAll(
-                PageRequest.of(
-                    pageable.pageNumber,
-                    pageable.pageSize,
-                    Sort.by(Sort.Direction.DESC, "created")
+            findAllTeststation.execute(
+                PageRequest(
+                    pageNo = pageable.pageNumber,
+                    pageSize = pageable.pageSize,
+                    sort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
                 )
             )
         )

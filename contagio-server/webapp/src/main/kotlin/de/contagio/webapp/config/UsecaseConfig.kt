@@ -16,6 +16,12 @@ open class UsecaseConfig {
     ) = ListOfAllTesterInfo(findAllTeststation, findAllTester)
 
     @Bean
+    open fun searchAllTesterTeststation(
+        findAllTester: IFindAllTester,
+        findAllTeststation: IFindAllTeststation
+    ) = SearchAllTesterTeststation(findAllTeststation, findAllTester)
+
+    @Bean
     open fun searchTestWithTeststation(
         findTester: IFindTester,
         findTeststation: IFindTeststation

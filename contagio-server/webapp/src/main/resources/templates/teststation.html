@@ -11,7 +11,7 @@
 
   <div class="btn-group">
     <a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" href="/createteststation">
-      <i class="fas fa-vial"></i></i><span th:text="#{command.createteststation}"></span>
+      <i class="fas fa-vial"></i><span th:text="#{command.createteststation}"></span>
     </a>
   </div>
   <div class="row">
@@ -29,21 +29,16 @@
           <tbody>
           <tr th:each="p : ${teststation.content}">
             <td><a th:href="@{/editteststation/{id}(id=${p.id})}" th:text="${p.name}"></a></td>
-            <td th:text="${p.address.fullAddress}"/>
-            <td th:text="${{p.created}}"/>
-            <td th:text="${{p.modified}}"/>
+            <td th:text="${p.address.fullAddress}"></td>
+            <td th:text="${{p.created}}"></td>
+            <td th:text="${{p.modified}}"></td>
           </tr>
 
           </tbody>
         </table>
       </div>
 
-      <div th:if="${teststation.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-        <a th:href="@{/teststation(size=${teststation.size}, page=${pageNumber})}"
-           th:text="${pageNumber}"
-           th:class="${pageNumber==teststation.number + 1} ? active"></a>
-      </div>
-
+      <nav th:replace="~{pagination :: pagination(${teststation},'/teststation')}"></nav>
     </div>
   </div>
 </div>

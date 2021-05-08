@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<body>
+
+<!--/*@thymesVar id="pagedResult" type="de.contagio.core.domain.port.PagedResult<Any>"*/-->
+
+<div th:fragment="pagination(pagedResult,pageUrl)">
+  <nav th:if="${pagedResult.totalPages>1}">
+    <ul class="pagination">
+      <li class="page-item"
+          th:classappend="${pagedResult.isFirst} ? 'disabled' : ''">
+        <a class="page-link"
+           href="#"
+           th:href="@{${pageUrl}(size=${pagedResult.pageSize}, page=${pagedResult.pageNo - 1})}"><i
+          class="fas fa-angle-left"></i></a>
+      </li>
+      <li class="page-item"
+          th:classappend="${pageNumber==pagedResult.pageNo} ? active"
+          th:each="pageNumber : ${#numbers.sequence(0, pagedResult.totalPages - 1)}">
+        <a th:href="@{${pageUrl}(size=${pagedResult.pageSize}, page=${pageNumber})}"
+           th:text="${pageNumber + 1}"
+           class="page-link"></a>
+      </li>
+      <li class="page-item"
+          th:classappend="${pagedResult.isLast} ? 'disabled' : ''">
+        <a class="page-link" href="#"
+           th:href="@{${pageUrl}(size=${pagedResult.pageSize}, page=${pagedResult.pageNo + 1})}"><i
+          class="fas fa-angle-right"></i></a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+</body>
+</html>

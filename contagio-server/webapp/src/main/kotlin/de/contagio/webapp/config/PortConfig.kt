@@ -2,6 +2,8 @@ package de.contagio.webapp.config
 
 import de.contagio.core.domain.port.*
 import de.contagio.webapp.repository.mongodb.*
+import de.contagio.webapp.util.toPageRequest
+import de.contagio.webapp.util.toPagedResult
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.*
@@ -51,7 +53,7 @@ open class PortConfig(
     @Bean
     open fun findAllTester(): IFindAllTester {
         return IFindAllTester {
-            testerRepository.findAll()
+            testerRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
 
@@ -87,7 +89,7 @@ open class PortConfig(
     @Bean
     open fun findAllTeststation(): IFindAllTeststation {
         return IFindAllTeststation {
-            teststationRepository.findAll()
+            teststationRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
 

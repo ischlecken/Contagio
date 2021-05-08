@@ -8,7 +8,7 @@ fun interface IFindTeststation {
 
 
 fun interface IFindAllTeststation {
-    fun execute(): Collection<Teststation>
+    fun execute(pageRequest: PageRequest): PagedResult<Teststation>
 }
 
 fun interface ISaveTeststation {

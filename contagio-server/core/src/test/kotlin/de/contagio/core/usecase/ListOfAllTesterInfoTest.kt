@@ -6,19 +6,31 @@ import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.core.domain.port.IFindAllTester
 import de.contagio.core.domain.port.IFindAllTeststation
+import de.contagio.core.domain.port.PagedResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ListOfAllTesterInfoTest {
 
+    private fun <T> createPageRequest(t: T): PagedResult<T> {
+        return PagedResult(
+            content = listOf(t),
+            pageSize = 10,
+            totalPages = 1,
+            totalElements = 1,
+            isFirst = true,
+            isLast = true
+        )
+    }
+
     @Test
     fun emptyTeststationEmptyTester_isEmpty() {
         val findAllTeststation = IFindAllTeststation {
-            emptyList()
+            PagedResult()
         }
 
         val findAllTester = IFindAllTester {
-            emptyList()
+            PagedResult()
         }
 
         val listOfAllTester = ListOfAllTesterInfo(findAllTeststation, findAllTester).execute()
@@ -29,11 +41,11 @@ class ListOfAllTesterInfoTest {
     @Test
     fun emptyTeststationWithOneTester_isEmpty() {
         val findAllTeststation = IFindAllTeststation {
-            emptyList()
+            PagedResult()
         }
 
         val findAllTester = IFindAllTester {
-            listOf(
+            createPageRequest(
                 Tester(
                     id = "1",
                     teststationId = "1",
@@ -50,7 +62,7 @@ class ListOfAllTesterInfoTest {
     @Test
     fun oneTeststationWithNotMatchingTester_isEmpty() {
         val findAllTeststation = IFindAllTeststation {
-            listOf(
+            createPageRequest(
                 Teststation(
                     id = "0",
                     name = "teststation",
@@ -60,7 +72,7 @@ class ListOfAllTesterInfoTest {
         }
 
         val findAllTester = IFindAllTester {
-            listOf(
+            createPageRequest(
                 Tester(
                     id = "1",
                     teststationId = "1",
@@ -77,7 +89,7 @@ class ListOfAllTesterInfoTest {
     @Test
     fun oneTeststationWithMatchingTester_expectedDisplayname() {
         val findAllTeststation = IFindAllTeststation {
-            listOf(
+            createPageRequest(
                 Teststation(
                     id = "1",
                     name = "teststation",
@@ -87,7 +99,7 @@ class ListOfAllTesterInfoTest {
         }
 
         val findAllTester = IFindAllTester {
-            listOf(
+            createPageRequest(
                 Tester(
                     id = "1",
                     teststationId = "1",

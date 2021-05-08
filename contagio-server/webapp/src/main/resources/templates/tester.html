@@ -11,7 +11,7 @@
 
   <div class="btn-group">
     <a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" href="/createtester">
-      <i class="fas fa-vial"></i></i><span th:text="#{command.createtester}"></span>
+      <i class="fas fa-user"></i><span th:text="#{command.createtester}"></span>
     </a>
   </div>
   <div class="row">
@@ -29,24 +29,22 @@
           </tr>
           </thead>
           <tbody>
-          <tr th:each="p : ${tester.content}">
-            <td><a href="#" th:href="@{/edittester/{testerid}(testerid=${p.id})}" th:text="${p.person.fullName}"></a></td>
-            <td ><a href="#" th:href="@{/editteststation/{teststationid}(teststationid=${p.teststationId})}" th:text="${p.teststationId}"></a></td>
-            <td th:text="${{p.person.phoneNo}}"/>
-            <td th:text="${{p.person.email}}"/>
-            <td th:text="${{p.created}}"/>
-            <td th:text="${{p.modified}}"/>
+          <!--/*@thymesVar id="testerTeststation" type="de.contagio.core.domain.port.PagedResult<de.contagio.core.domain.entity.TesterTeststation>"*/-->
+          <tr th:each="p : ${testerTeststation.content}">
+            <td><a href="#" th:href="@{/edittester/{testerid}(testerid=${p.tester.id})}" th:text="${p.tester.person.fullName}"></a></td>
+            <td><a href="#" th:href="@{/editteststation/{teststationid}(teststationid=${p.tester.teststationId})}"
+                   th:text="${p.teststation.name}"></a></td>
+            <td th:text="${{p.tester.person.phoneNo}}"/>
+            <td th:text="${{p.tester.person.email}}"/>
+            <td th:text="${{p.tester.created}}"/>
+            <td th:text="${{p.tester.modified}}"/>
           </tr>
 
           </tbody>
         </table>
       </div>
 
-      <div th:if="${tester.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-        <a th:href="@{/tester(size=${tester.size}, page=${pageNumber})}"
-           th:text="${pageNumber}"
-           th:class="${pageNumber==tester.number + 1} ? active"></a>
-      </div>
+      <nav th:replace="~{pagination :: pagination(${testerTeststation},'/tester')}"></nav>
 
     </div>
   </div>

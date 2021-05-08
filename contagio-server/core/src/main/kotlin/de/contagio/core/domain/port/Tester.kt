@@ -1,13 +1,14 @@
 package de.contagio.core.domain.port
 
 import de.contagio.core.domain.entity.Tester
+import de.contagio.core.domain.entity.TesterTeststation
 
 fun interface IFindTester {
     fun execute(id: String): Tester?
 }
 
 fun interface IFindAllTester {
-    fun execute(): Collection<Tester>
+    fun execute(pageRequest: PageRequest): PagedResult<Tester>
 }
 
 

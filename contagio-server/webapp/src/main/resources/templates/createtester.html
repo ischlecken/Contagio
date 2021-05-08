@@ -15,7 +15,7 @@
         <div class="form-group">
           <label for="teststationId" th:text="#{field.teststation}">Teststation</label>
           <select class="form-control" th:field="*{teststationId}" id="teststationId">
-            <option th:each="ts : ${teststationInfo}"
+            <option th:each="ts : ${teststationInfo.content}"
                     th:value="${ts.id}"
                     th:text="${ts.name}">Teststation Name
             </option>

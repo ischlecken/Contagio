@@ -5,17 +5,14 @@ package de.contagio.webapp.controller
 import de.contagio.core.domain.entity.CreateTesterDTO
 import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.UpdateTesterDTO
-import de.contagio.core.domain.port.IDeleteTester
-import de.contagio.core.domain.port.IFindAllTeststation
+import de.contagio.core.domain.port.*
 import de.contagio.core.usecase.CreateTester
+import de.contagio.core.usecase.SearchAllTesterTeststation
 import de.contagio.core.usecase.UpdateTester
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
-import de.contagio.webapp.repository.mongodb.TesterRepository
 import de.contagio.webapp.service.validate.ValidateTester
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -24,11 +21,11 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class TesterController(
-    private val testerRepository: TesterRepository,
     private val createTester: CreateTester,
     private val updateTester: UpdateTester,
     private val deleteTester: IDeleteTester,
     private val findAllTeststation: IFindAllTeststation,
+    private val searchAllTesterTeststation: SearchAllTesterTeststation,
     private val urlBuilder: UrlBuilder
 ) {
 
@@ -39,12 +36,12 @@ open class TesterController(
     ): String {
         model.addAttribute("pageType", "tester")
         model.addAttribute(
-            "tester",
-            testerRepository.findAll(
-                PageRequest.of(
-                    pageable.pageNumber,
-                    pageable.pageSize,
-                    Sort.by(Sort.Direction.DESC, "created")
+            "testerTeststation",
+            searchAllTesterTeststation.execute(
+                PageRequest(
+                    pageNo = pageable.pageNumber,
+                    pageSize = pageable.pageSize,
+                    sort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
                 )
             )
         )
@@ -73,7 +70,7 @@ open class TesterController(
             )
         )
         model.addAttribute("createTesterDTO", CreateTesterDTO())
-        model.addAttribute("teststationInfo", findAllTeststation.execute())
+        model.addAttribute("teststationInfo", findAllTeststation.execute(PageRequest(0,1000)))
 
         return "createtester"
     }
