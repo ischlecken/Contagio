@@ -30,7 +30,7 @@ open class ShowPassController(
             model.addAttribute("showDetails", showDetails ?: false)
 
             "verify"
-        } ?: "redirect:/overview"
+        } ?: "redirect:/pass"
 
     @GetMapping("/showpass")
     open fun showpass(
@@ -46,12 +46,12 @@ open class ShowPassController(
                 "breadcrumbinfo",
                 listOf(
                     Breadcrumb("HOME", urlBuilder.homeURL),
-                    Breadcrumb("OVERVIEW", urlBuilder.overviewURL),
+                    Breadcrumb("PASS", urlBuilder.passURL),
                     Breadcrumb("SHOWPASS", urlBuilder.showpassURL, true),
                 )
             )
 
             "showpass"
-        } ?: "redirect:/overview"
+        } ?: "redirect:/pass"
 
 }

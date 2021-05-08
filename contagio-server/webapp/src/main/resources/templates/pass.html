@@ -4,10 +4,10 @@
 <body th:classappend="${pageType}">
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
-<div class="container-fluid overview main">
+<div class="container-fluid pass main">
   <nav th:replace="~{breadcrumb}"></nav>
 
-  <h1 th:text="#{overview.title.h1}">Übersicht über die ausgestellten Pässe</h1>
+  <h1 th:text="#{pass.title.h1}">Übersicht über die ausgestellten Pässe</h1>
 
   <div class="btn-group">
     <a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-primary" href="/createpass">
@@ -34,7 +34,7 @@
           <tbody>
           <tr th:each="p : ${passInfo.content}">
             <td>
-              <a th:title="#{overview.opendetails.title}" title="Passdetails öffnen"
+              <a th:title="#{pass.opendetails.title}" title="Passdetails öffnen"
                  th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.person.fullName}"></a>
             </td>
             <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
@@ -78,16 +78,11 @@
 
             </td>
           </tr>
-
           </tbody>
         </table>
       </div>
 
-      <div th:if="${passInfo.totalPages > 0}" class="pagination" th:each="pageNumber : ${pageNumbers}">
-        <a th:href="@{/overview(size=${passInfo.size}, page=${pageNumber})}"
-           th:text="${pageNumber}"
-           th:class="${pageNumber==passInfo.number + 1} ? active"></a>
-      </div>
+      <nav th:replace="~{pagination :: pagination(${passInfo},'/pass')}"></nav>
 
     </div>
   </div>

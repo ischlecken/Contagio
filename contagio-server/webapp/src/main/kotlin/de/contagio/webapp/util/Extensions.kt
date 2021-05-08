@@ -1,9 +1,13 @@
 package de.contagio.webapp.util
 
+import de.contagio.core.domain.port.PageRequest
 import de.contagio.core.domain.port.PagedResult
 import de.contagio.core.domain.port.SortDirection
+import de.contagio.core.domain.port.Sorting
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
+val defaultSort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
 
 fun de.contagio.core.domain.port.PageRequest.toPageRequest(): org.springframework.data.domain.PageRequest {
     val sort = mutableListOf<Sort.Order>()
@@ -21,6 +25,28 @@ fun de.contagio.core.domain.port.PageRequest.toPageRequest(): org.springframewor
     }
 
     return org.springframework.data.domain.PageRequest.of(pageNo, pageSize, Sort.by(sort))
+}
+
+fun Pageable.toPageRequest(): PageRequest {
+    val sort = mutableListOf<Sorting>()
+
+    this.sort.forEach {
+        sort.add(
+            Sorting(
+                column = it.property,
+                direction = when( it.direction) {
+                    Sort.Direction.DESC -> SortDirection.desc
+                    Sort.Direction.ASC -> SortDirection.asc
+                }
+            )
+        )
+    }
+
+    return PageRequest(
+        pageNo = this.pageNumber,
+        pageSize = this.pageSize,
+        sort = sort
+    )
 }
 
 fun <T> org.springframework.data.domain.Page<T>.toPagedResult(): PagedResult<T> {

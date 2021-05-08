@@ -10,12 +10,19 @@ class UrlBuilder(private val baseUrl: String) {
         return "$baseUrl/co_v1/pass/$passId"
     }
 
+    fun showpassForSerialNumberURL(serialNumber: String): String {
+        return "$showpassURL?serialNumber=$serialNumber"
+    }
+
     val homeURL = baseUrl
-    val overviewURL = "$baseUrl/overview"
+    val passURL = "$baseUrl/pass"
     val showpassURL = "$baseUrl/showpass"
     val createpassURL = "$baseUrl/createpass"
     val testerURL = "$baseUrl/tester"
     val teststationURL = "$baseUrl/teststation"
+
+    val deviceinfoURL = "$baseUrl/deviceinfo"
+    val registrationinfoURL = "$baseUrl/registrationinfo"
 
     val createtesterURL = "$baseUrl/createtester"
     val edittesterURL = "$baseUrl/edittester"

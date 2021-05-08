@@ -14,7 +14,8 @@ open class PortConfig(
     private val passRepository: PassRepository,
     private val testerRepository: TesterRepository,
     private val teststationRepository: TeststationRepository,
-    private val registrationInfoRepository: RegistrationInfoRepository
+    private val registrationInfoRepository: RegistrationInfoRepository,
+    private val deviceInfoRepository: DeviceInfoRepository
 ) {
 
 
@@ -27,6 +28,13 @@ open class PortConfig(
                 result.get()
             else
                 null
+        }
+    }
+
+    @Bean
+    open fun findAllPassInfo(): IFindAllPassInfo {
+        return IFindAllPassInfo {
+            passInfoRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
 
@@ -132,12 +140,27 @@ open class PortConfig(
     }
 
     @Bean
-    open fun findRegistrations(): IFindRegistrations {
-        return IFindRegistrations { deviceLibraryIdentifier, serialNumber ->
+    open fun findRegistrationInfo(): IFindRegistrationInfo {
+        return IFindRegistrationInfo { deviceLibraryIdentifier, serialNumber ->
             registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
                 deviceLibraryIdentifier,
                 serialNumber
             )
+        }
+    }
+
+
+    @Bean
+    open fun findAllRegistrationInfo(): IFindAllRegistrationInfo {
+        return IFindAllRegistrationInfo {
+            registrationInfoRepository.findAll(it.toPageRequest()).toPagedResult()
+        }
+    }
+
+    @Bean
+    open fun findAllDeviceInfo(): IFindAllDeviceInfo {
+        return IFindAllDeviceInfo {
+            deviceInfoRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
 }

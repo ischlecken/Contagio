@@ -45,7 +45,7 @@ open class CreatePassController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
-                Breadcrumb("OVERVIEW", urlBuilder.overviewURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
                 Breadcrumb("CREATEPASS", urlBuilder.createpassURL, true),
             )
         )
@@ -71,7 +71,7 @@ open class CreatePassController(
 
         if (command.isEmpty() || !(command == "preview" || command == "create")) {
             val headers = HttpHeaders()
-            headers.add("Location", "/overview")
+            headers.add("Location", "/pass")
 
             return ResponseEntity(headers, HttpStatus.FOUND)
         }
@@ -114,7 +114,7 @@ open class CreatePassController(
                 val headers = HttpHeaders()
                 headers.add(
                     "Location",
-                    if (cpr.pkPass != null) "/overview" else "/createpass"
+                    if (cpr.pkPass != null) "/pass" else "/createpass"
                 )
 
                 ResponseEntity(headers, HttpStatus.FOUND)

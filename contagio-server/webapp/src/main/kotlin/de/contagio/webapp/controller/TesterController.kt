@@ -49,7 +49,8 @@ open class TesterController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
-                Breadcrumb("OVERVIEW", urlBuilder.overviewURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
+                Breadcrumb("TESTSTATION", urlBuilder.teststationURL),
                 Breadcrumb("TESTER", urlBuilder.testerURL, true),
             )
         )
@@ -65,6 +66,8 @@ open class TesterController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
+                Breadcrumb("TESTSTATION", urlBuilder.teststationURL),
                 Breadcrumb("TESTER", urlBuilder.testerURL),
                 Breadcrumb("CREATETESTER", urlBuilder.createtesterURL, true),
             )
@@ -97,6 +100,8 @@ open class TesterController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
+                Breadcrumb("TESTSTATION", urlBuilder.teststationURL),
                 Breadcrumb("TESTER", urlBuilder.testerURL),
                 Breadcrumb("EDITTESTER", urlBuilder.edittesterURL, true),
             )

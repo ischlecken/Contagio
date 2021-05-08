@@ -23,8 +23,8 @@
       <ul class="navbar-nav">
         <li sec:authorize="hasRole('ROLE_USER')"
             class="nav-item"
-            th:classappend="${pageType == 'overview'} ? 'active' : ''">
-          <a class="nav-link" href="/overview" th:text="#{menu.link.overview}">Overview</a>
+            th:classappend="${pageType == 'pass'} ? 'active' : ''">
+          <a class="nav-link" href="/pass" th:text="#{menu.link.pass}">Overview</a>
         </li>
         <li sec:authorize="hasRole('ROLE_ADMIN')"
             class="nav-item"
@@ -35,6 +35,17 @@
             class="nav-item"
             th:classappend="${pageType == 'tester'} ? 'active' : ''">
           <a class="nav-link" href="/tester" th:text="#{menu.link.tester}">Tester</a>
+        </li>
+
+        <li sec:authorize="hasRole('ROLE_ADMIN')"
+            class="nav-item"
+            th:classappend="${pageType == 'registrationinfo'} ? 'active' : ''">
+          <a class="nav-link" href="/registrationinfo" th:text="#{menu.link.registrationinfo}">Registration Info</a>
+        </li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')"
+            class="nav-item"
+            th:classappend="${pageType == 'deviceinfo'} ? 'active' : ''">
+          <a class="nav-link" href="/deviceinfo" th:text="#{menu.link.deviceinfo}">Device Info</a>
         </li>
       </ul>
       <div class="navbar-text userinfo"><i class="fas fa-user"></i><span class="username" sec:authentication="name"></span></div>

@@ -2,7 +2,7 @@ package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.port.IFindPass
 import de.contagio.core.domain.port.IFindPassInfo
-import de.contagio.core.domain.port.IFindRegistrations
+import de.contagio.core.domain.port.IFindRegistrationInfo
 import de.contagio.core.usecase.SearchPassesSinceLastUpdate
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
@@ -28,7 +28,7 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 open class WalletRestController(
     private val findPass: IFindPass,
     private val findPassInfo: IFindPassInfo,
-    private val findRegistrations: IFindRegistrations,
+    private val findRegistrationInfo: IFindRegistrationInfo,
     private val walletService: WalletService,
     private val searchPassesSinceLastUpdate: SearchPassesSinceLastUpdate
 ) {
@@ -110,7 +110,7 @@ open class WalletRestController(
         if (findPassInfo.execute(serialNumber) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
-        return if (findRegistrations.execute(deviceLibraryIdentifier, serialNumber).isEmpty()) {
+        return if (findRegistrationInfo.execute(deviceLibraryIdentifier, serialNumber).isEmpty()) {
             walletService.register(deviceLibraryIdentifier, serialNumber, walletRegistration.pushToken)
 
             ResponseEntity.status(HttpStatus.CREATED).build()

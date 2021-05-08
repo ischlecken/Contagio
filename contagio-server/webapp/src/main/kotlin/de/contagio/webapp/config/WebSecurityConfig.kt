@@ -56,8 +56,10 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
                 "/swagger-ui/**",
                 "/createpass",
                 "/teststation",
-                "/tester"
-            ).hasRole("ADMIN")
+                "/tester",
+                "/registrationinfo",
+                "/deviceinfo"
+                ).hasRole("ADMIN")
             .antMatchers("/co_v1/**").hasRole("API")
             .anyRequest().authenticated()
             .and().httpBasic().realmName("contagio")

@@ -11,6 +11,7 @@ import de.contagio.core.usecase.UpdateTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.service.validate.ValidateTeststation
+import de.contagio.webapp.util.defaultSort
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -38,7 +39,7 @@ open class TeststationController(
                 PageRequest(
                     pageNo = pageable.pageNumber,
                     pageSize = pageable.pageSize,
-                    sort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
+                    sort = defaultSort
                 )
             )
         )
@@ -46,6 +47,7 @@ open class TeststationController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
                 Breadcrumb("TESTSTATION", urlBuilder.teststationURL, true),
             )
         )
@@ -77,6 +79,7 @@ open class TeststationController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
                 Breadcrumb("TESTSTATION", urlBuilder.teststationURL),
                 Breadcrumb("CREATETESTSTATION", urlBuilder.createteststationURL, true),
             )
@@ -108,6 +111,7 @@ open class TeststationController(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
+                Breadcrumb("PASS", urlBuilder.passURL),
                 Breadcrumb("TESTSTATION", urlBuilder.teststationURL),
                 Breadcrumb("EDITTESTSTATION", urlBuilder.editteststationURL, true),
             )

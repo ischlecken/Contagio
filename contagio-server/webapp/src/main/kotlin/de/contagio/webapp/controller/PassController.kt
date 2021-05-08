@@ -2,13 +2,15 @@
 
 package de.contagio.webapp.controller
 
+import de.contagio.core.domain.port.IFindAllPassInfo
+import de.contagio.core.domain.port.SortDirection
+import de.contagio.core.domain.port.Sorting
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.service.PassService
-import org.springframework.data.domain.PageRequest
+import de.contagio.webapp.util.defaultSort
+import de.contagio.webapp.util.toPageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,42 +20,39 @@ import springfox.documentation.annotations.ApiIgnore
 
 @ApiIgnore
 @Controller
-open class OverviewController(
-    private val passInfoRepository: PassInfoRepository,
+open class PassController(
+    private val findAllPassInfo: IFindAllPassInfo,
     private val passService: PassService,
     private val urlBuilder: UrlBuilder
 ) {
 
-    @GetMapping("/overview")
+    @GetMapping("/pass")
     open fun home(
         model: Model,
         pageable: Pageable
     ): String {
-        model.addAttribute("pageType", "overview")
+        model.addAttribute("pageType", "pass")
         model.addAttribute(
             "passInfo",
-            passInfoRepository.findAll(
-                PageRequest.of(
-                    pageable.pageNumber,
-                    pageable.pageSize,
-                    Sort.by(Sort.Direction.DESC, "modified", "created")
-                )
+            findAllPassInfo.execute(
+                pageable
+                    .toPageRequest()
+                    .copy(sort = defaultSort)
             )
         )
         model.addAttribute(
             "breadcrumbinfo",
             listOf(
                 Breadcrumb("HOME", urlBuilder.homeURL),
-                Breadcrumb("OVERVIEW", urlBuilder.overviewURL, true),
+                Breadcrumb("PASS", urlBuilder.passURL, true),
             )
         )
 
-
-        return "overview"
+        return "pass"
     }
 
 
-    @PostMapping("/overview")
+    @PostMapping("/pass")
     open fun commands(
         @RequestParam serialnumber: String,
         @RequestParam command: String
@@ -68,6 +67,6 @@ open class OverviewController(
             "positive" -> passService.positive(serialnumber)
         }
 
-        return "redirect:overview"
+        return "redirect:/pass"
     }
 }
