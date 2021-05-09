@@ -34,6 +34,7 @@ class PassBuilder(
 
             if (pkpass.isValid) {
                 val cpt = ContagioPassTemplate(
+                    passBuilderInfo.passInfo.authToken,
                     passBuilderInfo.passImage,
                     passBuilderInfo.passInfo.passType,
                     passBuilderInfo.passInfo.issueStatus

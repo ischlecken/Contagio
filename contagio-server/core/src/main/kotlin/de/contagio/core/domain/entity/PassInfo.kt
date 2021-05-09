@@ -1,8 +1,10 @@
 package de.contagio.core.domain.entity
 
+import de.contagio.core.usecase.Encryptor
 import org.springframework.data.annotation.Id
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 enum class TestResultType {
     UNKNOWN, POSITIVE, NEGATIVE
@@ -44,6 +46,7 @@ enum class PassInstallationStatus {
 
 data class PassImage(
     @Id val id: String,
+    val iv: String,
     val data: ByteArray,
     val type: String,
     val created: Instant = Instant.now()
@@ -56,6 +59,7 @@ data class PassImage(
 
         if (id != other.id) return false
         if (!data.contentEquals(other.data)) return false
+        if (iv != other.iv) return false
         if (type != other.type) return false
         if (created != other.created) return false
 
@@ -65,6 +69,7 @@ data class PassImage(
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + data.contentHashCode()
+        result = 31 * result + iv.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + created.hashCode()
         return result
@@ -76,10 +81,14 @@ data class PassImage(
             contentType: String?,
             passInfo: PassInfo
         ): PassImage {
+            val encryptor = Encryptor()
+            val iv = Base64.getEncoder().encodeToString(encryptor.generateIV().iv)
+
             return PassImage(
                 id = passInfo.imageId,
                 type = contentType ?: "",
-                data = data
+                data = encryptor.execute(data, passInfo.authToken, iv),
+                iv = iv
             )
         }
     }

@@ -19,6 +19,7 @@ import javax.imageio.ImageIO
 private val logger = LoggerFactory.getLogger(ContagioPassTemplate::class.java)
 
 class ContagioPassTemplate(
+    private val key: String,
     private val passImage: PassImage,
     private val passType: PassType,
     private val issueStatus: IssueStatus
@@ -34,7 +35,8 @@ class ContagioPassTemplate(
         addFile("pass.strings", Locale.ENGLISH, getResourceStream("en.lproj/pass.strings"))
         addFile("pass.strings", Locale.GERMAN, getResourceStream("de.lproj/pass.strings"))
 
-        val inputImage = ImageIO.read(ByteArrayInputStream(passImage.data))
+        val imageData = Decryptor().execute(passImage.data, key, passImage.iv)
+        val inputImage = ImageIO.read(ByteArrayInputStream(imageData))
 
         when (passType) {
             PassType.COUPON,
@@ -79,8 +81,8 @@ class ContagioPassTemplate(
             .outputFormat("PNG")
             .outputQuality(1.0)
 
-        if( issueStatus==IssueStatus.EXPIRED ||issueStatus==IssueStatus.REVOKED)
-            thumbnailBuilder = thumbnailBuilder.addFilter(Colorize(Color(255, 0, 0,128)))
+        if (issueStatus == IssueStatus.EXPIRED || issueStatus == IssueStatus.REVOKED)
+            thumbnailBuilder = thumbnailBuilder.addFilter(Colorize(Color(255, 0, 0, 128)))
 
         thumbnailBuilder.toOutputStream(outputStream)
 

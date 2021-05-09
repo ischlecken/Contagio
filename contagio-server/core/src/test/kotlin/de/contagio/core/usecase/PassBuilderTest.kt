@@ -2,7 +2,6 @@ package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
 import org.apache.commons.io.IOUtils
-import java.io.ByteArrayInputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -49,6 +48,7 @@ class PassBuilderTest {
             ),
             passImage = PassImage(
                 id = "img",
+                iv = "iv",
                 data = IOUtils.toByteArray(img),
                 type = "image/png"
             ),

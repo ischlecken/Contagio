@@ -52,4 +52,26 @@ class EncryptorTest {
 
         assertEquals(message, decryptedMessage)
     }
+
+    @Test
+    fun encryptDecryptUsingBase64_isEqual() {
+        val encryptor = Encryptor()
+        val key =  Base64.getEncoder().encodeToString(encryptor.generateKey().encoded)
+        val iv =  Base64.getEncoder().encodeToString(encryptor.generateIV().iv)
+
+        logger.debug("key={}", key)
+        logger.debug("iv={}", iv)
+
+        val message = "the quick brown fox jumps over the lazy dog"
+        val encryptedMessage = encryptor.execute(message.toByteArray(), key, iv)
+
+        logger.debug("encryptedMessage={}", Base64.getEncoder().encodeToString(encryptedMessage))
+
+        val decryptor = Decryptor()
+        val decryptedMessage = String(decryptor.execute(encryptedMessage, key, iv))
+
+        logger.debug("decryptedMessage={}", decryptedMessage)
+
+        assertEquals(message, decryptedMessage)
+    }
 }

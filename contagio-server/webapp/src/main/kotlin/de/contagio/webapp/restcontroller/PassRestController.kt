@@ -4,6 +4,7 @@ import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
+import de.contagio.core.usecase.Decryptor
 import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
@@ -114,13 +115,20 @@ open class PassRestController(
 
     @GetMapping("/image/{id}")
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
+        val passInfo = passInfoRepository.findByImageId(id)
         val result = passImageRepository.findById(id)
 
-        logger.debug("getPassImage($id)")
-
-        return if (result.isPresent)
-            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(result.get().data)
+        if (passInfo.isPresent)
+            logger.debug("getPassImage($id) serialNumber=${passInfo.get().serialNumber}")
         else
+            logger.debug("getPassImage($id)")
+
+        return if (result.isPresent && passInfo.isPresent) {
+            val encodedData = result.get().data
+            val data = Decryptor().execute(encodedData, passInfo.get().authToken, result.get().iv)
+
+            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(data)
+        } else
             ResponseEntity.notFound().build()
     }
 

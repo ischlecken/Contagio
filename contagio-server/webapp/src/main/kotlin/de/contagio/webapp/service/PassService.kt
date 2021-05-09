@@ -1,6 +1,7 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
+import de.contagio.core.util.AuthTokenGenerator
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.CreatePassResponse
 import de.contagio.webapp.model.UpdatePassRequest
@@ -29,6 +30,7 @@ open class PassService(
 ) {
 
     private val uidGenerator = UIDGenerator()
+    private val authTokenGenerator= AuthTokenGenerator()
 
     open fun delete(serialnumber: String) {
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
@@ -163,7 +165,7 @@ open class PassService(
             serialNumber = uidGenerator.generate(),
             person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
             imageId = uidGenerator.generate(),
-            authToken = uidGenerator.generate(),
+            authToken = authTokenGenerator.generate(),
             testResult = testResult,
             testType = testType,
             passType = passType,
