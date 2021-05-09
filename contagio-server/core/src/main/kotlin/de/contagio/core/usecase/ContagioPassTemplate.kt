@@ -37,7 +37,8 @@ class ContagioPassTemplate(
         val inputImage = ImageIO.read(ByteArrayInputStream(passImage.data))
 
         when (passType) {
-            PassType.COUPON -> {
+            PassType.COUPON,
+            PassType.STORE -> {
                 createImages(inputImage, 375, 144, "strip")
             }
             PassType.EVENT -> {

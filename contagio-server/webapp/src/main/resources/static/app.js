@@ -1,7 +1,7 @@
 $(function () {
     console.log('contagio server started...');
 
-    $('.overview button.deletecommand').on('click', function (e) {
+    $('.pass button.deletecommand').on('click', function (e) {
         $('#confirmdelete').modal('show');
 
         e.preventDefault();

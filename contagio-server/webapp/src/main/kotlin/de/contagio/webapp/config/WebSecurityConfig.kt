@@ -53,14 +53,16 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
                 "/co_v1/wallet/**"
             ).permitAll()
             .antMatchers(
-                "/swagger-ui/**",
                 "/createpass",
                 "/teststation",
                 "/tester",
                 "/registrationinfo",
                 "/deviceinfo"
                 ).hasRole("ADMIN")
-            .antMatchers("/co_v1/**").hasRole("API")
+            .antMatchers(
+                "/co_v1/**",
+                "/swagger-ui/**"
+            ).hasRole("API")
             .anyRequest().authenticated()
             .and().httpBasic().realmName("contagio")
             .and().cors()

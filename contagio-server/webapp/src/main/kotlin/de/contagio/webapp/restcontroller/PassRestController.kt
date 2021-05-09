@@ -1,11 +1,13 @@
 package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
+import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
@@ -35,7 +37,8 @@ open class PassRestController(
     private val passBuilderService: PassBuilderService,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val qrCodeGeneratorService: QRCodeGeneratorService,
-    private val urlBuilder: UrlBuilder
+    private val urlBuilder: UrlBuilder,
+    private val contagioProperties: ContagioProperties
 ) {
 
 
@@ -67,6 +70,21 @@ open class PassRestController(
         @RequestParam testType: TestType
     ): ResponseEntity<PassInfo> {
 
+        val passType = when (testType) {
+            TestType.VACCINATION -> PassType.COUPON
+            TestType.PCRTEST -> PassType.EVENT
+            TestType.RAPIDTEST -> PassType.COUPON
+        }
+        val labelColor = when (testType) {
+            TestType.VACCINATION -> "rgb(0, 255, 0)"
+            else -> contagioProperties.pass.labelColor
+        }
+        val foregroundColor = contagioProperties.pass.foregroundColor
+        val backgroundColor = when (testType) {
+            TestType.VACCINATION -> "rgb(44, 133, 75)"
+            else -> contagioProperties.pass.backgroundColor
+        }
+
         return searchTesterWithTeststation.execute(testerId)?.let {
             passService.createPassAndSave(
                 image,
@@ -74,7 +92,8 @@ open class PassRestController(
                 phoneNo, email,
                 it.teststation.id,
                 it.tester.id,
-                testResult, testType
+                testResult, testType,
+                passType, labelColor, foregroundColor, backgroundColor
             ).let { cpr ->
                 ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
             } ?: ResponseEntity.badRequest().build()
