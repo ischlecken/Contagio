@@ -23,6 +23,7 @@ data class PassBuilderInfo(
     val passSigningInfo: PassSigningInfo,
     val passImage: PassImage,
     val passInfoEnvelope: PassInfoEnvelope,
+    val passInfo: PassInfo,
     val teststation: Teststation,
     val tester: Tester,
 

@@ -34,9 +34,9 @@ class PassBuilder(
 
             if (pkpass.isValid) {
                 val cpt = ContagioPassTemplate(
-                    passBuilderInfo.passInfoEnvelope.authToken,
+                    passBuilderInfo.passCoreInfo.authenticationToken,
                     passBuilderInfo.passImage,
-                    passBuilderInfo.passInfoEnvelope.passType,
+                    passBuilderInfo.passInfo.passType,
                     passBuilderInfo.passInfoEnvelope.issueStatus
                 )
                 cpt.build()
@@ -64,7 +64,7 @@ class PassBuilder(
     private fun buildPKPass(): PKPass {
         val pass = initCorePass()
 
-        val generic = when (passBuilderInfo.passInfoEnvelope.passType) {
+        val generic = when (passBuilderInfo.passInfo.passType) {
             PassType.GENERIC -> PKGenericPass()
             PassType.COUPON -> PKCoupon()
             PassType.EVENT -> PKEventTicket()
@@ -77,7 +77,7 @@ class PassBuilder(
         generic.auxiliaryFields = createAuxiliaryFields()
         generic.backFields = createBackfields()
 
-        when (passBuilderInfo.passInfoEnvelope.passType) {
+        when (passBuilderInfo.passInfo.passType) {
             PassType.GENERIC -> pass.generic = generic
             PassType.COUPON -> pass.coupon = generic as PKCoupon?
             PassType.EVENT -> pass.eventTicket = generic as PKEventTicket?
@@ -98,21 +98,24 @@ class PassBuilder(
             pass.organizationName = this.organisationName
             pass.isSharingProhibited = true
         }
+
         with(passBuilderInfo.passInfoEnvelope) {
             pass.serialNumber = this.serialNumber
 
             if (this.issueStatus == IssueStatus.REVOKED || this.issueStatus == IssueStatus.EXPIRED)
                 pass.expirationDate = Date.from(Instant.now())
-            else if (this.validUntil != null)
-                pass.expirationDate = Date.from(this.validUntil)
+            else if (passBuilderInfo.passInfo.validUntil != null)
+                pass.expirationDate = Date.from(passBuilderInfo.passInfo.validUntil)
 
+            pass.addBarcode(urlBuilder.verifyURL(this.serialNumber))
+        }
+
+        with(passBuilderInfo.passInfo) {
             pass.labelColor = this.labelColor
             pass.foregroundColor = this.foregroundColor
             pass.backgroundColor = this.backgroundColor
             pass.description = this.description
             pass.logoText = this.logoText
-
-            pass.addBarcode(urlBuilder.verifyURL(this.serialNumber))
         }
 
         return pass
@@ -121,7 +124,7 @@ class PassBuilder(
     private fun createHeaderFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        fields.add(PKField("testType", null, "TESTTYPE_${passBuilderInfo.passInfoEnvelope.testType.name}"))
+        fields.add(PKField("testType", null, "TESTTYPE_${passBuilderInfo.passInfo.testType.name}"))
 
         return fields
     }
@@ -129,15 +132,19 @@ class PassBuilder(
     private fun createPrimaryFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        when (passBuilderInfo.passInfoEnvelope.passType) {
+        when (passBuilderInfo.passInfo.passType) {
             PassType.COUPON -> fields.add(
                 if (passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.REVOKED || passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.EXPIRED)
                     PKField("issueStatus", "ISSUESTATUS_${passBuilderInfo.passInfoEnvelope.issueStatus}", "")
                 else
-                    PKField("testResult", "TESTRESULT", "TESTRESULT_${passBuilderInfo.passInfoEnvelope.testResult.name}")
+                    PKField(
+                        "testResult",
+                        "TESTRESULT",
+                        "TESTRESULT_${passBuilderInfo.passInfo.testResult.name}"
+                    )
             )
             else -> fields.add(
-                PKField("fullName", "FULLNAME", passBuilderInfo.passInfoEnvelope.person.fullName)
+                PKField("fullName", "FULLNAME", passBuilderInfo.passInfo.person.fullName)
             )
         }
 
@@ -147,21 +154,21 @@ class PassBuilder(
     private fun createSecondaryFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        if (passBuilderInfo.passInfoEnvelope.passType == PassType.COUPON)
-            fields.add(PKField("fullName", "FULLNAME", passBuilderInfo.passInfoEnvelope.person.fullName))
+        if (passBuilderInfo.passInfo.passType == PassType.COUPON)
+            fields.add(PKField("fullName", "FULLNAME", passBuilderInfo.passInfo.person.fullName))
         else
             fields.add(
                 PKField(
                     "testResult",
                     "TESTRESULT",
-                    "TESTRESULT_${passBuilderInfo.passInfoEnvelope.testResult.name}"
+                    "TESTRESULT_${passBuilderInfo.passInfo.testResult.name}"
                 )
             )
 
         val validUntilFormatted =
-            passBuilderInfo.passInfoEnvelope.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
+            passBuilderInfo.passInfo.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
         if (validUntilFormatted != null &&
-            passBuilderInfo.passInfoEnvelope.testResult != TestResultType.UNKNOWN &&
+            passBuilderInfo.passInfo.testResult != TestResultType.UNKNOWN &&
             passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.ISSUED
         ) {
             val validUntilField = PKField("validUntil", "VALIDUNTIL", validUntilFormatted)
@@ -185,7 +192,7 @@ class PassBuilder(
     }
 
     private fun createBackfields(): List<PKField> {
-        return with(passBuilderInfo.passInfoEnvelope) {
+        return with(passBuilderInfo.passInfo) {
             val fields = mutableListOf<PKField>()
 
             val validUntilFormatted = this.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
@@ -193,7 +200,7 @@ class PassBuilder(
             val showPassUrl = PKField(
                 "showPassUrl",
                 "SHOWPASSURL",
-                urlBuilder.verifyURL(this.serialNumber)
+                urlBuilder.verifyURL(passBuilderInfo.passInfoEnvelope.serialNumber)
             )
             showPassUrl.dataDetectorTypes = listOf(PKDataDetectorType.PKDataDetectorTypeLink)
             fields.add(showPassUrl)

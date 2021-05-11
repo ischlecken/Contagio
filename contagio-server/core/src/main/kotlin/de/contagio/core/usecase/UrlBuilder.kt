@@ -10,6 +10,7 @@ class UrlBuilder(private val baseUrl: String) {
         return "$baseUrl/co_v1/pass/$passId"
     }
 
+    @Suppress("unused")
     fun showpassForSerialNumberURL(serialNumber: String): String {
         return "$showpassURL?serialNumber=$serialNumber"
     }

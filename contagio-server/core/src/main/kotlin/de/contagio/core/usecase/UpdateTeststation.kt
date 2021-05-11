@@ -3,7 +3,6 @@ package de.contagio.core.usecase
 import de.contagio.core.domain.entity.Address
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.core.domain.entity.UpdateTeststationDTO
-import de.contagio.core.domain.port.IFindTeststation
 import de.contagio.core.domain.port.ISaveTeststation
 import java.time.Instant
 

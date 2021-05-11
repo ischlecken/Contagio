@@ -1,11 +1,6 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IUIDGenerator
-import org.springframework.data.annotation.Id
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import com.fasterxml.jackson.annotation.JsonIgnore
 
 data class GeoPosition(
     val latitude: String,
@@ -19,6 +14,7 @@ data class Address(
     val hno: String? = null,
     val position: GeoPosition? = null,
 ) {
+    @get:JsonIgnore
     val fullAddress: String
         get() = "$zipcode $city, $street $hno"
 }
@@ -29,6 +25,7 @@ data class Person(
     val phoneNo: String? = null,
     val email: String? = null
 ) {
+    @get:JsonIgnore
     val fullName: String
         get() = "$firstName $lastName"
 }

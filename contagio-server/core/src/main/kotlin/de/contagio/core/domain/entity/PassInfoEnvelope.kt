@@ -1,10 +1,37 @@
 package de.contagio.core.domain.entity
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.datatype.jsr310.ser.InstantSerializer
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import de.contagio.core.usecase.Decryptor
 import de.contagio.core.usecase.Encryptor
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.annotation.Id
 import java.time.Instant
+import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoUnit
 import java.util.*
+
+private val logger: Logger = LoggerFactory.getLogger("de.contagio.core.domain.entity")
+
+private val om = jacksonObjectMapper().apply {
+    val javaTimeModule = JavaTimeModule()
+
+    javaTimeModule.addSerializer(
+        Instant::class.java,
+        object : InstantSerializer(
+            INSTANCE,
+            false,
+            DateTimeFormatterBuilder().appendInstant(0).toFormatter()
+        ) {
+        }
+    )
+    registerModule(javaTimeModule)
+    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+}
 
 enum class TestResultType {
     UNKNOWN, POSITIVE, NEGATIVE
@@ -77,17 +104,18 @@ data class PassImage(
 
     companion object {
         fun build(
+            authToken: String,
+            imageId: String,
             data: ByteArray,
-            contentType: String?,
-            passInfoEnvelope: PassInfoEnvelope
+            contentType: String?
         ): PassImage {
             val encryptor = Encryptor()
             val iv = Base64.getEncoder().encodeToString(encryptor.generateIV().iv)
 
             return PassImage(
-                id = passInfoEnvelope.imageId,
+                id = imageId,
                 type = contentType ?: "",
-                data = encryptor.execute(data, passInfoEnvelope.authToken, iv),
+                data = encryptor.execute(data, authToken, iv),
                 iv = iv
             )
         }
@@ -123,7 +151,8 @@ data class Pass(
 
 
 data class PassInfo(
-    val serialNumber: String,
+    val passId: String? = null,
+    val imageId: String,
     val person: Person,
     val testResult: TestResultType,
     val testType: TestType,
@@ -134,31 +163,44 @@ data class PassInfo(
     val foregroundColor: String,
     val backgroundColor: String,
     val validUntil: Instant? = null
-)
+) {
+
+    fun toEncryptedPayload(authToken: String, iv: String): ByteArray {
+        val json = om.writeValueAsBytes(this)
+
+        return Encryptor().execute(json, authToken, iv)
+    }
+
+    companion object {
+        fun toPassInfo(data: ByteArray, authToken: String, iv: String): PassInfo? {
+            var result: PassInfo? = null
+
+            try {
+                val decryptedData = Decryptor().execute(data, authToken, iv)
+
+                result = om.readValue<PassInfo>(decryptedData)
+            } catch (ex: Exception) {
+                logger.error("Error while decrypting passinfo payload", ex)
+            }
+
+            return result
+        }
+    }
+}
 
 
+@Suppress("ArrayInDataClass")
 data class PassInfoEnvelope(
     @Id val serialNumber: String,
-    val person: Person,
-    val imageId: String,
+    val iv: String,
+    val passInfoPayload: ByteArray,
     val teststationId: String,
     val testerId: String,
-    val authToken: String,
-    val testResult: TestResultType,
-    val testType: TestType,
     val issueStatus: IssueStatus,
-    val passType: PassType,
-    val description: String,
-    val logoText: String,
-    val labelColor: String,
-    val foregroundColor: String,
-    val backgroundColor: String,
-    val passId: String? = null,
-    val passInstallationStatus: PassInstallationStatus = PassInstallationStatus.PENDING,
     val version: Int = 0,
     val created: Instant = Instant.now(),
     val modified: Instant? = null,
-    val validUntil: Instant? = null,
+    val passInstallationStatus: PassInstallationStatus = PassInstallationStatus.PENDING,
     val passInstalled: Instant? = null,
     val passRemoved: Instant? = null
 
@@ -166,29 +208,42 @@ data class PassInfoEnvelope(
     val updated: Instant get() = modified ?: created
 
     fun update(
+        authToken: String,
         testResult: TestResultType,
         issueStatus: IssueStatus,
         validUntil: Instant? = null
-    ): PassInfoEnvelope {
+    ): PassInfoEnvelope? {
 
-        val newValidUntil = when {
-            issueStatus == IssueStatus.EXPIRED -> this.validUntil
-            validUntil != null -> validUntil
-            else -> Instant.now()
-                .plus(if (testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
+        return getPassInfo(authToken)?.let {
+            val newValidUntil = when {
+                issueStatus == IssueStatus.EXPIRED -> it.validUntil
+                validUntil != null -> validUntil
+                else -> Instant.now()
+                    .plus(if (it.testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
+            }
+
+            it.copy(
+                testResult = testResult,
+                validUntil = newValidUntil
+            )
+        }?.let {
+            copy(
+                issueStatus = issueStatus,
+                modified = Instant.now(),
+                version = version + 1,
+                passInfoPayload = it.toEncryptedPayload(authToken, iv)
+            )
         }
+    }
 
-        return this.copy(
-            testResult = testResult,
-            issueStatus = issueStatus,
-            modified = Instant.now(),
-            validUntil = newValidUntil,
-            version = this.version + 1
-        )
+    fun getPassInfo(authToken: String): PassInfo? {
+        return PassInfo.toPassInfo(passInfoPayload, authToken, iv)
     }
 }
 
+@Suppress("ArrayInDataClass")
 data class ExtendedPassInfo(
     val passInfoEnvelope: PassInfoEnvelope,
-    val testerTeststation: TesterTeststation
+    val testerTeststation: TesterTeststation,
+    val passInfo: PassInfo? = null
 )
