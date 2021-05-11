@@ -1,12 +1,12 @@
 package de.contagio.core.domain.port
 
-import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.PassInfoEnvelope
 
 fun interface IFindPassInfo {
-    fun execute(id:String): PassInfo?
+    fun execute(id:String): PassInfoEnvelope?
 }
 
 
 fun interface IFindAllPassInfo {
-    fun execute(pageRequest: PageRequest): PagedResult<PassInfo>
+    fun execute(pageRequest: PageRequest): PagedResult<PassInfoEnvelope>
 }

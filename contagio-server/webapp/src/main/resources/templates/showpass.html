@@ -7,9 +7,9 @@
 <div class="container showpass main">
   <nav th:replace="~{breadcrumb}"></nav>
 
-  <h1><span th:text="#{showpass.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
-    <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfo.passId})}"></a>
-    <small class="serialno text-muted" th:text="${extendedPassInfo.passInfo.serialNumber}">serial no</small>
+  <h1><span th:text="#{showpass.title(${extendedPassInfo.passInfoEnvelope.person.fullName})}">Pass für Member</span>
+    <a class="addtowallet" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfoEnvelope.passId})}"></a>
+    <small class="serialno text-muted" th:text="${extendedPassInfo.passInfoEnvelope.serialNumber}">serial no</small>
   </h1>
   <div class="row">
     <div class="col-12 col-lg-8 order-2 order-lg-1">
@@ -18,13 +18,13 @@
         <div class="col-6">
           <div class="form-group">
             <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
-            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfo.person.phoneNo}">
+            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfoEnvelope.person.phoneNo}">
           </div>
         </div>
         <div class="col-6">
-          <div class="form-group" th:if="${extendedPassInfo.passInfo.person.email}">
+          <div class="form-group" th:if="${extendedPassInfo.passInfoEnvelope.person.email}">
             <label for="email" th:text="#{field.email}">E-Mail</label>
-            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfo.person.email}">
+            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfoEnvelope.person.email}">
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@
                    readonly
                    name="testType"
                    id="testType"
-                   th:value="#{testType.__${extendedPassInfo.passInfo.testType}__}">
+                   th:value="#{testType.__${extendedPassInfo.passInfoEnvelope.testType}__}">
           </div>
         </div>
         <div class="col-6">
@@ -47,7 +47,7 @@
                    readonly
                    name="testResult"
                    id="testResult"
-                   th:value="#{testResultType.__${extendedPassInfo.passInfo.testResult}__}">
+                   th:value="#{testResultType.__${extendedPassInfo.passInfoEnvelope.testResult}__}">
           </div>
         </div>
       </div>
@@ -60,13 +60,13 @@
                    readonly
                    name="issueStatus"
                    id="issueStatus"
-                   th:value="#{issueType.__${extendedPassInfo.passInfo.issueStatus}__}">
+                   th:value="#{issueType.__${extendedPassInfo.passInfoEnvelope.issueStatus}__}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
-            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfo.validUntil}}">
+            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfoEnvelope.validUntil}}">
           </div>
         </div>
       </div>
@@ -92,13 +92,13 @@
         <div class="col-6">
           <div class="form-group">
             <label for="passId" th:text="#{field.passid}">PassId</label>
-            <input class="form-control" readonly name="passId" id="passId" th:value="${extendedPassInfo.passInfo.passId}">
+            <input class="form-control" readonly name="passId" id="passId" th:value="${extendedPassInfo.passInfoEnvelope.passId}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="passId" th:text="#{field.version}">Version</label>
-            <input class="form-control" readonly name="version" id="version" th:value="${extendedPassInfo.passInfo.version}">
+            <input class="form-control" readonly name="version" id="version" th:value="${extendedPassInfo.passInfoEnvelope.version}">
           </div>
         </div>
       </div>
@@ -107,13 +107,13 @@
         <div class="col-6">
           <div class="form-group">
             <label for="created" th:text="#{field.created}">Erzeugt am</label>
-            <input class="form-control" readonly name="created" id="created" th:value="${{extendedPassInfo.passInfo.created}}">
+            <input class="form-control" readonly name="created" id="created" th:value="${{extendedPassInfo.passInfoEnvelope.created}}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="created" th:text="#{field.modified}">Geändert am</label>
-            <input class="form-control" readonly name="modified" id="modified" th:value="${{extendedPassInfo.passInfo.modified}}">
+            <input class="form-control" readonly name="modified" id="modified" th:value="${{extendedPassInfo.passInfoEnvelope.modified}}">
           </div>
         </div>
       </div>
@@ -123,14 +123,14 @@
           <div class="form-group">
             <label for="passInstallationStatus" th:text="#{field.installationstatus}">Status der Installation</label>
             <input class="form-control" readonly name="passInstallationStatus" id="passInstallationStatus"
-                   th:value="#{installationStatus.__${extendedPassInfo.passInfo.passInstallationStatus}__}">
+                   th:value="#{installationStatus.__${extendedPassInfo.passInfoEnvelope.passInstallationStatus}__}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="passInstalled" th:text="#{field.installed}">Installiert am</label>
             <input class="form-control" readonly name="passInstalled" id="passInstalled"
-                   th:value="${{extendedPassInfo.passInfo.passInstalled}}">
+                   th:value="${{extendedPassInfo.passInfoEnvelope.passInstalled}}">
           </div>
         </div>
       </div>
@@ -139,14 +139,14 @@
           <div class="form-group">
             <label for="passType" th:text="#{field.passtype}">Passtype</label>
             <input class="form-control" readonly name="passType" id="passType"
-                   th:value="#{passType.__${extendedPassInfo.passInfo.passType}__}">
+                   th:value="#{passType.__${extendedPassInfo.passInfoEnvelope.passType}__}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="passInstalled" th:text="#{field.logotext}">Logotext</label>
             <input class="form-control" readonly name="logoText" id="logoText"
-                   th:value="${{extendedPassInfo.passInfo.logoText}}">
+                   th:value="${{extendedPassInfo.passInfoEnvelope.logoText}}">
           </div>
         </div>
       </div>
@@ -154,8 +154,8 @@
     </div>
 
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage">
-      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
-      <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfo.passId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfoEnvelope.imageId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfoEnvelope.passId})}">
     </div>
   </div>
 </div>

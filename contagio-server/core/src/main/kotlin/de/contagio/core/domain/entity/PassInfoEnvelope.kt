@@ -79,15 +79,15 @@ data class PassImage(
         fun build(
             data: ByteArray,
             contentType: String?,
-            passInfo: PassInfo
+            passInfoEnvelope: PassInfoEnvelope
         ): PassImage {
             val encryptor = Encryptor()
             val iv = Base64.getEncoder().encodeToString(encryptor.generateIV().iv)
 
             return PassImage(
-                id = passInfo.imageId,
+                id = passInfoEnvelope.imageId,
                 type = contentType ?: "",
-                data = encryptor.execute(data, passInfo.authToken, iv),
+                data = encryptor.execute(data, passInfoEnvelope.authToken, iv),
                 iv = iv
             )
         }
@@ -123,6 +123,21 @@ data class Pass(
 
 
 data class PassInfo(
+    val serialNumber: String,
+    val person: Person,
+    val testResult: TestResultType,
+    val testType: TestType,
+    val passType: PassType,
+    val description: String,
+    val logoText: String,
+    val labelColor: String,
+    val foregroundColor: String,
+    val backgroundColor: String,
+    val validUntil: Instant? = null
+)
+
+
+data class PassInfoEnvelope(
     @Id val serialNumber: String,
     val person: Person,
     val imageId: String,
@@ -154,7 +169,7 @@ data class PassInfo(
         testResult: TestResultType,
         issueStatus: IssueStatus,
         validUntil: Instant? = null
-    ): PassInfo {
+    ): PassInfoEnvelope {
 
         val newValidUntil = when {
             issueStatus == IssueStatus.EXPIRED -> this.validUntil
@@ -174,6 +189,6 @@ data class PassInfo(
 }
 
 data class ExtendedPassInfo(
-    val passInfo: PassInfo,
+    val passInfoEnvelope: PassInfoEnvelope,
     val testerTeststation: TesterTeststation
 )

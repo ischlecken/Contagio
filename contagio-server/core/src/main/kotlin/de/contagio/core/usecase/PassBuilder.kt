@@ -34,10 +34,10 @@ class PassBuilder(
 
             if (pkpass.isValid) {
                 val cpt = ContagioPassTemplate(
-                    passBuilderInfo.passInfo.authToken,
+                    passBuilderInfo.passInfoEnvelope.authToken,
                     passBuilderInfo.passImage,
-                    passBuilderInfo.passInfo.passType,
-                    passBuilderInfo.passInfo.issueStatus
+                    passBuilderInfo.passInfoEnvelope.passType,
+                    passBuilderInfo.passInfoEnvelope.issueStatus
                 )
                 cpt.build()
 
@@ -64,7 +64,7 @@ class PassBuilder(
     private fun buildPKPass(): PKPass {
         val pass = initCorePass()
 
-        val generic = when (passBuilderInfo.passInfo.passType) {
+        val generic = when (passBuilderInfo.passInfoEnvelope.passType) {
             PassType.GENERIC -> PKGenericPass()
             PassType.COUPON -> PKCoupon()
             PassType.EVENT -> PKEventTicket()
@@ -77,7 +77,7 @@ class PassBuilder(
         generic.auxiliaryFields = createAuxiliaryFields()
         generic.backFields = createBackfields()
 
-        when (passBuilderInfo.passInfo.passType) {
+        when (passBuilderInfo.passInfoEnvelope.passType) {
             PassType.GENERIC -> pass.generic = generic
             PassType.COUPON -> pass.coupon = generic as PKCoupon?
             PassType.EVENT -> pass.eventTicket = generic as PKEventTicket?
@@ -98,7 +98,7 @@ class PassBuilder(
             pass.organizationName = this.organisationName
             pass.isSharingProhibited = true
         }
-        with(passBuilderInfo.passInfo) {
+        with(passBuilderInfo.passInfoEnvelope) {
             pass.serialNumber = this.serialNumber
 
             if (this.issueStatus == IssueStatus.REVOKED || this.issueStatus == IssueStatus.EXPIRED)
@@ -121,7 +121,7 @@ class PassBuilder(
     private fun createHeaderFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        fields.add(PKField("testType", null, "TESTTYPE_${passBuilderInfo.passInfo.testType.name}"))
+        fields.add(PKField("testType", null, "TESTTYPE_${passBuilderInfo.passInfoEnvelope.testType.name}"))
 
         return fields
     }
@@ -129,15 +129,15 @@ class PassBuilder(
     private fun createPrimaryFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        when (passBuilderInfo.passInfo.passType) {
+        when (passBuilderInfo.passInfoEnvelope.passType) {
             PassType.COUPON -> fields.add(
-                if (passBuilderInfo.passInfo.issueStatus == IssueStatus.REVOKED || passBuilderInfo.passInfo.issueStatus == IssueStatus.EXPIRED)
-                    PKField("issueStatus", "ISSUESTATUS_${passBuilderInfo.passInfo.issueStatus}", "")
+                if (passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.REVOKED || passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.EXPIRED)
+                    PKField("issueStatus", "ISSUESTATUS_${passBuilderInfo.passInfoEnvelope.issueStatus}", "")
                 else
-                    PKField("testResult", "TESTRESULT", "TESTRESULT_${passBuilderInfo.passInfo.testResult.name}")
+                    PKField("testResult", "TESTRESULT", "TESTRESULT_${passBuilderInfo.passInfoEnvelope.testResult.name}")
             )
             else -> fields.add(
-                PKField("fullName", "FULLNAME", passBuilderInfo.passInfo.person.fullName)
+                PKField("fullName", "FULLNAME", passBuilderInfo.passInfoEnvelope.person.fullName)
             )
         }
 
@@ -147,22 +147,22 @@ class PassBuilder(
     private fun createSecondaryFields(): List<PKField> {
         val fields = mutableListOf<PKField>()
 
-        if (passBuilderInfo.passInfo.passType == PassType.COUPON)
-            fields.add(PKField("fullName", "FULLNAME", passBuilderInfo.passInfo.person.fullName))
+        if (passBuilderInfo.passInfoEnvelope.passType == PassType.COUPON)
+            fields.add(PKField("fullName", "FULLNAME", passBuilderInfo.passInfoEnvelope.person.fullName))
         else
             fields.add(
                 PKField(
                     "testResult",
                     "TESTRESULT",
-                    "TESTRESULT_${passBuilderInfo.passInfo.testResult.name}"
+                    "TESTRESULT_${passBuilderInfo.passInfoEnvelope.testResult.name}"
                 )
             )
 
         val validUntilFormatted =
-            passBuilderInfo.passInfo.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
+            passBuilderInfo.passInfoEnvelope.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
         if (validUntilFormatted != null &&
-            passBuilderInfo.passInfo.testResult != TestResultType.UNKNOWN &&
-            passBuilderInfo.passInfo.issueStatus == IssueStatus.ISSUED
+            passBuilderInfo.passInfoEnvelope.testResult != TestResultType.UNKNOWN &&
+            passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.ISSUED
         ) {
             val validUntilField = PKField("validUntil", "VALIDUNTIL", validUntilFormatted)
             validUntilField.dateStyle = PKDateStyle.PKDateStyleMedium
@@ -185,7 +185,7 @@ class PassBuilder(
     }
 
     private fun createBackfields(): List<PKField> {
-        return with(passBuilderInfo.passInfo) {
+        return with(passBuilderInfo.passInfoEnvelope) {
             val fields = mutableListOf<PKField>()
 
             val validUntilFormatted = this.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)

@@ -1,6 +1,6 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.PassInfo
+import de.contagio.core.domain.entity.PassInfoEnvelope
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
@@ -44,14 +44,14 @@ open class PassRestController(
 
 
     @GetMapping("/info")
-    open fun getPasses(pageable: Pageable): Page<PassInfo> {
+    open fun getPasses(pageable: Pageable): Page<PassInfoEnvelope> {
         logger.debug("getAllPassInfo()")
 
         return passInfoRepository.findAll(pageable)
     }
 
     @GetMapping("/info/{serialNumber}")
-    open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfo> {
+    open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfoEnvelope> {
         logger.debug("getPassInfo($serialNumber)")
 
         val result = passInfoRepository.findById(serialNumber)
@@ -69,7 +69,7 @@ open class PassRestController(
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
-    ): ResponseEntity<PassInfo> {
+    ): ResponseEntity<PassInfoEnvelope> {
 
         val passType = when (testType) {
             TestType.VACCINATION -> PassType.COUPON
@@ -96,13 +96,13 @@ open class PassRestController(
                 testResult, testType,
                 passType, labelColor, foregroundColor, backgroundColor
             ).let { cpr ->
-                ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfo)
+                ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfoEnvelope)
             } ?: ResponseEntity.badRequest().build()
         } ?: ResponseEntity.badRequest().build()
     }
 
     @PatchMapping("/info")
-    open fun updatePass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfo> {
+    open fun updatePass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfoEnvelope> {
 
         val passInfo = passService.updatePass(updatePassRequest)
 

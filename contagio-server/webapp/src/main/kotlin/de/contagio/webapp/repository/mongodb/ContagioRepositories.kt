@@ -5,11 +5,11 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import org.springframework.data.mongodb.repository.Query
 import java.util.*
 
-interface PassInfoRepository : MongoRepository<PassInfo, String> {
+interface PassInfoRepository : MongoRepository<PassInfoEnvelope, String> {
     @Query("{issueStatus : {\$ne : ?0}}")
-    fun findByIssueStatusNotEqual(issueStatus: IssueStatus): Collection<PassInfo>
+    fun findByIssueStatusNotEqual(issueStatus: IssueStatus): Collection<PassInfoEnvelope>
 
-    fun findByImageId(imageId: String): Optional<PassInfo>
+    fun findByImageId(imageId: String): Optional<PassInfoEnvelope>
 }
 
 

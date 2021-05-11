@@ -14,7 +14,7 @@ class SearchPassInfo(
         findPassInfo.execute(id)?.let { passInfo ->
             searchTesterWithTeststation.execute(passInfo.testerId)?.let {
                 result = ExtendedPassInfo(
-                    passInfo = passInfo,
+                    passInfoEnvelope = passInfo,
                     testerTeststation = it
                 )
             }

@@ -51,7 +51,7 @@ open class PortConfig(
                 }
 
             return@IFindPass if (pass.isPresent)
-                PassInfoPass(passInfo = passInfo.get(), pass = pass.get())
+                PassInfoPass(passInfoEnvelope = passInfo.get(), pass = pass.get())
             else
                 null
         }

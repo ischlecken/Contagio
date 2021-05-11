@@ -1,11 +1,8 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.webapp.repository.mongodb.TeststationRepository
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

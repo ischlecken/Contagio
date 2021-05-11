@@ -2,6 +2,7 @@ package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
 import org.apache.commons.io.IOUtils
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -9,6 +10,15 @@ class PassBuilderTest {
 
     @Test
     fun createPass_expectedValuesAndValid() {
+        val authToken = Base64
+            .getEncoder()
+            .encodeToString(
+                byteArrayOf(
+                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00,
+                    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x10
+                )
+            )
+
         val passCoreInfo = PassCoreInfo(
             teamIdentifier = "teamid",
             passTypeIdentifier = "passTypeId",
@@ -16,12 +26,12 @@ class PassBuilderTest {
             organisationName = "bla org"
         )
 
-        val passInfo = PassInfo(
+        val passInfo = PassInfoEnvelope(
             serialNumber = "123",
             person = Person(firstName = "Hugo", lastName = "Schlecken"),
             passId = "123",
             imageId = "456",
-            authToken = "abc",
+            authToken = authToken,
             testResult = TestResultType.NEGATIVE,
             testType = TestType.RAPIDTEST,
             passType = PassType.GENERIC,
@@ -39,6 +49,18 @@ class PassBuilderTest {
         val keystore = PassBuilderTest::class.java.getResourceAsStream("/certs/pass.p12")
         val appleca = PassBuilderTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
 
+        val iv = Base64
+            .getEncoder()
+            .encodeToString(
+                byteArrayOf(
+                    0x01, 0x02, 0x03, 0x04,
+                    0x05, 0x06, 0x07, 0x08,
+                    0x09, 0x0a, 0x0b, 0x0c,
+                    0x0d, 0x0e, 0x0f, 0x00
+                )
+            )
+        val encryptedImgData = Encryptor().execute(IOUtils.toByteArray(img), authToken, iv)
+
         val passBuilderInfo = PassBuilderInfo(
             passCoreInfo = passCoreInfo,
             passSigningInfo = PassSigningInfo(
@@ -48,11 +70,11 @@ class PassBuilderTest {
             ),
             passImage = PassImage(
                 id = "img",
-                iv = "iv",
-                data = IOUtils.toByteArray(img),
+                iv = iv,
+                data = encryptedImgData,
                 type = "image/png"
             ),
-            passInfo = passInfo,
+            passInfoEnvelope = passInfo,
             teststation = Teststation(
                 id = "1",
                 "Teststation",

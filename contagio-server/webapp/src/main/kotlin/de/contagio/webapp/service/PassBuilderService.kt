@@ -32,7 +32,7 @@ class PassBuilderService(
 
     fun buildPkPass(
         passImage: PassImage,
-        passInfo: PassInfo,
+        passInfoEnvelope: PassInfoEnvelope,
         teststation: Teststation,
         tester: Tester,
     ): ByteArray? {
@@ -40,7 +40,7 @@ class PassBuilderService(
         val passCoreInfo = PassCoreInfo(
             teamIdentifier = contagioProperties.pass.teamIdentifier,
             passTypeIdentifier = contagioProperties.pass.passTypeId,
-            authenticationToken = passInfo.authToken,
+            authenticationToken = passInfoEnvelope.authToken,
             organisationName = contagioProperties.pass.organisationName,
         )
 
@@ -54,7 +54,7 @@ class PassBuilderService(
             passCoreInfo = passCoreInfo,
             passSigningInfo = passSigningInfo,
             passImage = passImage,
-            passInfo = passInfo,
+            passInfoEnvelope = passInfoEnvelope,
             teststation = teststation,
             tester = tester
         )

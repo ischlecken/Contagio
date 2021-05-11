@@ -5,7 +5,7 @@
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <div class="container showpass main">
-  <h1><span th:utext="#{verify.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
+  <h1><span th:utext="#{verify.title(${extendedPassInfo.passInfoEnvelope.person.fullName})}">Pass für Member</span>
   </h1>
   <div class="row">
     <div class="col-12 col-lg-8 order-2 order-lg-1">
@@ -18,13 +18,13 @@
                    readonly
                    name="issueStatus"
                    id="issueStatus"
-                   th:value="#{issueType.__${extendedPassInfo.passInfo.issueStatus}__}">
+                   th:value="#{issueType.__${extendedPassInfo.passInfoEnvelope.issueStatus}__}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
-            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfo.validUntil}}">
+            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfoEnvelope.validUntil}}">
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@
                    readonly
                    name="testType"
                    id="testType"
-                   th:value="#{testType.__${extendedPassInfo.passInfo.testType}__}">
+                   th:value="#{testType.__${extendedPassInfo.passInfoEnvelope.testType}__}">
           </div>
         </div>
         <div class="col-6">
@@ -47,7 +47,7 @@
                    readonly
                    name="testResult"
                    id="testResult"
-                   th:value="#{testResultType.__${extendedPassInfo.passInfo.testResult}__}">
+                   th:value="#{testResultType.__${extendedPassInfo.passInfoEnvelope.testResult}__}">
           </div>
         </div>
       </div>
@@ -56,13 +56,13 @@
         <div class="col-6">
           <div class="form-group">
             <label for="phoneNo" th:text="#{field.phoneno}">Telefonnummer</label>
-            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfo.person.phoneNo}">
+            <input class="form-control" readonly name="phoneNo" id="phoneNo" th:value="${extendedPassInfo.passInfoEnvelope.person.phoneNo}">
           </div>
         </div>
         <div class="col-6">
-          <div class="form-group" th:if="${extendedPassInfo.passInfo.person.email}">
+          <div class="form-group" th:if="${extendedPassInfo.passInfoEnvelope.person.email}">
             <label for="email" th:text="#{field.email}">E-Mail</label>
-            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfo.person.email}">
+            <input class="form-control" readonly name="email" id="email" th:value="${extendedPassInfo.passInfoEnvelope.person.email}">
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
     </div>
 
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage">
-      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfoEnvelope.imageId})}">
     </div>
   </div>
 </div>

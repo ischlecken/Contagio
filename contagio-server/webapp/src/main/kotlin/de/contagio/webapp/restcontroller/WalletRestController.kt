@@ -46,7 +46,7 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return findPass.execute(serialNumber)?.let {
-            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfo.updated.atZone(ZoneId.of("GMT")))
+            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfoEnvelope.updated.atZone(ZoneId.of("GMT")))
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 

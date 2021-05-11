@@ -116,8 +116,8 @@ open class PassService(
         testResult: TestResultType,
         issueStatus: IssueStatus,
         validUntil: Instant? = null,
-    ): PassInfo? {
-        var result: PassInfo? = null
+    ): PassInfoEnvelope? {
+        var result: PassInfoEnvelope? = null
 
         passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
             val updatedPassInfo = passInfo.update(testResult, issueStatus, validUntil)
@@ -161,7 +161,7 @@ open class PassService(
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        val passInfo = PassInfo(
+        val passInfo = PassInfoEnvelope(
             serialNumber = uidGenerator.generate(),
             person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
             imageId = uidGenerator.generate(),
@@ -180,7 +180,7 @@ open class PassService(
         )
 
         var result = CreatePassResponse(
-            passInfo = passInfo,
+            passInfoEnvelope = passInfo,
             passImage = PassImage.build(image.bytes, image.contentType, passInfo)
         )
 
@@ -228,26 +228,26 @@ open class PassService(
 
         if (cpr.pkPass != null) {
             cpr = cpr.copy(
-                passInfo = cpr.passInfo.copy(
+                passInfoEnvelope = cpr.passInfoEnvelope.copy(
                     passId = uidGenerator.generate(),
                     issueStatus = IssueStatus.ISSUED
                 )
             )
 
-            passRepository.save(Pass(id = cpr.passInfo.passId!!, data = cpr.pkPass!!))
+            passRepository.save(Pass(id = cpr.passInfoEnvelope.passId!!, data = cpr.pkPass!!))
             passImageRepository.save(cpr.passImage)
-            passInfoRepository.save(cpr.passInfo)
+            passInfoRepository.save(cpr.passInfoEnvelope)
         } else {
-            cpr = cpr.copy(passInfo = cpr.passInfo.copy(issueStatus = IssueStatus.REFUSED))
+            cpr = cpr.copy(passInfoEnvelope = cpr.passInfoEnvelope.copy(issueStatus = IssueStatus.REFUSED))
 
             passImageRepository.save(cpr.passImage)
-            passInfoRepository.save(cpr.passInfo)
+            passInfoRepository.save(cpr.passInfoEnvelope)
         }
 
         return cpr
     }
 
-    open fun updatePass(updatePassRequest: UpdatePassRequest): PassInfo? {
+    open fun updatePass(updatePassRequest: UpdatePassRequest): PassInfoEnvelope? {
         val result = passInfoRepository.findById(updatePassRequest.serialNumber)
 
         if (result.isPresent && updatePassRequest.testResult != null) {

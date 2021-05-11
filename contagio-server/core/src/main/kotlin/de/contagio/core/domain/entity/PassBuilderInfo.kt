@@ -22,11 +22,11 @@ data class PassBuilderInfo(
     val passCoreInfo: PassCoreInfo,
     val passSigningInfo: PassSigningInfo,
     val passImage: PassImage,
-    val passInfo: PassInfo,
+    val passInfoEnvelope: PassInfoEnvelope,
     val teststation: Teststation,
     val tester: Tester,
 
-)
+    )
 
 
 @Suppress("ArrayInDataClass")
