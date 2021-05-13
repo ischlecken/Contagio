@@ -21,20 +21,16 @@ import java.util.*
 private val logger = LoggerFactory.getLogger(PassBuilder::class.java)
 private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm'+00:00'")
 
-class PassBuilder(
-    private val passBuilderInfo: PassBuilderInfo,
-    private val urlBuilder: UrlBuilder
-) {
+class PassBuilder(private val passBuilderInfo: PassBuilderInfo, private val urlBuilder: UrlBuilder) {
 
-    fun build(): PassBuilderResult {
-        var result: ByteArray? = null
-        val pkpass = buildPKPass()
+    fun build(authToken: String): PassBuilderResult? {
+        var result: PassBuilderResult? = null
 
         try {
+            val pkpass = buildPKPass(authToken)
 
             if (pkpass.isValid) {
                 val cpt = ContagioPassTemplate(
-                    passBuilderInfo.passCoreInfo.authenticationToken,
                     passBuilderInfo.passImage,
                     passBuilderInfo.passInfo.passType,
                     passBuilderInfo.passInfoEnvelope.issueStatus
@@ -48,7 +44,10 @@ class PassBuilder(
                         passBuilderInfo.passSigningInfo.appleWWDRCA
                     )
 
-                result = PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pkpass, cpt, pkSigningInformation)
+                val pass =
+                    PKFileBasedSigningUtil().createSignedAndZippedPkPassArchive(pkpass, cpt, pkSigningInformation)
+
+                result = PassBuilderResult(pkpass = pkpass, pass = pass)
             } else {
                 logger.debug("pass is NOT valid: ${pkpass.validationErrors}")
             }
@@ -58,11 +57,11 @@ class PassBuilder(
             throw e
         }
 
-        return PassBuilderResult(pkpass = pkpass, pass = result)
+        return result
     }
 
-    private fun buildPKPass(): PKPass {
-        val pass = initCorePass()
+    private fun buildPKPass(authToken: String): PKPass {
+        val pass = initCorePass(authToken)
 
         val generic = when (passBuilderInfo.passInfo.passType) {
             PassType.GENERIC -> PKGenericPass()
@@ -87,25 +86,22 @@ class PassBuilder(
         return pass
     }
 
-    private fun initCorePass(): PKPass {
+    private fun initCorePass(authToken: String): PKPass {
         val pass = PKPass()
 
-        with(passBuilderInfo.passCoreInfo) {
+        with(passBuilderInfo.passInfoEnvelope) {
             pass.passTypeIdentifier = this.passTypeIdentifier
             pass.teamIdentifier = this.teamIdentifier
             pass.webServiceURL = URL(urlBuilder.walletURL)
-            pass.authenticationToken = this.authenticationToken
+            pass.authenticationToken = authToken
             pass.organizationName = this.organisationName
             pass.isSharingProhibited = true
-        }
-
-        with(passBuilderInfo.passInfoEnvelope) {
             pass.serialNumber = this.serialNumber
 
             if (this.issueStatus == IssueStatus.REVOKED || this.issueStatus == IssueStatus.EXPIRED)
                 pass.expirationDate = Date.from(Instant.now())
-            else if (passBuilderInfo.passInfo.validUntil != null)
-                pass.expirationDate = Date.from(passBuilderInfo.passInfo.validUntil)
+            else if (passBuilderInfo.passInfoEnvelope.validUntil != null)
+                pass.expirationDate = Date.from(passBuilderInfo.passInfoEnvelope.validUntil)
 
             pass.addBarcode(urlBuilder.verifyURL(this.serialNumber))
         }
@@ -166,7 +162,8 @@ class PassBuilder(
             )
 
         val validUntilFormatted =
-            passBuilderInfo.passInfo.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
+            passBuilderInfo.passInfoEnvelope.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
+
         if (validUntilFormatted != null &&
             passBuilderInfo.passInfo.testResult != TestResultType.UNKNOWN &&
             passBuilderInfo.passInfoEnvelope.issueStatus == IssueStatus.ISSUED
@@ -195,7 +192,8 @@ class PassBuilder(
         return with(passBuilderInfo.passInfo) {
             val fields = mutableListOf<PKField>()
 
-            val validUntilFormatted = this.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
+            val validUntilFormatted =
+                passBuilderInfo.passInfoEnvelope.validUntil?.atZone(ZoneId.of("UTC"))?.format(dateTimeFormatter)
 
             val showPassUrl = PKField(
                 "showPassUrl",

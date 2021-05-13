@@ -10,7 +10,7 @@ import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassImageRepository
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import de.contagio.webapp.repository.mongodb.PassRepository
 import de.contagio.webapp.service.PassBuilderService
 import de.contagio.webapp.service.PassService
@@ -31,7 +31,7 @@ private var logger = LoggerFactory.getLogger(PassRestController::class.java)
 @RestController
 @RequestMapping(PASS)
 open class PassRestController(
-    private val passInfoRepository: PassInfoRepository,
+    private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
     private val passImageRepository: PassImageRepository,
     private val passRepository: PassRepository,
     private val passService: PassService,
@@ -47,14 +47,14 @@ open class PassRestController(
     open fun getPasses(pageable: Pageable): Page<PassInfoEnvelope> {
         logger.debug("getAllPassInfo()")
 
-        return passInfoRepository.findAll(pageable)
+        return passInfoEnvelopeRepository.findAll(pageable)
     }
 
     @GetMapping("/info/{serialNumber}")
     open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfoEnvelope> {
         logger.debug("getPassInfo($serialNumber)")
 
-        val result = passInfoRepository.findById(serialNumber)
+        val result = passInfoEnvelopeRepository.findById(serialNumber)
 
         return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
     }
@@ -115,7 +115,7 @@ open class PassRestController(
 
     @GetMapping("/image/{id}")
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
-        val passInfo = passInfoRepository.findByImageId(id)
+        val passInfo = passInfoEnvelopeRepository.findByImageId(id)
         val result = passImageRepository.findById(id)
 
         if (passInfo.isPresent)

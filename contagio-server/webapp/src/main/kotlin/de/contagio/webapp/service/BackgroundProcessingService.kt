@@ -1,7 +1,7 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.IssueStatus
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -14,7 +14,7 @@ private const val CHECKINTERVAL_IN_HOURS = 20
 
 
 open class BackgroundProcessingService(
-    private val passInfoRepository: PassInfoRepository,
+    private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
     private val passService: PassService
 ) : BackgroundJob() {
 
@@ -36,14 +36,14 @@ open class BackgroundProcessingService(
         logger.debug("BackgroundProcessingService begins...")
 
         val now = Instant.now()
-        val passInfos = passInfoRepository.findByIssueStatusNotEqual(IssueStatus.EXPIRED)
+        val passInfos = passInfoEnvelopeRepository.findByIssueStatusNotEqual(IssueStatus.EXPIRED)
 
-        passInfos.forEach { passInfo ->
-            if (passInfo.validUntil?.isBefore(now) == true) {
+        passInfos.forEach { passInfoEnvelope ->
+            if (passInfoEnvelope.validUntil?.isBefore(now) == true) {
 
-                logger.debug("${passInfo.serialNumber} is expired...")
+                logger.debug("${passInfoEnvelope.serialNumber} is expired...")
 
-                passService.expire(passInfo.serialNumber)
+                passService.expire(passInfoEnvelope.serialNumber)
             }
         }
 

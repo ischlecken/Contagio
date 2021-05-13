@@ -1,25 +1,24 @@
 package de.contagio.core.usecase
 
-import de.contagio.core.domain.port.IFindPassInfo
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
 import de.contagio.core.domain.port.IFindRegisteredSerialNumbers
 import java.time.Instant
 
 data class PassSerialNumberWithUpdated(val serialNumber: String, val updated: Instant)
 
-class SearchPassesSinceLastUpdate(
+class SearchPassesForDevice(
     private val findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-    private val findPassInfo: IFindPassInfo
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope
 ) {
-    fun execute(
-        deviceLibraryIdentifier: String,
-        updatedSince: Instant? = null
-    ): Collection<PassSerialNumberWithUpdated> {
+    fun execute(deviceLibraryIdentifier: String): Collection<PassSerialNumberWithUpdated> {
         val result = mutableListOf<PassSerialNumberWithUpdated>()
 
         findRegisteredSerialNumbers.execute(deviceLibraryIdentifier).forEach {
-            findPassInfo.execute(it)?.let { passInfo ->
-                result.add(PassSerialNumberWithUpdated(passInfo.serialNumber, passInfo.updated))
-            }
+            findPassInfoEnvelope
+                .execute(it)
+                ?.let { passInfo ->
+                    result.add(PassSerialNumberWithUpdated(passInfo.serialNumber, passInfo.updated))
+                }
         }
 
         return result

@@ -1,6 +1,6 @@
 package de.contagio.webapp.config
 
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import de.contagio.webapp.service.BackgroundProcessingService
 import de.contagio.webapp.service.PassService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -16,9 +16,9 @@ open class BackgroundProcessingConfig {
     @Bean
     @ConditionalOnProperty(value = ["contagio.scheduler.enabled"], matchIfMissing = true, havingValue = "true")
     open fun backgroundProcessingService(
-        passInfoRepository: PassInfoRepository,
+        passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
         passService: PassService
     ): BackgroundProcessingService {
-        return BackgroundProcessingService(passInfoRepository, passService)
+        return BackgroundProcessingService(passInfoEnvelopeRepository, passService)
     }
 }

@@ -24,15 +24,12 @@ open class AppStartupRunner(
     override fun run(args: ApplicationArguments) {
         logger.info("AppStartupRunner.run()")
 
-        teststationRepository.save(
+        val teststations = listOf(
             Teststation(
                 id = "1",
                 name = "Tübingen Marktplatz",
                 address = Address(city = "Tübingen", zipcode = "12345", street = "Marktplatz", hno = "1")
-            )
-        )
-
-        teststationRepository.save(
+            ),
             Teststation(
                 id = "2",
                 name = "München Riemarkaden",
@@ -40,45 +37,43 @@ open class AppStartupRunner(
             )
         )
 
-        testerRepository.save(
+        val tester = listOf(
             Tester(
                 id = "1",
                 teststationId = "1",
                 person = Person(firstName = "Emil", lastName = "Nolde")
-            )
-        )
-
-        testerRepository.save(
+            ),
             Tester(
                 id = "2",
                 teststationId = "1",
                 person = Person(firstName = "Kunigunde", lastName = "Fischer")
-            )
-        )
-
-        testerRepository.save(
+            ),
             Tester(
                 id = "3",
                 teststationId = "1",
                 person = Person(firstName = "Lisa", lastName = "Federle")
-            )
-        )
-
-        testerRepository.save(
+            ),
             Tester(
                 id = "4",
                 teststationId = "2",
                 person = Person(firstName = "David", lastName = "Kuhn")
-            )
-        )
-
-        testerRepository.save(
+            ),
             Tester(
                 id = "5",
                 teststationId = "2",
                 person = Person(firstName = "Manuel", lastName = "Langweiler")
             )
         )
+
+        teststations.forEach {
+            if (!teststationRepository.existsById(it.id))
+                teststationRepository.save(it)
+        }
+
+        tester.forEach {
+            if (!testerRepository.existsById(it.id))
+                testerRepository.save(it)
+        }
     }
 
 }

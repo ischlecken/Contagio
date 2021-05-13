@@ -23,16 +23,26 @@ data class UpdateTeststationDTO(
 
 data class CreateTesterDTO(
     val teststationId: String = "",
-    val firstName: String= "",
-    val lastName: String= "",
-    val phoneNo: String= "",
-    val email: String= ""
+    val firstName: String = "",
+    val lastName: String = "",
+    val phoneNo: String = "",
+    val email: String = ""
 ) : Serializable
 
 
 data class UpdateTesterDTO(
-    val firstName: String= "",
-    val lastName: String= "",
-    val phoneNo: String= "",
-    val email: String= ""
+    val firstName: String = "",
+    val lastName: String = "",
+    val phoneNo: String = "",
+    val email: String = ""
 ) : Serializable
+
+
+@Suppress("ArrayInDataClass")
+data class CreatePassResponse(
+    val authToken: String,
+    val passInfoEnvelope: PassInfoEnvelope,
+    val passInfo: PassInfo,
+    val passImage: ByteArray,
+    val pkPass: ByteArray
+)

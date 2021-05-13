@@ -21,11 +21,23 @@ class Encryptor {
         return keyGenerator.generateKey()
     }
 
+    fun generateKeyBase64(): String {
+        val key = generateKey()
+
+        return Base64.getEncoder().encodeToString(key.encoded)
+    }
+
     fun generateIV(): IvParameterSpec {
         val iv = ByteArray(16)
         SecureRandom().nextBytes(iv)
 
         return IvParameterSpec(iv)
+    }
+
+    fun generateIVBase64(): String {
+        val iv = generateIV()
+
+        return Base64.getEncoder().encodeToString(iv.iv)
     }
 
     fun execute(input: ByteArray, keyBase64: String, ivBase64: String): ByteArray {

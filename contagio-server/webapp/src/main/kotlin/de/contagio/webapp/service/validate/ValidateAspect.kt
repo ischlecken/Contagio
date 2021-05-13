@@ -1,9 +1,12 @@
 package de.contagio.webapp.service.validate
 
+import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.Teststation
+import de.contagio.core.domain.port.IFindEncryptedPayload
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
 import de.contagio.webapp.model.properties.ContagioProperties
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.service.AuthTokenService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -14,12 +17,15 @@ import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
 private var logger = LoggerFactory.getLogger(ValidateAspect::class.java)
+private const val APPLE_PASS = "ApplePass "
 
 @Aspect
 @Component
 open class ValidateAspect(
     private val contagioProperties: ContagioProperties,
-    private val passInfoRepository: PassInfoRepository
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val findEncryptedPayload: IFindEncryptedPayload,
+    private val authTokenService: AuthTokenService
 ) {
 
     @Around("@annotation(validate)")
@@ -108,22 +114,32 @@ open class ValidateAspect(
 
 
     private fun isAuthorized(passTypeIdentifier: String, serialNumber: String, authorization: String): Boolean {
-        var result = true
+        val result = passTypeIdentifier == contagioProperties.pass.passTypeId &&
+                checkauthorization(serialNumber, authorization)
 
-        if (passTypeIdentifier != contagioProperties.pass.passTypeId)
-            result = false
-        else {
-            val passInfo = passInfoRepository.findById(serialNumber)
-
-            if (passInfo.isPresent && "ApplePass ${passInfo.get().authToken}" != authorization) {
-                logger.debug("authorization $authorization differs from expected value 'ApplePass ${passInfo.get().authToken}'")
-
-                result = false
-            }
-        }
-
-        logger.debug("isAuthorized(serialNumber=$serialNumber,authorization=$authorization):$result")
+        logger.debug("isAuthorized(serialNumber=$serialNumber, authorization=$authorization): $result")
 
         return result
+    }
+
+    @Suppress("FoldInitializerAndIfToElvis")
+    private fun checkauthorization(serialNumber: String, authorization: String): Boolean {
+        if (!authorization.startsWith(APPLE_PASS))
+            return false
+
+        val authToken = authorization.substring(APPLE_PASS.length)
+        if (authToken.length < 10)
+            return false
+
+        val passInfoEnvelope = findPassInfoEnvelope.execute(serialNumber) ?: return false
+        val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope.passInfoId) ?: return false
+
+        val passInfo = encryptedPassInfo.getObject(authToken, PassInfo::class.java) as? PassInfo
+        if (passInfo == null)
+            return false
+
+        authTokenService.setAuthToken(serialNumber, authToken)
+
+        return true
     }
 }

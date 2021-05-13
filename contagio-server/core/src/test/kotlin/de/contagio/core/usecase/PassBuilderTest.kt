@@ -1,18 +1,17 @@
 package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
+import de.contagio.core.domain.port.IGetEncryptionKey
 import org.apache.commons.io.IOUtils
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Suppress("HttpUrlsUsage")
 class PassBuilderTest {
 
-    private val authToken = Base64
+    private val key = Base64
         .getEncoder()
         .encodeToString(
             byteArrayOf(
@@ -21,27 +20,16 @@ class PassBuilderTest {
             )
         )
 
-    private val iv = Base64
-        .getEncoder()
-        .encodeToString(
-            byteArrayOf(
-                0x01, 0x02, 0x03, 0x04,
-                0x05, 0x06, 0x07, 0x08,
-                0x09, 0x0a, 0x0b, 0x0c,
-                0x0d, 0x0e, 0x0f, 0x00
-            )
-        )
+    private val getEncryptionKey = IGetEncryptionKey {
+        if (it == "123")
+            key
+        else
+            null
+    }
 
-    private val passCoreInfo = PassCoreInfo(
-        teamIdentifier = "teamid",
-        passTypeIdentifier = "passTypeId",
-        authenticationToken = authToken,
-        organisationName = "bla org"
-    )
-
-    private val passInfo = PassInfo(
+    private val passInfoTemplate = PassInfo(
         person = Person(firstName = "Hugo", lastName = "Schlecken"),
-        passId = "123",
+        passId = "123123",
         imageId = "456",
         testResult = TestResultType.NEGATIVE,
         testType = TestType.RAPIDTEST,
@@ -53,14 +41,18 @@ class PassBuilderTest {
         backgroundColor = "rgb(208, 38, 0)"
     )
 
-    private val passInfoEnvelope = PassInfoEnvelope(
-        iv = iv,
+    private val passInfoEnvelopeTemplate = PassInfoEnvelope(
         serialNumber = "123",
         issueStatus = IssueStatus.CREATED,
         teststationId = "1",
         testerId = "1",
-        passInfoPayload = passInfo.toEncryptedPayload(authToken, iv)
+        passInfoId = "4242",
+        teamIdentifier = "teamid",
+        passTypeIdentifier = "passTypeId",
+        organisationName = "bla org"
     )
+
+
 
     @Test
     fun createPass_expectedValuesAndValid() {
@@ -68,23 +60,15 @@ class PassBuilderTest {
         val keystore = PassBuilderTest::class.java.getResourceAsStream("/certs/pass.p12")
         val appleca = PassBuilderTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
 
-        val encryptedImgData = Encryptor().execute(IOUtils.toByteArray(img), authToken, iv)
-
         val passBuilderInfo = PassBuilderInfo(
-            passCoreInfo = passCoreInfo,
             passSigningInfo = PassSigningInfo(
-                keystore = keystore,
+                keystore = keystore!!,
                 keystorePassword = "1234",
-                appleWWDRCA = appleca,
+                appleWWDRCA = appleca!!,
             ),
-            passImage = PassImage(
-                id = "img",
-                iv = iv,
-                data = encryptedImgData,
-                type = "image/png"
-            ),
-            passInfoEnvelope = passInfoEnvelope,
-            passInfo = passInfo,
+            passImage = IOUtils.toByteArray(img),
+            passInfoEnvelope = passInfoEnvelopeTemplate,
+            passInfo = passInfoTemplate,
             teststation = Teststation(
                 id = "1",
                 "Teststation",
@@ -97,35 +81,103 @@ class PassBuilderTest {
             )
         )
 
-        val urlBuilder = UrlBuilder("http://bla.de")
+        val urlBuilder = UrlBuilder("https://bla.de")
+        val cpr = PassBuilder(passBuilderInfo, urlBuilder).build(key)
 
-        val cpr = PassBuilder(passBuilderInfo, urlBuilder).build()
+        assertEquals("123", cpr?.pkpass?.serialNumber)
+        assertEquals("teamid", cpr?.pkpass?.teamIdentifier)
+        assertEquals("passTypeId", cpr?.pkpass?.passTypeIdentifier)
+        assertEquals(getEncryptionKey.execute("123"), cpr?.pkpass?.authenticationToken)
+        assertEquals(true, cpr?.pkpass?.isSharingProhibited)
 
-        assertEquals("123", cpr.pkpass.serialNumber)
-        assertEquals("teamid", cpr.pkpass.teamIdentifier)
-        assertEquals("passTypeId", cpr.pkpass.passTypeIdentifier)
-        assertEquals(authToken, cpr.pkpass.authenticationToken)
-        assertEquals(true, cpr.pkpass.isSharingProhibited)
-
-        val validationErrors = cpr.pkpass.validationErrors
-        assertEquals(0, validationErrors.size)
+        val validationErrors = cpr?.pkpass?.validationErrors
+        assertEquals(0, validationErrors?.size)
     }
 
     @Test
-    fun updatePassInfoEnvelope_isExpected() {
-        val validUntil = LocalDateTime.of(2021,5,30,22,22,42).toInstant(ZoneOffset.UTC)
+    fun updatePassInfoEnvelopeWithoutEncryption_isExpected() {
+        val validUntil = LocalDateTime.of(2021, 5, 30, 22, 22, 42).toInstant(ZoneOffset.UTC)
 
-        val updatedPassInfoEnvelope = passInfoEnvelope
-            .update(
-                authToken,
-                TestResultType.POSITIVE,
-                IssueStatus.ISSUED,
-                validUntil
+        val encryptedPayload = object : IEncryptedPayload {
+            override fun getObject(key: String, cls: Class<*>): Any {
+                return passInfoTemplate
+            }
+
+            override fun get(key: String): ByteArray {
+                return byteArrayOf()
+            }
+        }
+
+        var savedPassInfo: PassInfo? = null
+        val updatePassInfoEnvelope = UpdatePassInfoEnvelope(
+            findEncryptedPayload = { encryptedPayload },
+            savePassInfoEnvelope = { },
+            saveEncryptedPayload = { _, obj, _ ->
+                savedPassInfo = obj as PassInfo
+
+                object : IEncryptedPayload {
+                    override fun getObject(key: String, cls: Class<*>): Any {
+                        return obj
+                    }
+
+                    override fun get(key: String): ByteArray {
+                        return byteArrayOf()
+                    }
+                }
+            },
+            getEncryptionKey = getEncryptionKey
+        )
+
+        val updatedPassInfoEnvelope = updatePassInfoEnvelope.execute(
+            passInfoEnvelope = passInfoEnvelopeTemplate,
+            testResult = TestResultType.POSITIVE,
+            issueStatus = IssueStatus.ISSUED,
+            validUntil = validUntil
+        )
+
+        assertEquals("123", updatedPassInfoEnvelope?.serialNumber)
+        assertEquals("4242", updatedPassInfoEnvelope?.passInfoId)
+        assertEquals(validUntil, updatedPassInfoEnvelope?.validUntil)
+        assertEquals(TestResultType.POSITIVE, savedPassInfo?.testResult)
+    }
+
+    @Test
+    fun updatePassInfoEnvelopeWithEncryption_isExpected() {
+        val validUntil = LocalDateTime.of(2021, 5, 30, 23, 23, 42).toInstant(ZoneOffset.UTC)
+
+        val encryptedPayload = EncryptedPayload
+            .toEncryptedJsonPayload(
+                passInfoEnvelopeTemplate.serialNumber,
+                passInfoTemplate,
+                key
             )
 
-        val passInfo = updatedPassInfoEnvelope?.getPassInfo(authToken)
+        var savedEncryptedPassInfo: EncryptedPayload? = null
+        val updatePassInfoEnvelope = UpdatePassInfoEnvelope(
+            findEncryptedPayload = { encryptedPayload },
+            savePassInfoEnvelope = { },
+            saveEncryptedPayload = { id, obj, key ->
+                val result = EncryptedPayload.toEncryptedJsonPayload(id, obj, key)
+                savedEncryptedPassInfo = result
 
-        assertEquals(TestResultType.POSITIVE, passInfo?.testResult)
-        assertEquals(validUntil, passInfo?.validUntil)
+                result
+            },
+            getEncryptionKey = getEncryptionKey
+        )
+
+        val updatedPassInfoEnvelope = updatePassInfoEnvelope.execute(
+            passInfoEnvelope = passInfoEnvelopeTemplate,
+            testResult = TestResultType.POSITIVE,
+            issueStatus = IssueStatus.ISSUED,
+            validUntil = validUntil
+        )
+
+        assertEquals("123", updatedPassInfoEnvelope?.serialNumber)
+        assertEquals("4242", updatedPassInfoEnvelope?.passInfoId)
+        assertEquals(validUntil, updatedPassInfoEnvelope?.validUntil)
+
+        assertEquals("4242", savedEncryptedPassInfo?.id)
+        val decryptedPassInfo = savedEncryptedPassInfo?.getObject(key, PassInfo::class.java) as PassInfo
+        assertEquals(TestResultType.POSITIVE, decryptedPassInfo.testResult)
     }
 }

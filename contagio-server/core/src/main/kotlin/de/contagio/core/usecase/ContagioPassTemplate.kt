@@ -2,7 +2,6 @@ package de.contagio.core.usecase
 
 import de.brendamour.jpasskit.signing.PKPassTemplateInMemory
 import de.contagio.core.domain.entity.IssueStatus
-import de.contagio.core.domain.entity.PassImage
 import de.contagio.core.domain.entity.PassType
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.filters.Colorize
@@ -19,8 +18,7 @@ import javax.imageio.ImageIO
 private val logger = LoggerFactory.getLogger(ContagioPassTemplate::class.java)
 
 class ContagioPassTemplate(
-    private val key: String,
-    private val passImage: PassImage,
+    private val passImage: ByteArray,
     private val passType: PassType,
     private val issueStatus: IssueStatus
 ) : PKPassTemplateInMemory() {
@@ -35,8 +33,7 @@ class ContagioPassTemplate(
         addFile("pass.strings", Locale.ENGLISH, getResourceStream("en.lproj/pass.strings"))
         addFile("pass.strings", Locale.GERMAN, getResourceStream("de.lproj/pass.strings"))
 
-        val imageData = Decryptor().execute(passImage.data, key, passImage.iv)
-        val inputImage = ImageIO.read(ByteArrayInputStream(imageData))
+        val inputImage = ImageIO.read(ByteArrayInputStream(passImage))
 
         when (passType) {
             PassType.COUPON,

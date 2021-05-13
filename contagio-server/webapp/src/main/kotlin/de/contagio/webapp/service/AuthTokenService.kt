@@ -7,7 +7,7 @@ import java.time.Instant
 
 private var logger = LoggerFactory.getLogger(AuthTokenService::class.java)
 
-data class AuthTokenData(val authToken: String, val serialNumber: String, val created: Instant = Instant.now())
+data class AuthTokenData(val serialNumber: String, val authToken: String, val created: Instant = Instant.now())
 
 @Service
 open class AuthTokenService {

@@ -6,9 +6,7 @@ import de.contagio.core.domain.entity.UpdateTeststationDTO
 import de.contagio.core.domain.port.ISaveTeststation
 import java.time.Instant
 
-class UpdateTeststation(
-    private val saveTeststation: ISaveTeststation
-) {
+class UpdateTeststation(private val saveTeststation: ISaveTeststation) {
 
     fun execute(teststation: Teststation, updateTeststationDTO: UpdateTeststationDTO) {
         saveTeststation.execute(

@@ -1,30 +1,31 @@
 package de.contagio.webapp.config
 
+import de.contagio.core.domain.entity.EncryptedPayload
 import de.contagio.core.domain.port.*
 import de.contagio.webapp.repository.mongodb.*
+import de.contagio.webapp.service.AuthTokenService
 import de.contagio.webapp.util.toPageRequest
 import de.contagio.webapp.util.toPagedResult
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.util.*
 
 @Configuration
 open class PortConfig(
-    private val passInfoRepository: PassInfoRepository,
-    private val passRepository: PassRepository,
+    private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
+    private val encryptedPayloadRepository: EncryptedPayloadRepository,
     private val testerRepository: TesterRepository,
     private val teststationRepository: TeststationRepository,
     private val registrationInfoRepository: RegistrationInfoRepository,
-    private val deviceInfoRepository: DeviceInfoRepository
+    private val deviceInfoRepository: DeviceInfoRepository,
+    private val authTokenService: AuthTokenService,
 ) {
 
-
     @Bean
-    open fun findPassInfo(): IFindPassInfo {
-        return IFindPassInfo { id ->
-            val result = passInfoRepository.findById(id)
+    open fun findPassInfoEnvelope(): IFindPassInfoEnvelope {
+        return IFindPassInfoEnvelope { id ->
+            val result = passInfoEnvelopeRepository.findById(id)
 
-            return@IFindPassInfo if (result.isPresent)
+            return@IFindPassInfoEnvelope if (result.isPresent)
                 result.get()
             else
                 null
@@ -32,31 +33,53 @@ open class PortConfig(
     }
 
     @Bean
-    open fun findAllPassInfo(): IFindAllPassInfo {
-        return IFindAllPassInfo {
-            passInfoRepository.findAll(it.toPageRequest()).toPagedResult()
+    open fun findAllPassInfoEnvelope(): IFindAllPassInfoEnvelope {
+        return IFindAllPassInfoEnvelope {
+            passInfoEnvelopeRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
 
     @Bean
-    open fun findPass(): IFindPass {
-        return IFindPass { id ->
-            val passInfo = passInfoRepository.findById(id)
-            val pass = passInfo
-                .flatMap {
-                    if (!it.passId.isNullOrEmpty())
-                        passRepository.findById(it.passId!!)
-                    else
-                        Optional.empty()
-                }
+    open fun savePassInfoEnvelope(): ISavePassInfoEnvelope {
+        return ISavePassInfoEnvelope {
+            passInfoEnvelopeRepository.save(it)
+        }
+    }
 
-            return@IFindPass if (pass.isPresent)
-                PassInfoPass(passInfoEnvelope = passInfo.get(), pass = pass.get())
+
+    @Bean
+    open fun findEncryptedPayload(): IFindEncryptedPayload {
+        return IFindEncryptedPayload { id ->
+            val result = encryptedPayloadRepository.findById(id)
+
+            return@IFindEncryptedPayload if (result.isPresent)
+                result.get()
             else
                 null
         }
     }
 
+    @Bean
+    open fun saveEncryptedPayload(): ISaveEncryptedPayload {
+        return ISaveEncryptedPayload { id, obj, key ->
+            val result = EncryptedPayload.toEncryptedJsonPayload(id, obj, key)
+
+            encryptedPayloadRepository.save(result)
+
+            result
+        }
+    }
+
+    @Bean
+    open fun saveRawEncryptedPayload(): ISaveRawEncryptedPayload {
+        return ISaveRawEncryptedPayload { id, obj, key ->
+            val result = EncryptedPayload.toEncryptedPayload(id, obj, key)
+
+            encryptedPayloadRepository.save(result)
+
+            result
+        }
+    }
 
     @Bean
     open fun findAllTester(): IFindAllTester {
@@ -163,4 +186,13 @@ open class PortConfig(
             deviceInfoRepository.findAll(it.toPageRequest()).toPagedResult()
         }
     }
+
+
+    @Bean
+    open fun getEncryptionKey(): IGetEncryptionKey {
+        return IGetEncryptionKey { id ->
+            authTokenService.getAuthToken(id)
+        }
+    }
+
 }

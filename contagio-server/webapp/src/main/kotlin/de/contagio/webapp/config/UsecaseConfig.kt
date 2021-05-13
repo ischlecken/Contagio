@@ -61,10 +61,10 @@ open class UsecaseConfig {
     ) = SearchPassInfo(findPassInfo, searchTesterWithTeststation)
 
     @Bean
-    open fun searchPassesSinceLastUpdate(
+    open fun searchPassesForDevice(
         findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
         findPassInfo: IFindPassInfo
-    ) = SearchPassesSinceLastUpdate(findRegisteredSerialNumbers, findPassInfo)
+    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPassInfo)
 
     @Bean
     open fun urlBuilder(contagioProperties: ContagioProperties): UrlBuilder {

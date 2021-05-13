@@ -7,9 +7,7 @@ import de.contagio.core.domain.port.ISaveTester
 import java.time.Instant
 
 
-class UpdateTester(
-    private val saveTester: ISaveTester
-) {
+class UpdateTester(private val saveTester: ISaveTester) {
 
     fun execute(tester: Tester, updateTesterDTO: UpdateTesterDTO) {
         saveTester.execute(

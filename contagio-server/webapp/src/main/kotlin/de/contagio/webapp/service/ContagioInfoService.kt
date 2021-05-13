@@ -1,13 +1,13 @@
 package de.contagio.webapp.service
 
-import de.contagio.webapp.repository.mongodb.PassInfoRepository
+import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import org.springframework.stereotype.Service
 
 @Service
     open class ContagioInfoService(
-    private val passInfoRepository: PassInfoRepository
+    private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository
 ) {
 
     val activePassCount: Long
-        get() = passInfoRepository.count()
+        get() = passInfoEnvelopeRepository.count()
 }

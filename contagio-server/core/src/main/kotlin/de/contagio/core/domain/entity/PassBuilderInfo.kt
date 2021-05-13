@@ -3,13 +3,6 @@ package de.contagio.core.domain.entity
 import de.brendamour.jpasskit.PKPass
 import java.io.InputStream
 
-data class PassCoreInfo(
-    val teamIdentifier: String,
-    val passTypeIdentifier: String,
-    val authenticationToken: String,
-    val organisationName: String,
-)
-
 
 data class PassSigningInfo(
     val keystore: InputStream,
@@ -18,20 +11,19 @@ data class PassSigningInfo(
 )
 
 
+@Suppress("ArrayInDataClass")
 data class PassBuilderInfo(
-    val passCoreInfo: PassCoreInfo,
-    val passSigningInfo: PassSigningInfo,
-    val passImage: PassImage,
     val passInfoEnvelope: PassInfoEnvelope,
     val passInfo: PassInfo,
+    val passImage: ByteArray,
     val teststation: Teststation,
     val tester: Tester,
-
-    )
+    val passSigningInfo: PassSigningInfo,
+)
 
 
 @Suppress("ArrayInDataClass")
 data class PassBuilderResult(
     val pkpass: PKPass,
-    val pass: ByteArray?
+    val pass: ByteArray
 )

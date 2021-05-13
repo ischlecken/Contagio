@@ -6,6 +6,7 @@ import de.brendamour.jpasskit.PKPass
 import de.brendamour.jpasskit.enums.PKBarcodeFormat
 import java.nio.charset.Charset
 
+@Suppress("unused")
 fun PKPass.addLocation(latitude: Double, longitude: Double) {
     val location = PKLocation()
     location.latitude = latitude

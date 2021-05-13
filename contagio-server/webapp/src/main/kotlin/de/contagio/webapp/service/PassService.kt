@@ -1,50 +1,66 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
+import de.contagio.core.domain.port.ISaveEncryptedPayload
+import de.contagio.core.domain.port.ISavePassInfoEnvelope
+import de.contagio.core.domain.port.ISaveRawEncryptedPayload
+import de.contagio.core.usecase.CreatePass
+import de.contagio.core.usecase.SearchTesterWithTeststation
+import de.contagio.core.usecase.SignatureBuilder
+import de.contagio.core.usecase.UrlBuilder
 import de.contagio.core.util.AuthTokenGenerator
 import de.contagio.core.util.UIDGenerator
-import de.contagio.webapp.model.CreatePassResponse
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.*
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
-
 
 private var logger = LoggerFactory.getLogger(PassService::class.java)
 
 @Service
 open class PassService(
-    private val passInfoRepository: PassInfoRepository,
-    private val passImageRepository: PassImageRepository,
-    private val passRepository: PassRepository,
-    private val passBuilderService: PassBuilderService,
+    private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
     private val teststationRepository: TeststationRepository,
     private val testerRepository: TesterRepository,
     private val contagioProperties: ContagioProperties,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val registrationInfoRepository: RegistrationInfoRepository,
-    private val pushNotificationService: PushNotificationService
+    private val pushNotificationService: PushNotificationService,
+    private val savePassInfoEnvelope: ISavePassInfoEnvelope,
+    private val saveEncryptedPayload: ISaveEncryptedPayload,
+    private val saveRawEncryptedPayload: ISaveRawEncryptedPayload,
+    private val searchTesterWithTeststation: SearchTesterWithTeststation,
+    private val urlBuilder: UrlBuilder
 ) {
 
+    @Value("classpath:certs/pass.p12")
+    private lateinit var passKeystore: Resource
+
+    @Value("classpath:certs/AppleWWDRCA.cer")
+    private lateinit var appleWWDRCA: Resource
+
+    @Value("classpath:certs/contagio-sign.p12")
+    private lateinit var contagioSignKeystore: Resource
+
     private val uidGenerator = UIDGenerator()
-    private val authTokenGenerator= AuthTokenGenerator()
+    private val authTokenGenerator = AuthTokenGenerator()
 
+    /**
+     * TODO: delete image and pass if authToken present
+     */
     open fun delete(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            passInfo.passId?.let { passId ->
-                passRepository.deleteById(passId)
-            }
-
-            passImageRepository.deleteById(passInfo.imageId)
-            passInfoRepository.deleteById(passInfo.serialNumber)
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
+            passInfoEnvelopeRepository.deleteById(passInfo.serialNumber)
         }
     }
 
     open fun issue(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.ISSUED)
 
             notifyDevice(serialnumber)
@@ -52,7 +68,7 @@ open class PassService(
     }
 
     open fun expire(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.EXPIRED)
 
             notifyDevice(serialnumber)
@@ -60,7 +76,7 @@ open class PassService(
     }
 
     open fun revoke(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
             updateTestResult(serialnumber, passInfo.testResult, IssueStatus.REVOKED)
 
             notifyDevice(serialnumber)
@@ -68,7 +84,7 @@ open class PassService(
     }
 
     open fun negative(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
 
             if (passInfo.issueStatus.isActive()) {
                 updateTestResult(serialnumber, TestResultType.NEGATIVE, IssueStatus.ISSUED)
@@ -79,7 +95,7 @@ open class PassService(
     }
 
     open fun positive(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
             if (passInfo.issueStatus.isActive()) {
                 updateTestResult(serialnumber, TestResultType.POSITIVE, IssueStatus.ISSUED)
 
@@ -89,8 +105,8 @@ open class PassService(
     }
 
     open fun installed(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            passInfoRepository.save(
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
+            passInfoEnvelopeRepository.save(
                 passInfo.copy(
                     passInstallationStatus = PassInstallationStatus.INSTALLED,
                     passInstalled = Instant.now(),
@@ -100,8 +116,8 @@ open class PassService(
     }
 
     open fun removed(serialnumber: String) {
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
-            passInfoRepository.save(
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
+            passInfoEnvelopeRepository.save(
                 passInfo.copy(
                     passInstallationStatus = PassInstallationStatus.REMOVED,
                     passInstalled = Instant.now(),
@@ -119,7 +135,7 @@ open class PassService(
     ): PassInfoEnvelope? {
         var result: PassInfoEnvelope? = null
 
-        passInfoRepository.findById(serialnumber).ifPresent { passInfo ->
+        passInfoEnvelopeRepository.findById(serialnumber).ifPresent { passInfo ->
             val updatedPassInfo = passInfo.update(testResult, issueStatus, validUntil)
             val pass = passRepository.findById(passInfo.passId!!)
             val passImage = passImageRepository.findById(passInfo.imageId)
@@ -133,7 +149,7 @@ open class PassService(
                     tester.get()
                 )?.let {
                     passRepository.save(pass.get().copy(data = it))
-                    passInfoRepository.save(updatedPassInfo)
+                    passInfoEnvelopeRepository.save(updatedPassInfo)
 
                     result = updatedPassInfo
                 }
@@ -156,48 +172,51 @@ open class PassService(
         passType: PassType,
         labelColor: String,
         foregroundColor: String,
-        backgroundColor: String
-    ): CreatePassResponse {
+        backgroundColor: String,
+        save: Boolean = false
+    ): CreatePassResponse? {
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        val passInfo = PassInfoEnvelope(
-            serialNumber = uidGenerator.generate(),
-            person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
-            imageId = uidGenerator.generate(),
-            authToken = authTokenGenerator.generate(),
+        val passSigningInfo = PassSigningInfo(
+            keystore = passKeystore.inputStream,
+            keystorePassword = contagioProperties.pass.keystorePassword,
+            appleWWDRCA = appleWWDRCA.inputStream
+        )
+
+        val createPass = CreatePass(
+            savePassInfoEnvelope,
+            saveEncryptedPayload,
+            saveRawEncryptedPayload,
+            searchTesterWithTeststation,
+            urlBuilder
+        )
+
+        return createPass.execute(
+            teamIdentifier = contagioProperties.pass.teamIdentifier,
+            passTypeIdentifier = contagioProperties.pass.passTypeId,
+            organisationName = contagioProperties.pass.organisationName,
+            description = contagioProperties.pass.description,
+            logoText = contagioProperties.pass.logoText,
+            image = image.bytes,
+            firstName = firstName,
+            lastName = lastName,
+            phoneNo = phoneNo,
+            email = email,
+            testerId = testerId,
             testResult = testResult,
             testType = testType,
             passType = passType,
-            issueStatus = IssueStatus.CREATED,
-            teststationId = teststationId,
-            testerId = testerId,
-            description = contagioProperties.pass.description,
-            logoText = contagioProperties.pass.logoText,
             labelColor = labelColor,
             foregroundColor = foregroundColor,
-            backgroundColor = backgroundColor
-        )
+            backgroundColor = backgroundColor,
+            passSigningInfo = passSigningInfo
+        )?.let {
+            if (save)
+                createPass.save(it)
 
-        var result = CreatePassResponse(
-            passInfoEnvelope = passInfo,
-            passImage = PassImage.build(image.bytes, image.contentType, passInfo)
-        )
-
-        val teststation = teststationRepository.findById(teststationId)
-        val tester = testerRepository.findById(testerId)
-        if (teststation.isPresent && tester.isPresent) {
-            passBuilderService.buildPkPass(
-                result.passImage,
-                passInfo,
-                teststation.get(),
-                tester.get()
-            )?.let {
-                result = result.copy(pkPass = it)
-            }
+            it
         }
-
-        return result
     }
 
     open fun createPassAndSave(
@@ -214,41 +233,22 @@ open class PassService(
         labelColor: String = contagioProperties.pass.labelColor,
         foregroundColor: String = contagioProperties.pass.foregroundColor,
         backgroundColor: String = contagioProperties.pass.backgroundColor
-    ): CreatePassResponse {
+    ): CreatePassResponse? {
 
-        var cpr = createPass(
+        return createPass(
             image,
             firstName, lastName,
             phoneNo, email,
             teststationId, testerId,
             testResult, testType,
             passType,
-            labelColor, foregroundColor, backgroundColor
+            labelColor, foregroundColor, backgroundColor,
+            true
         )
-
-        if (cpr.pkPass != null) {
-            cpr = cpr.copy(
-                passInfoEnvelope = cpr.passInfoEnvelope.copy(
-                    passId = uidGenerator.generate(),
-                    issueStatus = IssueStatus.ISSUED
-                )
-            )
-
-            passRepository.save(Pass(id = cpr.passInfoEnvelope.passId!!, data = cpr.pkPass!!))
-            passImageRepository.save(cpr.passImage)
-            passInfoRepository.save(cpr.passInfoEnvelope)
-        } else {
-            cpr = cpr.copy(passInfoEnvelope = cpr.passInfoEnvelope.copy(issueStatus = IssueStatus.REFUSED))
-
-            passImageRepository.save(cpr.passImage)
-            passInfoRepository.save(cpr.passInfoEnvelope)
-        }
-
-        return cpr
     }
 
     open fun updatePass(updatePassRequest: UpdatePassRequest): PassInfoEnvelope? {
-        val result = passInfoRepository.findById(updatePassRequest.serialNumber)
+        val result = passInfoEnvelopeRepository.findById(updatePassRequest.serialNumber)
 
         if (result.isPresent && updatePassRequest.testResult != null) {
             val passInfo = updateTestResult(
@@ -272,7 +272,8 @@ open class PassService(
             deviceInfoRepository.findById(registrationInfo.deviceLibraryIdentifier).ifPresent { deviceInfo ->
                 logger.debug("found push token ${deviceInfo.pushToken} for serialnumber $serialnumber...")
 
-                pushNotificationService.sendPushNotificationAsync(deviceInfo.pushToken)
+                pushNotificationService
+                    .sendPushNotificationAsync(deviceInfo.pushToken)
                     ?.thenApply {
                         logger.debug("  apns-id=${it.apnsId}")
                         logger.debug("  isAccepted=${it.isAccepted}")
@@ -282,4 +283,11 @@ open class PassService(
             }
         }
     }
+
+
+    open fun sign(data: ByteArray) = SignatureBuilder(
+        contagioSignKeystore.inputStream,
+        contagioProperties.sign.password,
+        contagioProperties.sign.keyname
+    ).execute(data)
 }
