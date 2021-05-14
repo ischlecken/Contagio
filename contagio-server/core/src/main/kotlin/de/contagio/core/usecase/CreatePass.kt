@@ -40,7 +40,6 @@ class CreatePass(
         save: Boolean = false
     ): CreatePassResponse? {
 
-        var result: CreatePassResponse? = null
         val authToken = authTokenGenerator.generate()
 
         val passInfo = PassInfo(
@@ -57,48 +56,48 @@ class CreatePass(
             backgroundColor = backgroundColor
         )
 
-        searchTesterWithTeststation.execute(testerId)?.apply {
-            val passInfoEnvelope = PassInfoEnvelope(
-                teamIdentifier = teamIdentifier,
-                passTypeIdentifier = passTypeIdentifier,
-                organisationName = organisationName,
-                serialNumber = uidGenerator.generate(),
-                issueStatus = IssueStatus.CREATED,
-                teststationId = teststation.id,
-                testerId = tester.id,
-                passInfoId = uidGenerator.generate(),
-            )
+        return searchTesterWithTeststation
+            .execute(testerId)
+            ?.let {
+                val passInfoEnvelope = PassInfoEnvelope(
+                    teamIdentifier = teamIdentifier,
+                    passTypeIdentifier = passTypeIdentifier,
+                    organisationName = organisationName,
+                    serialNumber = uidGenerator.generate(),
+                    issueStatus = IssueStatus.CREATED,
+                    teststationId = it.teststation.id,
+                    testerId = it.tester.id,
+                    passInfoId = uidGenerator.generate(),
+                )
 
-            val passBuilderInfo = PassBuilderInfo(
-                passSigningInfo = passSigningInfo,
-                passImage = image,
-                passInfoEnvelope = passInfoEnvelope,
-                passInfo = passInfo,
-                teststation = teststation,
-                tester = tester
-            )
+                val passBuilderInfo = PassBuilderInfo(
+                    passSigningInfo = passSigningInfo,
+                    passImage = image,
+                    passInfoEnvelope = passInfoEnvelope,
+                    passInfo = passInfo,
+                    teststation = it.teststation,
+                    tester = it.tester
+                )
 
-            PassBuilder(passBuilderInfo, urlBuilder)
-                .build(authToken)
-                ?.apply {
-                    val cpr = CreatePassResponse(
-                        passInfoEnvelope = passInfoEnvelope,
-                        passInfo = passInfo,
-                        passImage = image,
-                        authToken = authToken,
-                        pkPass = pkpass,
-                        pass = pass
-                    )
+                PassBuilder(passBuilderInfo, urlBuilder)
+                    .build(authToken)
+                    ?.let { pbr ->
+                        val cpr = CreatePassResponse(
+                            passInfoEnvelope = passInfoEnvelope,
+                            passInfo = passInfo,
+                            passImage = image,
+                            authToken = authToken,
+                            pkPass = pbr.pkpass,
+                            pass = pbr.pass
+                        )
 
-                    if (save) {
-                        save(cpr)
+                        if (save) {
+                            save(cpr)
+                        }
+
+                        cpr
                     }
-
-                    result = cpr
-                }
-        }
-
-        return result
+            }
     }
 
     private fun save(createPassResponse: CreatePassResponse) {

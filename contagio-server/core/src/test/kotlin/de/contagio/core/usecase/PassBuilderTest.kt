@@ -99,11 +99,11 @@ class PassBuilderTest {
         val validUntil = LocalDateTime.of(2021, 5, 30, 22, 22, 42).toInstant(ZoneOffset.UTC)
 
         val encryptedPayload = object : IEncryptedPayload {
-            override fun getObject(key: String, cls: Class<*>): Any {
+            override fun getObject(key: String?, cls: Class<*>): Any {
                 return passInfoTemplate
             }
 
-            override fun get(key: String): ByteArray {
+            override fun get(key: String?): ByteArray {
                 return byteArrayOf()
             }
         }
@@ -116,11 +116,11 @@ class PassBuilderTest {
                 savedPassInfo = obj as PassInfo
 
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any {
+                    override fun getObject(key: String?, cls: Class<*>): Any {
                         return obj
                     }
 
-                    override fun get(key: String): ByteArray {
+                    override fun get(key: String?): ByteArray {
                         return byteArrayOf()
                     }
                 }

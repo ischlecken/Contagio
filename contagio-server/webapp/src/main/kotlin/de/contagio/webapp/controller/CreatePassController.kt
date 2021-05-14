@@ -76,8 +76,8 @@ open class CreatePassController(
             return ResponseEntity(headers, HttpStatus.FOUND)
         }
 
-        val teststationId = searchTesterWithTeststation.execute(testerId)?.teststation?.id
-            ?: return ResponseEntity.badRequest().build()
+        val teststationId = searchTesterWithTeststation
+            .execute(testerId)?.teststation?.id ?: return ResponseEntity.badRequest().build()
 
         return when (command) {
             "preview" -> {
@@ -88,34 +88,33 @@ open class CreatePassController(
                     teststationId, testerId,
                     testResult, testType,
                     passType,
-                    labelColor, foregroundColor, backgroundColor
+                    labelColor, foregroundColor, backgroundColor,
+                    save = false
                 )
 
-                if (cpr.pkPass != null && cpr.pkPass.isNotEmpty())
+                if (cpr?.pass?.isNotEmpty() == true)
                     ResponseEntity
                         .ok()
                         .header("Content-Disposition", "attachment; filename=\"preview.pkpass\"")
                         .contentType(pkpassMediatype)
-                        .body(cpr.pkPass)
+                        .body(cpr.pass)
                 else
                     ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
             }
             "create" -> {
-                val cpr = passService.createPassAndSave(
+                val cpr = passService.createPass(
                     image,
                     firstName, lastName,
                     phoneNo, email,
                     teststationId, testerId,
                     testResult, testType,
                     passType,
-                    labelColor, foregroundColor, backgroundColor
+                    labelColor, foregroundColor, backgroundColor,
+                    save = true
                 )
 
                 val headers = HttpHeaders()
-                headers.add(
-                    "Location",
-                    if (cpr.pkPass != null) "/pass" else "/createpass"
-                )
+                headers.add("Location", if (cpr?.pkPass != null) "/pass" else "/createpass")
 
                 ResponseEntity(headers, HttpStatus.FOUND)
             }

@@ -30,7 +30,7 @@ class UpdatePassTest {
             },
             findEncryptedPayload = {
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any? {
+                    override fun getObject(key: String?, cls: Class<*>): Any? {
                         return when (it) {
                             "passInfoId123" -> PassInfo(
                                 person = Person(firstName = "helge", lastName = "schneider"),
@@ -49,7 +49,7 @@ class UpdatePassTest {
                         }
                     }
 
-                    override fun get(key: String): ByteArray? {
+                    override fun get(key: String?): ByteArray? {
                         return when (it) {
                             "imageId1" -> IOUtils.toByteArray(img)
                             else -> null
@@ -61,28 +61,28 @@ class UpdatePassTest {
             savePassInfoEnvelope = {
 
             },
-            saveEncryptedPayload = { id, obj, key ->
+            saveEncryptedPayload = { id, obj, _ ->
 
                 if (id == "passInfoId123")
                     updatedPassInfo = obj as PassInfo
 
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any? {
+                    override fun getObject(key: String?, cls: Class<*>): Any? {
                         TODO("Not yet implemented")
                     }
 
-                    override fun get(key: String): ByteArray? {
+                    override fun get(key: String?): ByteArray? {
                         TODO("Not yet implemented")
                     }
                 }
             },
-            saveRawEncryptedPayload = { id, obj, key ->
+            saveRawEncryptedPayload = { _, _, _ ->
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any? {
+                    override fun getObject(key: String?, cls: Class<*>): Any? {
                         TODO("Not yet implemented")
                     }
 
-                    override fun get(key: String): ByteArray? {
+                    override fun get(key: String?): ByteArray? {
                         TODO("Not yet implemented")
                     }
                 }
@@ -122,6 +122,7 @@ class UpdatePassTest {
             serialNumber = "123456",
             testResult = TestResultType.NEGATIVE,
             validUntil = null,
+            issueStatus = null,
             passSigningInfo = passSigningInfo
         )
 

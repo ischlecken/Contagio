@@ -18,77 +18,62 @@ class UpdatePass(
     fun execute(
         serialNumber: String,
         testResult: TestResultType?,
+        issueStatus: IssueStatus?,
         validUntil: Instant?,
         passSigningInfo: PassSigningInfo
     ): UpdatePassResponse? {
-        var result: UpdatePassResponse? = null
 
-        getEncryptionKey.execute(serialNumber)?.let { authToken ->
-            findPassInfoEnvelope.execute(serialNumber)?.let { passInfoEnvelope ->
+        val authToken = getEncryptionKey.execute(serialNumber)
+        val passInfoEnvelope = findPassInfoEnvelope.execute(serialNumber)
+        val testerTeststation = searchTesterWithTeststation.execute(passInfoEnvelope?.testerId)
+        val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
+        val passInfo = encryptedPassInfo?.getObject(authToken, PassInfo::class.java) as? PassInfo
+        val passImageEncrypted = findEncryptedPayload.execute(passInfo?.imageId)
+        val passImage = passImageEncrypted?.get(authToken)
 
-                searchTesterWithTeststation.execute(passInfoEnvelope.testerId)?.let { testerTeststation ->
+        var updatedPassInfoEnvelope = passInfoEnvelope
+        if (issueStatus != null)
+            updatedPassInfoEnvelope = updatedPassInfoEnvelope?.copy(issueStatus = issueStatus)
+        if (validUntil != null)
+            updatedPassInfoEnvelope = updatedPassInfoEnvelope?.copy(validUntil = validUntil)
 
-                    findEncryptedPayload.execute(passInfoEnvelope.passInfoId)?.let { encryptedPassInfo ->
+        var updatedPassInfo = passInfo
+        if (testResult != null)
+            updatedPassInfo = updatedPassInfo?.copy(testResult = testResult)
 
-                        (encryptedPassInfo.getObject(authToken, PassInfo::class.java) as? PassInfo)?.let { passInfo ->
-                            findEncryptedPayload.execute(passInfo.imageId)?.let { passImageEncrypted ->
+        return if (
+            authToken != null &&
+            passImage != null &&
+            updatedPassInfo != null &&
+            updatedPassInfoEnvelope != null &&
+            testerTeststation != null
+        ) {
+            val passBuilderInfo = PassBuilderInfo(
+                passSigningInfo = passSigningInfo,
+                passImage = passImage,
+                passInfoEnvelope = updatedPassInfoEnvelope,
+                passInfo = updatedPassInfo,
+                teststation = testerTeststation.teststation,
+                tester = testerTeststation.tester
+            )
 
-                                passImageEncrypted.get(authToken)?.let { passImage ->
-                                    val updatedPassInfoEnvelope = if (validUntil != null)
-                                        passInfoEnvelope.copy(
-                                            validUntil = validUntil
-                                        )
-                                    else
-                                        passInfoEnvelope
+            PassBuilder(passBuilderInfo, urlBuilder)
+                .build(authToken)
+                ?.let {
+                    saveRawEncryptedPayload.execute(updatedPassInfo.passId, it.pass, authToken)
+                    saveEncryptedPayload.execute(updatedPassInfoEnvelope.passInfoId, updatedPassInfo, authToken)
+                    savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
 
-                                    val updatedPassInfo = if (testResult != null)
-                                        passInfo.copy(testResult = testResult)
-                                    else
-                                        passInfo
-
-                                    val passBuilderInfo = PassBuilderInfo(
-                                        passSigningInfo = passSigningInfo,
-                                        passImage = passImage,
-                                        passInfoEnvelope = updatedPassInfoEnvelope,
-                                        passInfo = updatedPassInfo,
-                                        teststation = testerTeststation.teststation,
-                                        tester = testerTeststation.tester
-                                    )
-
-                                    val pbr = PassBuilder(passBuilderInfo, urlBuilder)
-                                        .build(authToken)
-                                        ?.apply {
-
-                                            saveRawEncryptedPayload.execute(
-                                                updatedPassInfo.passId,
-                                                this.pass,
-                                                authToken
-                                            )
-                                            saveEncryptedPayload.execute(
-                                                updatedPassInfoEnvelope.passInfoId,
-                                                updatedPassInfo,
-                                                authToken
-                                            )
-                                            savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
-                                        }
-
-                                    if (pbr != null)
-                                        result = UpdatePassResponse(
-                                            authToken = authToken,
-                                            passInfoEnvelope = passInfoEnvelope,
-                                            passInfo = passInfo,
-                                            pkPass = pbr.pkpass,
-                                            pass = pbr.pass
-                                        )
-                                }
-                            }
-                        }
-                    }
+                    UpdatePassResponse(
+                        authToken = authToken,
+                        passInfoEnvelope = updatedPassInfoEnvelope,
+                        passInfo = updatedPassInfo,
+                        pkPass = it.pkpass,
+                        pass = it.pass
+                    )
                 }
-            }
-        }
-
-        return result
+        } else
+            null
     }
 
 }

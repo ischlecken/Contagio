@@ -2,9 +2,7 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.core.domain.port.IFindAllPassInfo
-import de.contagio.core.domain.port.SortDirection
-import de.contagio.core.domain.port.Sorting
+import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.service.PassService
@@ -21,7 +19,7 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class PassController(
-    private val findAllPassInfo: IFindAllPassInfo,
+    private val findAllPassInfoEnvelope: IFindAllPassInfoEnvelope,
     private val passService: PassService,
     private val urlBuilder: UrlBuilder
 ) {
@@ -34,7 +32,7 @@ open class PassController(
         model.addAttribute("pageType", "pass")
         model.addAttribute(
             "passInfo",
-            findAllPassInfo.execute(
+            findAllPassInfoEnvelope.execute(
                 pageable
                     .toPageRequest()
                     .copy(sort = defaultSort)

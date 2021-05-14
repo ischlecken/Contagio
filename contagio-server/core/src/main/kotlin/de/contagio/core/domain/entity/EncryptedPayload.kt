@@ -30,8 +30,8 @@ private val om = jacksonObjectMapper().apply {
 }
 
 interface IEncryptedPayload {
-    fun getObject(key: String, cls: Class<*>): Any?
-    fun get(key: String): ByteArray?
+    fun getObject(key: String?, cls: Class<*>): Any?
+    fun get(key: String?): ByteArray?
 }
 
 class EncryptedPayload(
@@ -41,7 +41,7 @@ class EncryptedPayload(
     val updated: Instant = Instant.now()
 ) : IEncryptedPayload {
 
-    override fun getObject(key: String, cls: Class<*>): Any? {
+    override fun getObject(key: String?, cls: Class<*>): Any? {
         var result: Any? = null
 
         get(key)?.let {
@@ -55,14 +55,15 @@ class EncryptedPayload(
         return result
     }
 
-    override fun get(key: String): ByteArray? {
+    override fun get(key: String?): ByteArray? {
         var result: ByteArray? = null
 
-        try {
-            result = Decryptor().execute(encryptedPayload, key, iv)
-        } catch (ex: Exception) {
-            logger.error("Exception while decrypting payload", ex)
-        }
+        if (key != null)
+            try {
+                result = Decryptor().execute(encryptedPayload, key, iv)
+            } catch (ex: Exception) {
+                logger.error("Exception while decrypting payload", ex)
+            }
 
         return result
     }

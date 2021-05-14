@@ -73,8 +73,10 @@ data class PassInfoEnvelope(
     val passRemoved: Instant? = null
 )
 
+@Suppress("ArrayInDataClass")
 data class ExtendedPassInfo(
     val passInfoEnvelope: PassInfoEnvelope,
     val testerTeststation: TesterTeststation,
-    val passInfo: PassInfo? = null
+    val passInfo: PassInfo? = null,
+    val pass: ByteArray? = null
 )

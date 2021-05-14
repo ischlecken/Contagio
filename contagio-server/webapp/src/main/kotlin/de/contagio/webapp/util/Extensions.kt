@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort
 
 val defaultSort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
 
-fun de.contagio.core.domain.port.PageRequest.toPageRequest(): org.springframework.data.domain.PageRequest {
+fun PageRequest.toPageRequest(): org.springframework.data.domain.PageRequest {
     val sort = mutableListOf<Sort.Order>()
 
     this.sort.forEach {
@@ -37,6 +37,7 @@ fun Pageable.toPageRequest(): PageRequest {
                 direction = when( it.direction) {
                     Sort.Direction.DESC -> SortDirection.desc
                     Sort.Direction.ASC -> SortDirection.asc
+                    else -> SortDirection.asc
                 }
             )
         )

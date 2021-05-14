@@ -4,7 +4,8 @@ import de.contagio.core.domain.entity.PassInfoEnvelope
 import de.contagio.core.domain.entity.PassType
 import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
-import de.contagio.core.usecase.Decryptor
+import de.contagio.core.domain.port.IFindEncryptedPayload
+import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
@@ -33,24 +34,29 @@ open class PassRestController(
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val qrCodeGeneratorService: QRCodeGeneratorService,
     private val urlBuilder: UrlBuilder,
+    private val getEncryptionKey: IGetEncryptionKey,
+    private val findEncryptedPayload: IFindEncryptedPayload,
     private val contagioProperties: ContagioProperties
 ) {
 
 
     @GetMapping("/info")
-    open fun getPasses(pageable: Pageable): Page<PassInfoEnvelope> {
-        logger.debug("getAllPassInfo()")
+    open fun getPassEnvelopes(pageable: Pageable): Page<PassInfoEnvelope> {
+        logger.debug("getPassEnvelopes()")
 
         return passInfoEnvelopeRepository.findAll(pageable)
     }
 
     @GetMapping("/info/{serialNumber}")
-    open fun getPassInfo(@PathVariable serialNumber: String): ResponseEntity<PassInfoEnvelope> {
-        logger.debug("getPassInfo($serialNumber)")
+    open fun getPassInfoEnvelope(@PathVariable serialNumber: String): ResponseEntity<PassInfoEnvelope> {
+        logger.debug("getPassInfoEnvelope($serialNumber)")
 
         val result = passInfoEnvelopeRepository.findById(serialNumber)
 
-        return if (result.isPresent) ResponseEntity.ok(result.get()) else ResponseEntity.notFound().build()
+        return if (result.isPresent)
+            ResponseEntity.ok(result.get())
+        else
+            ResponseEntity.notFound().build()
     }
 
     @PostMapping("/info")
@@ -81,16 +87,17 @@ open class PassRestController(
         }
 
         return searchTesterWithTeststation.execute(testerId)?.let {
-            passService.createPassAndSave(
+            passService.createPass(
                 image,
                 firstName, lastName,
                 phoneNo, email,
                 it.teststation.id,
                 it.tester.id,
                 testResult, testType,
-                passType, labelColor, foregroundColor, backgroundColor
+                passType, labelColor, foregroundColor, backgroundColor,
+                save = true
             ).let { cpr ->
-                ResponseEntity.status(HttpStatus.CREATED).body(cpr.passInfoEnvelope)
+                ResponseEntity.status(HttpStatus.CREATED).body(cpr?.passInfoEnvelope)
             } ?: ResponseEntity.badRequest().build()
         } ?: ResponseEntity.badRequest().build()
     }
@@ -109,45 +116,42 @@ open class PassRestController(
 
     @GetMapping("/image/{id}")
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
-        val passInfo = passInfoEnvelopeRepository.findByImageId(id)
-        val result = passImageRepository.findById(id)
+        val encryptedImage = findEncryptedPayload.execute(id)
 
-        if (passInfo.isPresent)
-            logger.debug("getPassImage($id) serialNumber=${passInfo.get().serialNumber}")
-        else
-            logger.debug("getPassImage($id)")
+        val result = encryptedImage?.get(getEncryptionKey.execute(id))
 
-        return if (result.isPresent && passInfo.isPresent) {
-            val encodedData = result.get().data
-            val data = Decryptor().execute(encodedData, passInfo.get().authToken, result.get().iv)
+        logger.debug("getPassImage($id) ${result != null}")
 
-            ResponseEntity.ok().contentType(MediaType.parseMediaType(result.get().type)).body(data)
+        return if (result != null) {
+            ResponseEntity.ok().contentType(MediaType.parseMediaType("image/jpeg")).body(result)
         } else
             ResponseEntity.notFound().build()
     }
 
     @GetMapping("/{passId}")
     open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
-        val result = passRepository.findById(passId)
+        val encryptedPass = findEncryptedPayload.execute(passId)
+        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
 
-        logger.debug("getPass(passId=$passId): ${result.isPresent}")
+        logger.debug("getPass(passId=$passId): ${result != null}")
 
-        if (result.isEmpty)
+        if (result == null)
             return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok().contentType(pkpassMediatype).body(result.get().data)
+        return ResponseEntity.ok().contentType(pkpassMediatype).body(result)
     }
 
     @GetMapping("/{passId}/signature")
     open fun getPassSignature(@PathVariable passId: String): ResponseEntity<ByteArray> {
-        val result = passRepository.findById(passId)
+        val encryptedPass = findEncryptedPayload.execute(passId)
+        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
 
-        logger.debug("getPassSignature(passId=$passId): ${result.isPresent}")
+        logger.debug("getPassSignature(passId=$passId): ${result != null}")
 
-        if (result.isEmpty)
+        if (result == null)
             return ResponseEntity.notFound().build()
 
-        val s = passBuilderService.sign(result.get())
+        val s = passService.sign(result)
 
         return if (s != null)
             ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)
@@ -158,11 +162,12 @@ open class PassRestController(
 
     @GetMapping("/{passId}/qrcode")
     open fun getPassQRCode(@PathVariable passId: String): ResponseEntity<ByteArray> {
-        val result = passRepository.findById(passId)
+        val encryptedPass = findEncryptedPayload.execute(passId)
+        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
 
-        logger.debug("getPassQRCode(passId=$passId): ${result.isPresent}")
+        logger.debug("getPassQRCode(passId=$passId): ${result != null}")
 
-        if (result.isEmpty)
+        if (result == null)
             return ResponseEntity.notFound().build()
 
         var qrCode: ByteArray? = null

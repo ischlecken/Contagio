@@ -20,29 +20,29 @@ class CreatePassTest {
             savePassInfoEnvelope = {
 
             },
-            saveEncryptedPayload = { id, obj, key ->
+            saveEncryptedPayload = { id, _, key ->
                 logger.debug("saveEncryptedPayload() id=$id key=$key")
                 passInfoId = id
 
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any? {
+                    override fun getObject(key: String?, cls: Class<*>): Any? {
                         TODO("Not yet implemented")
                     }
 
-                    override fun get(key: String): ByteArray? {
+                    override fun get(key: String?): ByteArray? {
                         TODO("Not yet implemented")
                     }
                 }
             },
-            saveRawEncryptedPayload = { id, obj, key ->
+            saveRawEncryptedPayload = { id, _, key ->
                 logger.debug("saveRawEncryptedPayload() id=$id key=$key")
 
                 object : IEncryptedPayload {
-                    override fun getObject(key: String, cls: Class<*>): Any? {
+                    override fun getObject(key: String?, cls: Class<*>): Any? {
                         TODO("Not yet implemented")
                     }
 
-                    override fun get(key: String): ByteArray? {
+                    override fun get(key: String?): ByteArray? {
                         TODO("Not yet implemented")
                     }
                 }

@@ -1,8 +1,7 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.port.IFindPass
-import de.contagio.core.domain.port.IFindPassInfo
-import de.contagio.core.domain.port.IFindRegistrationInfo
+import de.contagio.core.domain.port.*
+import de.contagio.core.usecase.SearchPassInfo
 import de.contagio.core.usecase.SearchPassesForDevice
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
@@ -26,9 +25,9 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 @RestController
 @RequestMapping("$WALLET/v1")
 open class WalletRestController(
-    private val findPass: IFindPass,
-    private val findPassInfo: IFindPassInfo,
     private val findRegistrationInfo: IFindRegistrationInfo,
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val searchPassInfo: SearchPassInfo,
     private val walletService: WalletService,
     private val searchPassesForDevice: SearchPassesForDevice
 ) {
@@ -45,7 +44,7 @@ open class WalletRestController(
     ): ResponseEntity<ByteArray> {
         logger.debug("getPass(serialNumber=${serialNumber})")
 
-        return findPass.execute(serialNumber)?.let {
+        return searchPassInfo.execute(serialNumber)?.let {
             val lastModified = lastModifiedDateTimeFormatter.format(it.passInfoEnvelope.updated.atZone(ZoneId.of("GMT")))
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
@@ -54,7 +53,7 @@ open class WalletRestController(
                 .ok()
                 .header("Last-Modified", lastModified)
                 .contentType(pkpassMediatype)
-                .body(it.pass.data)
+                .body(it.pass)
         } ?: ResponseEntity.notFound().build()
     }
 
@@ -107,7 +106,7 @@ open class WalletRestController(
     ): ResponseEntity<Void> {
         logger.debug("registerDevice(deviceLibraryIdentifier=${deviceLibraryIdentifier}, serialNumber=${serialNumber}, pushToken=${walletRegistration.pushToken})")
 
-        if (findPassInfo.execute(serialNumber) == null)
+        if (findPassInfoEnvelope.execute(serialNumber) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
         return if (findRegistrationInfo.execute(deviceLibraryIdentifier, serialNumber).isEmpty()) {

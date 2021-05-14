@@ -9,17 +9,18 @@ class SearchTesterWithTeststation(
     private val findTeststation: IFindTeststation
 ) {
 
-    fun execute(id: String): TesterTeststation? {
+    fun execute(id: String?): TesterTeststation? {
         var result: TesterTeststation? = null
 
-        findTester.execute(id)?.let { tester ->
-            findTeststation.execute(tester.teststationId)?.let { teststation ->
-                result = TesterTeststation(
-                    tester = tester,
-                    teststation = teststation
-                )
+        if (id != null)
+            findTester.execute(id)?.let { tester ->
+                findTeststation.execute(tester.teststationId)?.let { teststation ->
+                    result = TesterTeststation(
+                        tester = tester,
+                        teststation = teststation
+                    )
+                }
             }
-        }
 
         return result
     }

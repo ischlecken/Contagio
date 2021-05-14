@@ -3,7 +3,7 @@ package de.contagio.core.domain.port
 import de.contagio.core.domain.entity.IEncryptedPayload
 
 fun interface IFindEncryptedPayload {
-    fun execute(id: String): IEncryptedPayload?
+    fun execute(id: String?): IEncryptedPayload?
 }
 
 
