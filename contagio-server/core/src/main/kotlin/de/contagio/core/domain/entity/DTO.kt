@@ -1,5 +1,6 @@
 package de.contagio.core.domain.entity
 
+import de.brendamour.jpasskit.PKPass
 import java.io.Serializable
 
 
@@ -44,5 +45,16 @@ data class CreatePassResponse(
     val passInfoEnvelope: PassInfoEnvelope,
     val passInfo: PassInfo,
     val passImage: ByteArray,
-    val pkPass: ByteArray
+    val pkPass: PKPass,
+    val pass: ByteArray
+)
+
+
+@Suppress("ArrayInDataClass")
+data class UpdatePassResponse(
+    val authToken: String,
+    val passInfoEnvelope: PassInfoEnvelope,
+    val passInfo: PassInfo,
+    val pkPass: PKPass,
+    val pass: ByteArray
 )

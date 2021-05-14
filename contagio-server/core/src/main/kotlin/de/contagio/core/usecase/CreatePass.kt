@@ -36,7 +36,8 @@ class CreatePass(
         labelColor: String,
         foregroundColor: String,
         backgroundColor: String,
-        passSigningInfo: PassSigningInfo
+        passSigningInfo: PassSigningInfo,
+        save: Boolean = false
     ): CreatePassResponse? {
 
         var result: CreatePassResponse? = null
@@ -80,23 +81,30 @@ class CreatePass(
             PassBuilder(passBuilderInfo, urlBuilder)
                 .build(authToken)
                 ?.apply {
-                    result = CreatePassResponse(
+                    val cpr = CreatePassResponse(
                         passInfoEnvelope = passInfoEnvelope,
                         passInfo = passInfo,
                         passImage = image,
                         authToken = authToken,
-                        pkPass = pass
+                        pkPass = pkpass,
+                        pass = pass
                     )
+
+                    if (save) {
+                        save(cpr)
+                    }
+
+                    result = cpr
                 }
         }
 
         return result
     }
 
-    fun save(createPassResponse: CreatePassResponse) {
+    private fun save(createPassResponse: CreatePassResponse) {
         with(createPassResponse) {
             saveRawEncryptedPayload.execute(passInfo.imageId, passImage, authToken)
-            saveRawEncryptedPayload.execute(passInfo.passId, pkPass, authToken)
+            saveRawEncryptedPayload.execute(passInfo.passId, pass, authToken)
             saveEncryptedPayload.execute(passInfoEnvelope.passInfoId, passInfo, authToken)
             savePassInfoEnvelope.execute(passInfoEnvelope)
         }

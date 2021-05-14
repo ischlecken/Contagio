@@ -210,13 +210,9 @@ open class PassService(
             labelColor = labelColor,
             foregroundColor = foregroundColor,
             backgroundColor = backgroundColor,
-            passSigningInfo = passSigningInfo
-        )?.let {
-            if (save)
-                createPass.save(it)
-
-            it
-        }
+            passSigningInfo = passSigningInfo,
+            save = save
+        )
     }
 
     open fun createPassAndSave(

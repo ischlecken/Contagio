@@ -9,10 +9,7 @@ import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
-import de.contagio.webapp.repository.mongodb.PassImageRepository
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
-import de.contagio.webapp.repository.mongodb.PassRepository
-import de.contagio.webapp.service.PassBuilderService
 import de.contagio.webapp.service.PassService
 import de.contagio.webapp.service.QRCodeGeneratorService
 import org.slf4j.LoggerFactory
@@ -32,10 +29,7 @@ private var logger = LoggerFactory.getLogger(PassRestController::class.java)
 @RequestMapping(PASS)
 open class PassRestController(
     private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
-    private val passImageRepository: PassImageRepository,
-    private val passRepository: PassRepository,
     private val passService: PassService,
-    private val passBuilderService: PassBuilderService,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val qrCodeGeneratorService: QRCodeGeneratorService,
     private val urlBuilder: UrlBuilder,
