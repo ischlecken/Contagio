@@ -197,7 +197,7 @@ open class PortConfig(
     @Bean
     open fun findRegistrationInfoBySerialNumber(): IFindRegistrationInfoBySerialNumber {
         return IFindRegistrationInfoBySerialNumber { serialNumber ->
-            registrationInfoRepository.findByDeviceLibraryIdentifier(serialNumber)
+            registrationInfoRepository.findBySerialNumber(serialNumber)
         }
     }
 

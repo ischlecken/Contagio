@@ -46,8 +46,7 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return searchPassInfo.execute(serialNumber)?.let {
-            val lastModified =
-                lastModifiedDateTimeFormatter.format(it.passInfoEnvelope.updated.atZone(ZoneId.of("GMT")))
+            val lastModified = lastModifiedDateTimeFormatter.format(it.passUpdated?.atZone(ZoneId.of("GMT")))
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 
@@ -69,11 +68,9 @@ open class WalletRestController(
 
         logger.debug("getPasses(deviceLibraryIdentifier=${deviceLibraryIdentifier}, passesUpdatedSince=${passesUpdatedSince})")
 
-        var serialNumbers = searchPassesForDevice
-            .execute(deviceLibraryIdentifier)
-            .sortedByDescending {
-                it.updated
-            }
+        var serialNumbers = searchPassesForDevice.execute(deviceLibraryIdentifier).sortedByDescending {
+            it.updated
+        }
 
         if (passesUpdatedSince != null) {
             val updatedSince = Instant.ofEpochSecond(passesUpdatedSince.toLong() + 1)

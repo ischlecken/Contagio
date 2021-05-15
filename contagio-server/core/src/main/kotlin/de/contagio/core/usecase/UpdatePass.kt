@@ -12,11 +12,11 @@ class UpdatePass(
     private val saveRawEncryptedPayload: ISaveRawEncryptedPayload,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val getEncryptionKey: IGetEncryptionKey,
-    private val urlBuilder: UrlBuilder,
-    private val passSigningInfo: PassSigningInfo
+    private val urlBuilder: UrlBuilder
 ) {
 
     fun execute(
+        passSigningInfo: PassSigningInfo,
         serialNumber: String,
         testResult: TestResultType?,
         issueStatus: IssueStatus?,
@@ -57,21 +57,19 @@ class UpdatePass(
                 tester = testerTeststation.tester
             )
 
-            PassBuilder(passBuilderInfo, urlBuilder)
-                .build(authToken)
-                ?.let {
-                    saveRawEncryptedPayload.execute(updatedPassInfo.passId, it.pass, authToken)
-                    saveEncryptedPayload.execute(updatedPassInfoEnvelope.passInfoId, updatedPassInfo, authToken)
-                    savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
+            PassBuilder(passBuilderInfo, urlBuilder).build(authToken)?.let {
+                saveRawEncryptedPayload.execute(updatedPassInfo.passId, it.pass, authToken)
+                saveEncryptedPayload.execute(updatedPassInfoEnvelope.passInfoId, updatedPassInfo, authToken)
+                savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
 
-                    UpdatePassResponse(
-                        authToken = authToken,
-                        passInfoEnvelope = updatedPassInfoEnvelope,
-                        passInfo = updatedPassInfo,
-                        pkPass = it.pkpass,
-                        pass = it.pass
-                    )
-                }
+                UpdatePassResponse(
+                    authToken = authToken,
+                    passInfoEnvelope = updatedPassInfoEnvelope,
+                    passInfo = updatedPassInfo,
+                    pkPass = it.pkpass,
+                    pass = it.pass
+                )
+            }
         } else
             null
     }

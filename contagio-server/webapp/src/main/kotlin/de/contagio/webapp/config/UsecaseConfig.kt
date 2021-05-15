@@ -1,13 +1,10 @@
 package de.contagio.webapp.config
 
-import de.contagio.core.domain.entity.PassSigningInfo
 import de.contagio.core.domain.port.*
 import de.contagio.core.usecase.*
 import de.contagio.webapp.model.properties.ContagioProperties
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.Resource
 
 @Configuration
 open class UsecaseConfig {
@@ -68,8 +65,10 @@ open class UsecaseConfig {
     @Bean
     open fun searchPassesForDevice(
         findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-        findPassInfoEnvelope: IFindPassInfoEnvelope
-    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPassInfoEnvelope)
+        findPassInfoEnvelope: IFindPassInfoEnvelope,
+        findEncryptedPayload: IFindEncryptedPayload,
+        getEncryptionKey: IGetEncryptionKey
+    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPassInfoEnvelope,findEncryptedPayload,getEncryptionKey)
 
     @Bean
     open fun urlBuilder(contagioProperties: ContagioProperties): UrlBuilder {
@@ -77,18 +76,6 @@ open class UsecaseConfig {
     }
 
 
-    @Value("classpath:certs/pass.p12")
-    private lateinit var passKeystore: Resource
-
-    @Value("classpath:certs/AppleWWDRCA.cer")
-    private lateinit var appleWWDRCA: Resource
-
-    @Bean
-    open fun passSigningInfo(contagioProperties: ContagioProperties) = PassSigningInfo(
-        keystore = passKeystore.inputStream,
-        keystorePassword = contagioProperties.pass.keystorePassword,
-        appleWWDRCA = appleWWDRCA.inputStream
-    )
 
 
     @Bean
@@ -100,8 +87,7 @@ open class UsecaseConfig {
         saveRawEncryptedPayload: ISaveRawEncryptedPayload,
         searchTesterWithTeststation: SearchTesterWithTeststation,
         getEncryptionKey: IGetEncryptionKey,
-        urlBuilder: UrlBuilder,
-        passSigningInfo: PassSigningInfo
+        urlBuilder: UrlBuilder
     ) = UpdatePass(
         findPassInfoEnvelope = findPassInfoEnvelope,
         findEncryptedPayload = findEncryptedPayload,
@@ -110,8 +96,7 @@ open class UsecaseConfig {
         saveRawEncryptedPayload = saveRawEncryptedPayload,
         searchTesterWithTeststation = searchTesterWithTeststation,
         getEncryptionKey = getEncryptionKey,
-        urlBuilder = urlBuilder,
-        passSigningInfo = passSigningInfo
+        urlBuilder = urlBuilder
     )
 
     @Bean
@@ -120,15 +105,13 @@ open class UsecaseConfig {
         saveEncryptedPayload: ISaveEncryptedPayload,
         saveRawEncryptedPayload: ISaveRawEncryptedPayload,
         searchTesterWithTeststation: SearchTesterWithTeststation,
-        urlBuilder: UrlBuilder,
-        passSigningInfo: PassSigningInfo
+        urlBuilder: UrlBuilder
     ) = CreatePass(
         savePassInfoEnvelope,
         saveEncryptedPayload,
         saveRawEncryptedPayload,
         searchTesterWithTeststation,
-        urlBuilder,
-        passSigningInfo
+        urlBuilder
     )
 
     @Bean

@@ -43,7 +43,7 @@ open class AuthTokenService {
         val newTokenMap = mutableMapOf<String, AuthTokenData>()
 
         authTokens.forEach {
-            if (it.value.created.plusMillis(2 * 60 * 1000).isAfter(Instant.now())) {
+            if (it.value.created.plusMillis(10 * 60 * 1000).isAfter(Instant.now())) {
                 newTokenMap[it.key] = it.value
             }
         }

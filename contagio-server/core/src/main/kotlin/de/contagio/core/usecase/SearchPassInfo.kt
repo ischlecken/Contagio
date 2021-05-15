@@ -1,5 +1,6 @@
 package de.contagio.core.usecase
 
+import de.contagio.core.domain.entity.EncryptedPayload
 import de.contagio.core.domain.entity.ExtendedPassInfo
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.port.IFindEncryptedPayload
@@ -20,7 +21,7 @@ class SearchPassInfo(
         val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
         val key = getEncryptionKey.execute(IdType.SERIALNUMBER, id)
         val passInfo = encryptedPassInfo?.getObject(key, PassInfo::class.java) as? PassInfo
-        val encryptedPass = findEncryptedPayload.execute(passInfo?.passId)
+        val encryptedPass = findEncryptedPayload.execute(passInfo?.passId) as? EncryptedPayload
         val pass = encryptedPass?.get(key)
 
         return if (passInfoEnvelope != null && testerTeststation != null && encryptedPassInfo != null)
@@ -28,7 +29,8 @@ class SearchPassInfo(
                 passInfoEnvelope = passInfoEnvelope,
                 testerTeststation = testerTeststation,
                 passInfo = passInfo,
-                pass = pass
+                pass = pass,
+                passUpdated = encryptedPass?.updated
             )
         else
             null

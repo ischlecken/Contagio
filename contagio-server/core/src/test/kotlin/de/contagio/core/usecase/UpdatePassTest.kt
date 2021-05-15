@@ -60,7 +60,6 @@ class UpdatePassTest {
 
             },
             saveEncryptedPayload = { id, obj, _ ->
-
                 if (id == "passInfoId123")
                     updatedPassInfo = obj as PassInfo
 
@@ -104,11 +103,11 @@ class UpdatePassTest {
             getEncryptionKey = { _, _ ->
                 authToken
             },
-            urlBuilder = UrlBuilder("https://blafasel.de"),
-            passSigningInfo = CreatePassTest.passSigningInfo()
+            urlBuilder = UrlBuilder("https://blafasel.de")
         )
 
         val result = updatePass.execute(
+            passSigningInfo = CreatePassTest.passSigningInfo(),
             serialNumber = "123456",
             testResult = TestResultType.NEGATIVE,
             validUntil = null,

@@ -22,9 +22,6 @@
           <thead>
           <tr>
             <th th:text="#{field.name}">Name</th>
-            <th th:text="#{field.image}">Bild</th>
-            <th th:text="#{field.testtype}">Testtyp</th>
-            <th th:text="#{field.testresult}">Testresultat</th>
             <th th:text="#{field.issuestatus}">Ausgabestatus</th>
             <th th:text="#{field.installationstatus}">Installationstatus</th>
             <th th:text="#{field.validuntil}">Gültig bis</th>
@@ -35,11 +32,8 @@
           <tr th:each="p : ${passInfo.content}">
             <td>
               <a th:title="#{pass.opendetails.title}" title="Passdetails öffnen"
-                 th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.person.fullName}"></a>
+                 th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.serialNumber}"></a>
             </td>
-            <td><img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${p.imageId})}"></td>
-            <td th:text="#{testType.__${p.testType}__}"/>
-            <td th:text="#{testResultType.__${p.testResult}__}"/>
             <td th:text="#{issueType.__${p.issueStatus}__}"/>
             <td th:text="#{installationStatus.__${p.passInstallationStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>

@@ -1,7 +1,7 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
-import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.*
 import de.contagio.webapp.model.UpdatePassRequest
@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 private var logger = LoggerFactory.getLogger(PassService::class.java)
 
@@ -20,7 +21,7 @@ open class PassService(
     private val contagioProperties: ContagioProperties,
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val authTokenService: AuthTokenService,
-    private val deletePassInfoEnvelope: IFindPassInfoEnvelope,
+    private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
     private val createPass: CreatePass,
     private val updatePass: UpdatePass,
     private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
@@ -37,6 +38,7 @@ open class PassService(
     open fun issue(serialnumber: String) {
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = serialnumber,
                 issueStatus = IssueStatus.ISSUED,
                 testResult = null,
@@ -49,6 +51,7 @@ open class PassService(
     open fun expire(serialnumber: String) {
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = serialnumber,
                 issueStatus = IssueStatus.EXPIRED,
                 testResult = null,
@@ -61,6 +64,7 @@ open class PassService(
     open fun revoke(serialnumber: String) {
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = serialnumber,
                 issueStatus = IssueStatus.REVOKED,
                 testResult = null,
@@ -73,10 +77,11 @@ open class PassService(
     open fun negative(serialnumber: String) {
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = serialnumber,
                 issueStatus = IssueStatus.ISSUED,
                 testResult = TestResultType.NEGATIVE,
-                validUntil = null
+                validUntil = Instant.now().plus(3, ChronoUnit.DAYS)
             )?.also {
                 notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
             }
@@ -85,10 +90,11 @@ open class PassService(
     open fun positive(serialnumber: String) {
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = serialnumber,
                 issueStatus = IssueStatus.ISSUED,
                 testResult = TestResultType.POSITIVE,
-                validUntil = null
+                validUntil = Instant.now().plus(30, ChronoUnit.DAYS)
             )?.also {
                 notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
             }
@@ -136,6 +142,7 @@ open class PassService(
         logger.debug("  image.size=${image.size}")
 
         return createPass.execute(
+            passSigningInfo = passSigningInfo(),
             teamIdentifier = contagioProperties.pass.teamIdentifier,
             passTypeIdentifier = contagioProperties.pass.passTypeId,
             organisationName = contagioProperties.pass.organisationName,
@@ -167,6 +174,7 @@ open class PassService(
     open fun updatePass(updatePassRequest: UpdatePassRequest) =
         updatePass
             .execute(
+                passSigningInfo = passSigningInfo(),
                 serialNumber = updatePassRequest.serialNumber,
                 issueStatus = IssueStatus.ISSUED,
                 testResult = updatePassRequest.testResult,
@@ -176,6 +184,19 @@ open class PassService(
 
                 it.passInfoEnvelope
             }
+
+
+    @Value("classpath:certs/pass.p12")
+    private lateinit var passKeystore: Resource
+
+    @Value("classpath:certs/AppleWWDRCA.cer")
+    private lateinit var appleWWDRCA: Resource
+
+    private fun passSigningInfo() = PassSigningInfo(
+        keystore = passKeystore.inputStream,
+        keystorePassword = contagioProperties.pass.keystorePassword,
+        appleWWDRCA = appleWWDRCA.inputStream
+    )
 
 
     @Value("classpath:certs/contagio-sign.p12")

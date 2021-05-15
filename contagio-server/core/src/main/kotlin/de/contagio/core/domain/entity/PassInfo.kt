@@ -78,5 +78,6 @@ data class ExtendedPassInfo(
     val passInfoEnvelope: PassInfoEnvelope,
     val testerTeststation: TesterTeststation,
     val passInfo: PassInfo? = null,
-    val pass: ByteArray? = null
+    val pass: ByteArray? = null,
+    val passUpdated: Instant? = null
 )

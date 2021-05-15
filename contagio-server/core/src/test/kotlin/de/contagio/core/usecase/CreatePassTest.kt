@@ -61,11 +61,11 @@ class CreatePassTest {
                     )
                 }
             ),
-            urlBuilder = UrlBuilder("https://bla.de"),
-            passSigningInfo = passSigningInfo()
+            urlBuilder = UrlBuilder("https://bla.de")
         )
 
         val cpr = createPass.execute(
+            passSigningInfo = passSigningInfo(),
             teamIdentifier = "xx4V27BGKSLA",
             passTypeIdentifier = "pass.de.contagio.til",
             organisationName = "Contagio - TIL",
