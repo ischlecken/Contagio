@@ -1,10 +1,13 @@
 package de.contagio.webapp.config
 
+import de.contagio.core.domain.entity.PassSigningInfo
 import de.contagio.core.domain.port.*
 import de.contagio.core.usecase.*
 import de.contagio.webapp.model.properties.ContagioProperties
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.Resource
 
 @Configuration
 open class UsecaseConfig {
@@ -72,4 +75,72 @@ open class UsecaseConfig {
     open fun urlBuilder(contagioProperties: ContagioProperties): UrlBuilder {
         return UrlBuilder(contagioProperties.baseUrl)
     }
+
+
+    @Value("classpath:certs/pass.p12")
+    private lateinit var passKeystore: Resource
+
+    @Value("classpath:certs/AppleWWDRCA.cer")
+    private lateinit var appleWWDRCA: Resource
+
+    @Bean
+    open fun passSigningInfo(contagioProperties: ContagioProperties) = PassSigningInfo(
+        keystore = passKeystore.inputStream,
+        keystorePassword = contagioProperties.pass.keystorePassword,
+        appleWWDRCA = appleWWDRCA.inputStream
+    )
+
+
+    @Bean
+    open fun updatePass(
+        findPassInfoEnvelope: IFindPassInfoEnvelope,
+        findEncryptedPayload: IFindEncryptedPayload,
+        savePassInfoEnvelope: ISavePassInfoEnvelope,
+        saveEncryptedPayload: ISaveEncryptedPayload,
+        saveRawEncryptedPayload: ISaveRawEncryptedPayload,
+        searchTesterWithTeststation: SearchTesterWithTeststation,
+        getEncryptionKey: IGetEncryptionKey,
+        urlBuilder: UrlBuilder,
+        passSigningInfo: PassSigningInfo
+    ) = UpdatePass(
+        findPassInfoEnvelope = findPassInfoEnvelope,
+        findEncryptedPayload = findEncryptedPayload,
+        savePassInfoEnvelope = savePassInfoEnvelope,
+        saveEncryptedPayload = saveEncryptedPayload,
+        saveRawEncryptedPayload = saveRawEncryptedPayload,
+        searchTesterWithTeststation = searchTesterWithTeststation,
+        getEncryptionKey = getEncryptionKey,
+        urlBuilder = urlBuilder,
+        passSigningInfo = passSigningInfo
+    )
+
+    @Bean
+    open fun createPass(
+        savePassInfoEnvelope: ISavePassInfoEnvelope,
+        saveEncryptedPayload: ISaveEncryptedPayload,
+        saveRawEncryptedPayload: ISaveRawEncryptedPayload,
+        searchTesterWithTeststation: SearchTesterWithTeststation,
+        urlBuilder: UrlBuilder,
+        passSigningInfo: PassSigningInfo
+    ) = CreatePass(
+        savePassInfoEnvelope,
+        saveEncryptedPayload,
+        saveRawEncryptedPayload,
+        searchTesterWithTeststation,
+        urlBuilder,
+        passSigningInfo
+    )
+
+    @Bean
+    open fun updateOnlyPassInfoEnvelope(
+        findPassInfoEnvelope: IFindPassInfoEnvelope,
+        savePassInfoEnvelope: ISavePassInfoEnvelope
+    ) = UpdateOnlyPassInfoEnvelope(findPassInfoEnvelope, savePassInfoEnvelope)
+
+    @Bean
+    open fun notifyAllDevicesWithInstalledSerialNumber(
+        findRegistrationInfoBySerialNumber: IFindRegistrationInfoBySerialNumber,
+        findDeviceInfo: IFindDeviceInfo,
+        notifyDevice: INotifyDevice
+    ) = NotifyAllDevicesWithInstalledSerialNumber(findRegistrationInfoBySerialNumber, findDeviceInfo, notifyDevice)
 }

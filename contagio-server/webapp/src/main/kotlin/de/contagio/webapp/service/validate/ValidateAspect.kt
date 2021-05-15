@@ -5,6 +5,7 @@ import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.core.domain.port.IFindEncryptedPayload
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.IdType
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.service.AuthTokenService
 import org.aspectj.lang.ProceedingJoinPoint
@@ -138,7 +139,9 @@ open class ValidateAspect(
         if (passInfo == null)
             return false
 
-        authTokenService.setAuthToken(serialNumber, authToken)
+        authTokenService.setAuthToken(IdType.SERIALNUMBER, serialNumber, authToken)
+        authTokenService.setAuthToken(IdType.PASSID, passInfo.passId, authToken)
+        authTokenService.setAuthToken(IdType.IMAGEID, passInfo.imageId, authToken)
 
         return true
     }

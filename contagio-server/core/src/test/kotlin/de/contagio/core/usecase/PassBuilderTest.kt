@@ -2,6 +2,7 @@ package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.IdType
 import org.apache.commons.io.IOUtils
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -20,8 +21,8 @@ class PassBuilderTest {
             )
         )
 
-    private val getEncryptionKey = IGetEncryptionKey {
-        if (it == "123")
+    private val getEncryptionKey = IGetEncryptionKey { _, id ->
+        if (id == "123")
             key
         else
             null
@@ -51,7 +52,6 @@ class PassBuilderTest {
         passTypeIdentifier = "passTypeId",
         organisationName = "bla org"
     )
-
 
 
     @Test
@@ -87,7 +87,7 @@ class PassBuilderTest {
         assertEquals("123", cpr?.pkpass?.serialNumber)
         assertEquals("teamid", cpr?.pkpass?.teamIdentifier)
         assertEquals("passTypeId", cpr?.pkpass?.passTypeIdentifier)
-        assertEquals(getEncryptionKey.execute("123"), cpr?.pkpass?.authenticationToken)
+        assertEquals(getEncryptionKey.execute(IdType.SERIALNUMBER,"123"), cpr?.pkpass?.authenticationToken)
         assertEquals(true, cpr?.pkpass?.isSharingProhibited)
 
         val validationErrors = cpr?.pkpass?.validationErrors

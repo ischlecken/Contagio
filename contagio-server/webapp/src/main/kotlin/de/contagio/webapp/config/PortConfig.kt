@@ -4,10 +4,15 @@ import de.contagio.core.domain.entity.EncryptedPayload
 import de.contagio.core.domain.port.*
 import de.contagio.webapp.repository.mongodb.*
 import de.contagio.webapp.service.AuthTokenService
+import de.contagio.webapp.service.PushNotificationService
 import de.contagio.webapp.util.toPageRequest
 import de.contagio.webapp.util.toPagedResult
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.*
+
+private var logger = LoggerFactory.getLogger(PortConfig::class.java)
 
 @Configuration
 open class PortConfig(
@@ -33,6 +38,21 @@ open class PortConfig(
     }
 
     @Bean
+    open fun deletePassInfoEnvelope(): IDeletePassInfoEnvelope {
+        return IDeletePassInfoEnvelope { id ->
+            val result = passInfoEnvelopeRepository.findById(id)
+
+            if (result.isPresent)
+                passInfoEnvelopeRepository.deleteById(id)
+
+            return@IDeletePassInfoEnvelope if (result.isPresent)
+                result.get()
+            else
+                null
+        }
+    }
+
+    @Bean
     open fun findAllPassInfoEnvelope(): IFindAllPassInfoEnvelope {
         return IFindAllPassInfoEnvelope {
             passInfoEnvelopeRepository.findAll(it.toPageRequest()).toPagedResult()
@@ -50,7 +70,7 @@ open class PortConfig(
     @Bean
     open fun findEncryptedPayload(): IFindEncryptedPayload {
         return IFindEncryptedPayload { id ->
-            val result = encryptedPayloadRepository.findById(id)
+            val result = if (id != null) encryptedPayloadRepository.findById(id) else Optional.empty()
 
             return@IFindEncryptedPayload if (result.isPresent)
                 result.get()
@@ -165,10 +185,19 @@ open class PortConfig(
     @Bean
     open fun findRegistrationInfo(): IFindRegistrationInfo {
         return IFindRegistrationInfo { deviceLibraryIdentifier, serialNumber ->
-            registrationInfoRepository.findByDeviceLibraryIdentifierAndSerialNumber(
-                deviceLibraryIdentifier,
-                serialNumber
-            )
+            registrationInfoRepository
+                .findByDeviceLibraryIdentifierAndSerialNumber(
+                    deviceLibraryIdentifier,
+                    serialNumber
+                )
+                .firstOrNull()
+        }
+    }
+
+    @Bean
+    open fun findRegistrationInfoBySerialNumber(): IFindRegistrationInfoBySerialNumber {
+        return IFindRegistrationInfoBySerialNumber { serialNumber ->
+            registrationInfoRepository.findByDeviceLibraryIdentifier(serialNumber)
         }
     }
 
@@ -187,12 +216,37 @@ open class PortConfig(
         }
     }
 
-
     @Bean
-    open fun getEncryptionKey(): IGetEncryptionKey {
-        return IGetEncryptionKey { id ->
-            authTokenService.getAuthToken(id)
+    open fun findDeviceInfo(): IFindDeviceInfo {
+        return IFindDeviceInfo {
+            val result = deviceInfoRepository.findById(it)
+
+            return@IFindDeviceInfo if (result.isPresent) result.get() else null
         }
     }
 
+
+    @Bean
+    open fun getEncryptionKey(): IGetEncryptionKey {
+        return IGetEncryptionKey { type, id ->
+            authTokenService.getAuthToken(type, id)
+        }
+    }
+
+
+    @Bean
+    open fun notifyDevice(pushNotificationService: PushNotificationService): INotifyDevice {
+        return INotifyDevice { serialNumber, deviceInfo ->
+
+            logger.debug("found push token ${deviceInfo.pushToken} for serialnumber $serialNumber...")
+
+            pushNotificationService
+                .sendPushNotificationAsync(deviceInfo.pushToken)
+                ?.thenApply {
+                    logger.debug("  apns-id=${it.apnsId}")
+                    logger.debug("  isAccepted=${it.isAccepted}")
+                    logger.debug("  rejectionReason=${it.rejectionReason}")
+                }
+        }
+    }
 }

@@ -2,7 +2,6 @@ package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.util.AuthTokenGenerator
-import org.apache.commons.io.IOUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -12,7 +11,6 @@ class UpdatePassTest {
     @Test
     fun updatePass_isExpected() {
         val authToken = AuthTokenGenerator().generate()
-        val img = CreatePassTest::class.java.getResourceAsStream("/testimg.png")
         var updatedPassInfo: PassInfo? = null
 
         val updatePass = UpdatePass(
@@ -51,7 +49,7 @@ class UpdatePassTest {
 
                     override fun get(key: String?): ByteArray? {
                         return when (it) {
-                            "imageId1" -> IOUtils.toByteArray(img)
+                            "imageId1" -> CreatePassTest.passImage()
                             else -> null
                         }
                     }
@@ -103,27 +101,18 @@ class UpdatePassTest {
                     )
                 }
             ),
-            getEncryptionKey = {
+            getEncryptionKey = { _, _ ->
                 authToken
             },
-            urlBuilder = UrlBuilder("https://blafasel.de")
-        )
-
-        val keystore = CreatePassTest::class.java.getResourceAsStream("/certs/pass.p12")
-        val appleca = CreatePassTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
-
-        val passSigningInfo = PassSigningInfo(
-            keystore = keystore!!,
-            keystorePassword = "1234",
-            appleWWDRCA = appleca!!,
+            urlBuilder = UrlBuilder("https://blafasel.de"),
+            passSigningInfo = CreatePassTest.passSigningInfo()
         )
 
         val result = updatePass.execute(
             serialNumber = "123456",
             testResult = TestResultType.NEGATIVE,
             validUntil = null,
-            issueStatus = null,
-            passSigningInfo = passSigningInfo
+            issueStatus = null
         )
 
         assertNotNull(result)

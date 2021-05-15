@@ -6,6 +6,7 @@ import de.contagio.core.domain.entity.TestResultType
 import de.contagio.core.domain.entity.TestType
 import de.contagio.core.domain.port.IFindEncryptedPayload
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
@@ -118,7 +119,7 @@ open class PassRestController(
     open fun getPassImage(@PathVariable id: String): ResponseEntity<ByteArray> {
         val encryptedImage = findEncryptedPayload.execute(id)
 
-        val result = encryptedImage?.get(getEncryptionKey.execute(id))
+        val result = encryptedImage?.get(getEncryptionKey.execute(IdType.IMAGEID, id))
 
         logger.debug("getPassImage($id) ${result != null}")
 
@@ -131,7 +132,7 @@ open class PassRestController(
     @GetMapping("/{passId}")
     open fun getPass(@PathVariable passId: String): ResponseEntity<ByteArray> {
         val encryptedPass = findEncryptedPayload.execute(passId)
-        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
+        val result = encryptedPass?.get(getEncryptionKey.execute(IdType.PASSID, passId))
 
         logger.debug("getPass(passId=$passId): ${result != null}")
 
@@ -144,7 +145,7 @@ open class PassRestController(
     @GetMapping("/{passId}/signature")
     open fun getPassSignature(@PathVariable passId: String): ResponseEntity<ByteArray> {
         val encryptedPass = findEncryptedPayload.execute(passId)
-        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
+        val result = encryptedPass?.get(getEncryptionKey.execute(IdType.PASSID, passId))
 
         logger.debug("getPassSignature(passId=$passId): ${result != null}")
 
@@ -163,7 +164,7 @@ open class PassRestController(
     @GetMapping("/{passId}/qrcode")
     open fun getPassQRCode(@PathVariable passId: String): ResponseEntity<ByteArray> {
         val encryptedPass = findEncryptedPayload.execute(passId)
-        val result = encryptedPass?.get(getEncryptionKey.execute(passId))
+        val result = encryptedPass?.get(getEncryptionKey.execute(IdType.PASSID, passId))
 
         logger.debug("getPassQRCode(passId=$passId): ${result != null}")
 

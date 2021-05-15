@@ -1,10 +1,7 @@
 package de.contagio.core.usecase
 
 import de.contagio.core.domain.entity.*
-import de.contagio.core.domain.port.IFindEncryptedPayload
-import de.contagio.core.domain.port.IGetEncryptionKey
-import de.contagio.core.domain.port.ISaveEncryptedPayload
-import de.contagio.core.domain.port.ISavePassInfoEnvelope
+import de.contagio.core.domain.port.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -22,7 +19,7 @@ class UpdatePassInfoEnvelope(
         validUntil: Instant? = null
     ): PassInfoEnvelope? {
 
-        return getEncryptionKey.execute(passInfoEnvelope.serialNumber)?.let { authToken ->
+        return getEncryptionKey.execute(IdType.SERIALNUMBER, passInfoEnvelope.serialNumber)?.let { authToken ->
             findEncryptedPayload.execute(passInfoEnvelope.passInfoId)?.let { encryptedPayload ->
                 val passInfo = encryptedPayload.getObject(authToken, PassInfo::class.java) as PassInfo
 

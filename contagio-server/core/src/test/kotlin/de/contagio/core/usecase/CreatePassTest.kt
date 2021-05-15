@@ -17,9 +17,7 @@ class CreatePassTest {
         var passInfoId: String? = null
 
         val createPass = CreatePass(
-            savePassInfoEnvelope = {
-
-            },
+            savePassInfoEnvelope = { },
             saveEncryptedPayload = { id, _, key ->
                 logger.debug("saveEncryptedPayload() id=$id key=$key")
                 passInfoId = id
@@ -63,17 +61,8 @@ class CreatePassTest {
                     )
                 }
             ),
-            urlBuilder = UrlBuilder("https://bla.de")
-        )
-
-        val img = CreatePassTest::class.java.getResourceAsStream("/testimg.png")
-        val keystore = CreatePassTest::class.java.getResourceAsStream("/certs/pass.p12")
-        val appleca = CreatePassTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
-
-        val passSigningInfo = PassSigningInfo(
-            keystore = keystore!!,
-            keystorePassword = "1234",
-            appleWWDRCA = appleca!!,
+            urlBuilder = UrlBuilder("https://bla.de"),
+            passSigningInfo = passSigningInfo()
         )
 
         val cpr = createPass.execute(
@@ -82,7 +71,7 @@ class CreatePassTest {
             organisationName = "Contagio - TIL",
             description = "TIL",
             logoText = "LOGO_TESTTYPE",
-            image = IOUtils.toByteArray(img),
+            image = passImage(),
             firstName = "Hugo",
             lastName = "Schlecken",
             phoneNo = "089454545",
@@ -94,7 +83,6 @@ class CreatePassTest {
             labelColor = "rgb(5, 175, 190)",
             foregroundColor = "rgb(255, 255, 255)",
             backgroundColor = "rgb(208, 38, 0)",
-            passSigningInfo = passSigningInfo,
             save = true
         )
 
@@ -117,5 +105,25 @@ class CreatePassTest {
 
         assertEquals(cpr.passInfoEnvelope.serialNumber, cpr.pkPass.serialNumber)
         assertEquals(passInfoId, cpr.passInfoEnvelope.passInfoId)
+    }
+
+    companion object {
+        fun passSigningInfo(): PassSigningInfo {
+            val keystore = CreatePassTest::class.java.getResourceAsStream("/certs/pass.p12")
+            val appleca = CreatePassTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
+
+            return PassSigningInfo(
+                keystore = keystore!!,
+                keystorePassword = "1234",
+                appleWWDRCA = appleca!!,
+            )
+        }
+
+        fun passImage(): ByteArray {
+            val img = CreatePassTest::class.java.getResourceAsStream("/testimg.png")
+
+            return IOUtils.toByteArray(img)
+        }
+
     }
 }

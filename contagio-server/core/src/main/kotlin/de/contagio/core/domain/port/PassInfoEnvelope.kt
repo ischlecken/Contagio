@@ -13,3 +13,7 @@ fun interface ISavePassInfoEnvelope {
 fun interface IFindAllPassInfoEnvelope {
     fun execute(pageRequest: PageRequest): PagedResult<PassInfoEnvelope>
 }
+
+fun interface IDeletePassInfoEnvelope {
+    fun execute(id:String): PassInfoEnvelope?
+}

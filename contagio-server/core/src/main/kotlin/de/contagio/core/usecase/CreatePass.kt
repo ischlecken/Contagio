@@ -12,7 +12,8 @@ class CreatePass(
     private val saveEncryptedPayload: ISaveEncryptedPayload,
     private val saveRawEncryptedPayload: ISaveRawEncryptedPayload,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
-    private val urlBuilder: UrlBuilder
+    private val urlBuilder: UrlBuilder,
+    private val passSigningInfo: PassSigningInfo
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -36,7 +37,6 @@ class CreatePass(
         labelColor: String,
         foregroundColor: String,
         backgroundColor: String,
-        passSigningInfo: PassSigningInfo,
         save: Boolean = false
     ): CreatePassResponse? {
 

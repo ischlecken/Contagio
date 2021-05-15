@@ -1,6 +1,7 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.port.*
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.IFindRegistrationInfo
 import de.contagio.core.usecase.SearchPassInfo
 import de.contagio.core.usecase.SearchPassesForDevice
 import de.contagio.webapp.model.WalletLog
@@ -45,7 +46,8 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return searchPassInfo.execute(serialNumber)?.let {
-            val lastModified = lastModifiedDateTimeFormatter.format(it.passInfoEnvelope.updated.atZone(ZoneId.of("GMT")))
+            val lastModified =
+                lastModifiedDateTimeFormatter.format(it.passInfoEnvelope.updated.atZone(ZoneId.of("GMT")))
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 
@@ -109,7 +111,7 @@ open class WalletRestController(
         if (findPassInfoEnvelope.execute(serialNumber) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
-        return if (findRegistrationInfo.execute(deviceLibraryIdentifier, serialNumber).isEmpty()) {
+        return if (findRegistrationInfo.execute(deviceLibraryIdentifier, serialNumber) == null) {
             walletService.register(deviceLibraryIdentifier, serialNumber, walletRegistration.pushToken)
 
             ResponseEntity.status(HttpStatus.CREATED).build()
