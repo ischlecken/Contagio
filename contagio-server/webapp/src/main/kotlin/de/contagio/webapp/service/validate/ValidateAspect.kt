@@ -5,9 +5,9 @@ import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.Teststation
 import de.contagio.core.domain.port.IFindEncryptedPayload
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.ISetEncryptionKey
 import de.contagio.core.domain.port.IdType
 import de.contagio.webapp.model.properties.ContagioProperties
-import de.contagio.webapp.service.AuthTokenService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -26,7 +26,7 @@ open class ValidateAspect(
     private val contagioProperties: ContagioProperties,
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
     private val findEncryptedPayload: IFindEncryptedPayload,
-    private val authTokenService: AuthTokenService
+    private val setEncryptionKey: ISetEncryptionKey
 ) {
 
     @Around("@annotation(validate)")
@@ -139,9 +139,9 @@ open class ValidateAspect(
         if (passInfo == null)
             return false
 
-        authTokenService.setAuthToken(IdType.SERIALNUMBER, serialNumber, authToken)
-        authTokenService.setAuthToken(IdType.PASSID, passInfo.passId, authToken)
-        authTokenService.setAuthToken(IdType.IMAGEID, passInfo.imageId, authToken)
+        setEncryptionKey.execute(IdType.SERIALNUMBER, serialNumber, authToken)
+        setEncryptionKey.execute(IdType.PASSID, passInfo.passId, authToken)
+        setEncryptionKey.execute(IdType.IMAGEID, passInfo.imageId, authToken)
 
         return true
     }

@@ -1,6 +1,8 @@
 package de.contagio.webapp
 
 import de.contagio.webapp.config.BuildInfoConfig
+import de.contagio.webapp.service.BackgroundProcessingService
+import de.contagio.webapp.service.PassCommandProcessor
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan.Filter
 import org.springframework.context.annotation.FilterType
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 private var logger = LoggerFactory.getLogger(ContagioApplication::class.java)
 
@@ -41,7 +44,9 @@ private var logger = LoggerFactory.getLogger(ContagioApplication::class.java)
 open class ContagioApplication(
     @Value("\${spring.application.name}")
     private var appName: String,
-    private val buildConfig: BuildInfoConfig
+    private val buildConfig: BuildInfoConfig,
+    private val backgroundProcessingService: BackgroundProcessingService,
+    private val passCommandProcessor: PassCommandProcessor
 ) {
 
     @PostConstruct
@@ -57,6 +62,17 @@ open class ContagioApplication(
         logger.info("Git Branch:${bi.scmBranch}")
         logger.info("Build Timestamp:${bi.timestamp}")
         logger.info("Spring Boot:${bi.springboot}")
+
+        passCommandProcessor.start { logger.debug("CommandProcessor stopped.") }
+    }
+
+    @PreDestroy
+    fun onDestroy() {
+
+        logger.info("time to say goodbye for ${this.appName}...")
+        passCommandProcessor.stop()
+        backgroundProcessingService.stop()
+        logger.info("goodbye ${this.appName}.")
     }
 }
 

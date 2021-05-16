@@ -235,6 +235,13 @@ open class PortConfig(
 
 
     @Bean
+    open fun setEncryptionKey(): ISetEncryptionKey {
+        return ISetEncryptionKey { type, id, key ->
+            authTokenService.setAuthToken(type, id, key)
+        }
+    }
+
+    @Bean
     open fun notifyDevice(pushNotificationService: PushNotificationService): INotifyDevice {
         return INotifyDevice { serialNumber, deviceInfo ->
 

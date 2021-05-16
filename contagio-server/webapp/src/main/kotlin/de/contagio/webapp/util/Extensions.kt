@@ -7,7 +7,7 @@ import de.contagio.core.domain.port.Sorting
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-val defaultSort = listOf(Sorting("modified", SortDirection.desc), Sorting("created", SortDirection.desc))
+val defaultSort = listOf(Sorting("updated", SortDirection.desc))
 
 fun PageRequest.toPageRequest(): org.springframework.data.domain.PageRequest {
     val sort = mutableListOf<Sort.Order>()

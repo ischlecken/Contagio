@@ -1,7 +1,10 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.DeviceInfo
+import de.contagio.core.domain.entity.InstalledPassCommand
 import de.contagio.core.domain.entity.RegistrationInfo
+import de.contagio.core.domain.entity.RemovedPassCommand
+import de.contagio.core.usecase.UpdateOnlyPassInfoEnvelope
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.repository.mongodb.DeviceInfoRepository
 import de.contagio.webapp.repository.mongodb.RegistrationInfoRepository
@@ -15,7 +18,8 @@ private var logger = LoggerFactory.getLogger(WalletService::class.java)
 open class WalletService(
     private val deviceInfoRepository: DeviceInfoRepository,
     private val registrationInfoRepository: RegistrationInfoRepository,
-    private val passService: PassService
+    private val passCommandProcessor: PassCommandProcessor,
+    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -36,7 +40,7 @@ open class WalletService(
             )
         )
 
-        passService.installed(serialNumber)
+        passCommandProcessor.addCommand(InstalledPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
     }
 
     open fun unregister(deviceLibraryIdentifier: String, serialNumber: String): Boolean {
@@ -54,7 +58,7 @@ open class WalletService(
                 }
 
             if (registrationInfoRepository.countBySerialNumber(serialNumber) == 0L)
-                passService.removed(serialNumber)
+                passCommandProcessor.addCommand(RemovedPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
         } catch (ex: Exception) {
             logger.error("Exception while unregister $serialNumber", ex)
         }

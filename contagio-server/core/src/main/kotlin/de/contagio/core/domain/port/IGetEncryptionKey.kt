@@ -8,3 +8,8 @@ enum class IdType {
 fun interface IGetEncryptionKey {
     fun execute(type: IdType, id: String): String?
 }
+
+
+fun interface ISetEncryptionKey {
+    fun execute(type: IdType, id: String, key:String)
+}

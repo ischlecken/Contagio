@@ -114,7 +114,7 @@ open class CreatePassController(
                 )
 
                 val headers = HttpHeaders()
-                headers.add("Location", if (cpr?.pkPass != null) "/pass" else "/createpass")
+                headers.add("Location",  "/pass")
 
                 ResponseEntity(headers, HttpStatus.FOUND)
             }

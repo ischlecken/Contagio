@@ -25,6 +25,7 @@
             <th th:text="#{field.issuestatus}">Ausgabestatus</th>
             <th th:text="#{field.installationstatus}">Installationstatus</th>
             <th th:text="#{field.validuntil}">Gültig bis</th>
+            <th th:text="#{field.updated}">Geändert am</th>
             <th th:text="#{field.commands}">Befehle</th>
           </tr>
           </thead>
@@ -37,6 +38,7 @@
             <td th:text="#{issueType.__${p.issueStatus}__}"/>
             <td th:text="#{installationStatus.__${p.passInstallationStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>
+            <td th:text="${{p.updated}}"/>
 
             <td>
               <form method="post" id="commandform">

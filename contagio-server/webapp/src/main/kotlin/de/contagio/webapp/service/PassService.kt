@@ -1,9 +1,14 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
-import de.contagio.core.domain.port.IDeletePassInfoEnvelope
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.ISetEncryptionKey
 import de.contagio.core.domain.port.IdType
-import de.contagio.core.usecase.*
+import de.contagio.core.usecase.CreatePass
+import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
+import de.contagio.core.usecase.SignatureBuilder
+import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import org.slf4j.LoggerFactory
@@ -11,8 +16,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 private var logger = LoggerFactory.getLogger(PassService::class.java)
 
@@ -20,107 +23,13 @@ private var logger = LoggerFactory.getLogger(PassService::class.java)
 open class PassService(
     private val contagioProperties: ContagioProperties,
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val authTokenService: AuthTokenService,
-    private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
+    private val setEncryptionKey: ISetEncryptionKey,
+    private val getEncryptionKey: IGetEncryptionKey,
     private val createPass: CreatePass,
     private val updatePass: UpdatePass,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val passCommandProcessor: PassCommandProcessor
 ) {
-
-
-    /**
-     * TODO: queue deletion of image and pass until authToken is known
-     */
-    open fun delete(serialnumber: String) {
-        deletePassInfoEnvelope.execute(serialnumber)
-    }
-
-    open fun issue(serialnumber: String) {
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = serialnumber,
-                issueStatus = IssueStatus.ISSUED,
-                testResult = null,
-                validUntil = null
-            )?.also {
-                notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
-            }
-    }
-
-    open fun expire(serialnumber: String) {
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = serialnumber,
-                issueStatus = IssueStatus.EXPIRED,
-                testResult = null,
-                validUntil = null
-            )?.also {
-                notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
-            }
-    }
-
-    open fun revoke(serialnumber: String) {
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = serialnumber,
-                issueStatus = IssueStatus.REVOKED,
-                testResult = null,
-                validUntil = null
-            )?.also {
-                notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
-            }
-    }
-
-    open fun negative(serialnumber: String) {
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = serialnumber,
-                issueStatus = IssueStatus.ISSUED,
-                testResult = TestResultType.NEGATIVE,
-                validUntil = Instant.now().plus(3, ChronoUnit.DAYS)
-            )?.also {
-                notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
-            }
-    }
-
-    open fun positive(serialnumber: String) {
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = serialnumber,
-                issueStatus = IssueStatus.ISSUED,
-                testResult = TestResultType.POSITIVE,
-                validUntil = Instant.now().plus(30, ChronoUnit.DAYS)
-            )?.also {
-                notifyAllDevicesWithInstalledSerialNumber.execute(serialnumber)
-            }
-    }
-
-    open fun installed(serialnumber: String) {
-        updateOnlyPassInfoEnvelope
-            .execute(serialnumber) {
-                it.copy(
-                    passInstallationStatus = PassInstallationStatus.INSTALLED,
-                    passInstalled = Instant.now(),
-                )
-            }
-    }
-
-    open fun removed(serialnumber: String) {
-        updateOnlyPassInfoEnvelope
-            .execute(serialnumber) {
-                it.copy(
-                    passInstallationStatus = PassInstallationStatus.REMOVED,
-                    passInstalled = Instant.now(),
-                    passRemoved = Instant.now()
-                )
-            }
-    }
-
 
     open fun createPass(
         image: MultipartFile,
@@ -138,65 +47,79 @@ open class PassService(
         backgroundColor: String,
         save: Boolean = false
     ): CreatePassResponse? {
+
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        return createPass.execute(
-            passSigningInfo = passSigningInfo(),
-            teamIdentifier = contagioProperties.pass.teamIdentifier,
-            passTypeIdentifier = contagioProperties.pass.passTypeId,
-            organisationName = contagioProperties.pass.organisationName,
-            description = contagioProperties.pass.description,
-            logoText = contagioProperties.pass.logoText,
-            image = image.bytes,
-            firstName = firstName,
-            lastName = lastName,
-            phoneNo = phoneNo,
-            email = email,
-            testerId = testerId,
-            testResult = testResult,
-            testType = testType,
-            passType = passType,
-            labelColor = labelColor,
-            foregroundColor = foregroundColor,
-            backgroundColor = backgroundColor,
-            save = save
-        )?.let {
+        if (!save)
+            return createPass.execute(
+                passSigningInfo = passCommandProcessor.passSigningInfo(),
+                teamIdentifier = contagioProperties.pass.teamIdentifier,
+                passTypeIdentifier = contagioProperties.pass.passTypeId,
+                organisationName = contagioProperties.pass.organisationName,
+                description = contagioProperties.pass.description,
+                logoText = contagioProperties.pass.logoText,
+                image = image.bytes,
+                firstName = firstName,
+                lastName = lastName,
+                phoneNo = phoneNo,
+                email = email,
+                testerId = testerId,
+                testResult = testResult,
+                testType = testType,
+                passType = passType,
+                labelColor = labelColor,
+                foregroundColor = foregroundColor,
+                backgroundColor = backgroundColor,
+                save = false
+            )
 
-            authTokenService.setAuthToken(IdType.SERIALNUMBER, it.passInfoEnvelope.serialNumber, it.authToken)
-            authTokenService.setAuthToken(IdType.PASSID, it.passInfo.passId, it.authToken)
-            authTokenService.setAuthToken(IdType.IMAGEID, it.passInfo.imageId, it.authToken)
+        passCommandProcessor.addCommand(
+            CreatePassCommand(
+                setEncryptionKey = setEncryptionKey,
+                createPass = createPass,
+                teamIdentifier = contagioProperties.pass.teamIdentifier,
+                passTypeIdentifier = contagioProperties.pass.passTypeId,
+                organisationName = contagioProperties.pass.organisationName,
+                description = contagioProperties.pass.description,
+                logoText = contagioProperties.pass.logoText,
+                image = image.bytes,
+                firstName = firstName,
+                lastName = lastName,
+                phoneNo = phoneNo,
+                email = email,
+                testerId = testerId,
+                testResult = testResult,
+                testType = testType,
+                passType = passType,
+                labelColor = labelColor,
+                foregroundColor = foregroundColor,
+                backgroundColor = backgroundColor,
+                save = true
+            )
+        )
 
-            it
-        }
+        return null
     }
 
-    open fun updatePass(updatePassRequest: UpdatePassRequest) =
-        updatePass
-            .execute(
-                passSigningInfo = passSigningInfo(),
-                serialNumber = updatePassRequest.serialNumber,
-                issueStatus = IssueStatus.ISSUED,
-                testResult = updatePassRequest.testResult,
-                validUntil = updatePassRequest.validUntil
-            )?.let {
-                notifyAllDevicesWithInstalledSerialNumber.execute(updatePassRequest.serialNumber)
+    open fun updatePass(updatePassRequest: UpdatePassRequest): PassInfoEnvelope? {
+        val result = findPassInfoEnvelope.execute(updatePassRequest.serialNumber)
 
-                it.passInfoEnvelope
-            }
+        if (result != null)
+            passCommandProcessor.addCommand(
+                UpdatePassCommand(
+                    updatePass = updatePass,
+                    notifyAllDevicesWithInstalledSerialNumber = notifyAllDevicesWithInstalledSerialNumber,
+                    serialNumber = updatePassRequest.serialNumber,
+                    key = getEncryptionKey.execute(IdType.SERIALNUMBER, updatePassRequest.serialNumber),
+                    issueStatus = IssueStatus.ISSUED,
+                    testResult = updatePassRequest.testResult,
+                    validUntil = updatePassRequest.validUntil
+                )
+            )
 
-
-    @Value("classpath:certs/pass.p12")
-    private lateinit var passKeystore: Resource
-
-    @Value("classpath:certs/AppleWWDRCA.cer")
-    private lateinit var appleWWDRCA: Resource
-
-    private fun passSigningInfo() = PassSigningInfo(
-        keystore = passKeystore.inputStream,
-        keystorePassword = contagioProperties.pass.keystorePassword,
-        appleWWDRCA = appleWWDRCA.inputStream
-    )
+        return result
+    }
 
 
     @Value("classpath:certs/contagio-sign.p12")

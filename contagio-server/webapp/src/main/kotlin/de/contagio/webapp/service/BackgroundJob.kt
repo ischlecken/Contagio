@@ -3,15 +3,12 @@
 package de.contagio.webapp.service
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 
 private var logger = LoggerFactory.getLogger(BackgroundJob::class.java)
 
 abstract class BackgroundJob {
     private var job: Job? = null
-    private val mutex = Mutex()
 
     abstract suspend fun process()
 
@@ -23,9 +20,6 @@ abstract class BackgroundJob {
                 } catch (ex: CancellationException) {
                     logger.debug(ex.message)
                 } finally {
-                    mutex.withLock {
-                        job = null
-                    }
                     backgroundJobStopped()
                 }
             }
@@ -33,15 +27,15 @@ abstract class BackgroundJob {
     }
 
     fun stop() {
-        if (job != null)
+        if (isRunning())
             runBlocking {
-                mutex.withLock {
-                    if (job != null)
-                        job!!.cancel("stop BackgroundJob...")
-                }
+                job!!.cancel("stop BackgroundJob...")
+                job!!.join()
+
+                job = null
             }
     }
 
     fun isRunning() =
-        job != null
+        job != null && job!!.isActive
 }

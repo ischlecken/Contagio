@@ -1,8 +1,11 @@
 package de.contagio.webapp.config
 
+import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
+import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import de.contagio.webapp.service.BackgroundProcessingService
-import de.contagio.webapp.service.PassService
+import de.contagio.webapp.service.PassCommandProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,8 +20,17 @@ open class BackgroundProcessingConfig {
     @ConditionalOnProperty(value = ["contagio.scheduler.enabled"], matchIfMissing = true, havingValue = "true")
     open fun backgroundProcessingService(
         passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
-        passService: PassService
+        passCommandProcessor: PassCommandProcessor,
+        getEncryptionKey: IGetEncryptionKey,
+        notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
+        updatePass: UpdatePass
     ): BackgroundProcessingService {
-        return BackgroundProcessingService(passInfoEnvelopeRepository, passService)
+        return BackgroundProcessingService(
+            passInfoEnvelopeRepository,
+            passCommandProcessor,
+            getEncryptionKey,
+            notifyAllDevicesWithInstalledSerialNumber,
+            updatePass
+        )
     }
 }
