@@ -3,7 +3,6 @@ package de.contagio.webapp.service
 import de.contagio.core.domain.entity.ExpirePassCommand
 import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.port.IGetEncryptionKey
-import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
@@ -53,10 +52,10 @@ open class BackgroundProcessingService(
 
                 passCommandProcessor.addCommand(
                     ExpirePassCommand(
+                        getEncryptionKey,
                         notifyAllDevicesWithInstalledSerialNumber,
                         updatePass,
-                        passInfoEnvelope.serialNumber,
-                        getEncryptionKey.execute(IdType.SERIALNUMBER, passInfoEnvelope.serialNumber)
+                        passInfoEnvelope.serialNumber
                     )
                 )
             }

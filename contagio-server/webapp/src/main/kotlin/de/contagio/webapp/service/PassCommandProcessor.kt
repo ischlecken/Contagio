@@ -28,6 +28,8 @@ open class PassCommandProcessor(
                 commands.add(cmd)
             }
         }
+
+        logger.debug("addCommand($cmd)")
     }
 
     private suspend fun peekCommand(i: Int): PassCommand? {
@@ -38,6 +40,8 @@ open class PassCommandProcessor(
                 result = commands[i]
         }
 
+        logger.debug("peekCommand($i): $result")
+
         return result
     }
 
@@ -46,6 +50,8 @@ open class PassCommandProcessor(
             if (commands.size > 0 && i < commands.size)
                 commands.removeAt(i)
         }
+
+        logger.debug("removeCommand($i)")
     }
 
     override suspend fun process() {
@@ -60,8 +66,9 @@ open class PassCommandProcessor(
 
                 if (cmd?.execute(passSigningInfo()) == true)
                     removeCommand(i)
+                else
+                    i++
 
-                i++
             } while (cmd != null)
 
             logger.debug("CommandProcessor ping {${Thread.currentThread().name}}")

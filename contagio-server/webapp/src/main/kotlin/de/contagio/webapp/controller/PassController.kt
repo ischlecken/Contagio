@@ -6,7 +6,6 @@ import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
-import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.core.usecase.UrlBuilder
@@ -66,26 +65,34 @@ open class PassController(
         @RequestParam command: String
     ): String {
 
-        val key = getEncryptionKey.execute(IdType.SERIALNUMBER, serialnumber)
-
         when (command) {
             "delete" -> passCommandProcessor.addCommand(
-                DeletePassCommand(deletePassInfoEnvelope, serialnumber, key)
+                DeletePassCommand(deletePassInfoEnvelope, serialnumber)
             )
             "expire" -> passCommandProcessor.addCommand(
-                ExpirePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber, key)
+                ExpirePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "revoke" -> passCommandProcessor.addCommand(
-                RevokePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber, key)
+                RevokePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "issue" -> passCommandProcessor.addCommand(
-                IssuePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber, key)
+                IssuePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "negative" -> passCommandProcessor.addCommand(
-                NegativePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber, key)
+                NegativePassCommand(
+                    getEncryptionKey,
+                    notifyAllDevicesWithInstalledSerialNumber,
+                    updatePass,
+                    serialnumber
+                )
             )
             "positive" -> passCommandProcessor.addCommand(
-                PositivePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber, key)
+                PositivePassCommand(
+                    getEncryptionKey,
+                    notifyAllDevicesWithInstalledSerialNumber,
+                    updatePass,
+                    serialnumber
+                )
             )
         }
 

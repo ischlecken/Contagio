@@ -43,6 +43,7 @@
             <td>
               <form method="post" id="commandform">
                 <input type="hidden" name="serialnumber" th:value="${p.serialNumber}"/>
+
                 <div class="btn-group">
                   <button class="btn btn-danger deletecommand"><span th:title="#{command.delete}"><i
                     class="fas fa-trash-alt"></i></span>
@@ -70,8 +71,6 @@
                   </th:block>
                 </div>
               </form>
-
-
             </td>
           </tr>
           </tbody>

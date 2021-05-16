@@ -19,6 +19,7 @@
 	<logger name="org.thymeleaf.extras.springsecurity5" level="DEBUG" />
 
 	<logger name="de.contagio" level="DEBUG" />
+	<logger name="de.contagio.core.usecase.ContagioPassTemplate" level="OFF" />
 
 </configuration>
 

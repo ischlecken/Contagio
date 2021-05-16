@@ -4,7 +4,6 @@ import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.ISetEncryptionKey
-import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.CreatePass
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.SignatureBuilder
@@ -108,10 +107,10 @@ open class PassService(
         if (result != null)
             passCommandProcessor.addCommand(
                 UpdatePassCommand(
-                    updatePass = updatePass,
+                    getEncryptionKey,
                     notifyAllDevicesWithInstalledSerialNumber = notifyAllDevicesWithInstalledSerialNumber,
+                    updatePass = updatePass,
                     serialNumber = updatePassRequest.serialNumber,
-                    key = getEncryptionKey.execute(IdType.SERIALNUMBER, updatePassRequest.serialNumber),
                     issueStatus = IssueStatus.ISSUED,
                     testResult = updatePassRequest.testResult,
                     validUntil = updatePassRequest.validUntil
