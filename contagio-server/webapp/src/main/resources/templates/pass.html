@@ -30,7 +30,9 @@
           </tr>
           </thead>
           <tbody>
-          <tr th:each="p : ${passInfo.content}">
+          <tr th:each="p : ${passInfo.content}"
+              th:classappend="${unlockedSerialNumbers.contains(p.serialNumber)} ? 'unlocked' : ''"
+          >
             <td>
               <a th:title="#{pass.opendetails.title}" title="Passdetails öffnen"
                  th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.serialNumber}"></a>

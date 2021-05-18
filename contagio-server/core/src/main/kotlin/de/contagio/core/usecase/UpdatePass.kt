@@ -11,19 +11,18 @@ class UpdatePass(
     private val saveEncryptedPayload: ISaveEncryptedPayload,
     private val saveRawEncryptedPayload: ISaveRawEncryptedPayload,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
-    private val getEncryptionKey: IGetEncryptionKey,
-    private val urlBuilder: UrlBuilder
+    private val urlBuilder: UrlBuilder,
+    private val passSigningInfo: PassSigningInfo
 ) {
 
     fun execute(
-        passSigningInfo: PassSigningInfo,
+        authToken: String?,
         serialNumber: String,
         testResult: TestResultType?,
         issueStatus: IssueStatus?,
         validUntil: Instant?
     ): UpdatePassResponse? {
 
-        val authToken = getEncryptionKey.execute(IdType.SERIALNUMBER, serialNumber)
         val passInfoEnvelope = findPassInfoEnvelope.execute(serialNumber)
         val testerTeststation = searchTesterWithTeststation.execute(passInfoEnvelope?.testerId)
         val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)

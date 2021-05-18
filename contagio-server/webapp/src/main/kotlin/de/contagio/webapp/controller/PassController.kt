@@ -6,6 +6,7 @@ import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.core.usecase.UrlBuilder
@@ -34,19 +35,22 @@ open class PassController(
 ) {
 
     @GetMapping("/pass")
-    open fun home(
-        model: Model,
-        pageable: Pageable
-    ): String {
-        model.addAttribute("pageType", "pass")
-        model.addAttribute(
-            "passInfo",
-            findAllPassInfoEnvelope.execute(
-                pageable
-                    .toPageRequest()
-                    .copy(sort = defaultSort)
-            )
+    open fun home(model: Model, pageable: Pageable): String {
+
+        val passes = findAllPassInfoEnvelope.execute(
+            pageable.toPageRequest().copy(sort = defaultSort)
         )
+
+        val unlockedSerialNumbers = mutableListOf<String>()
+        passes.content.forEach {pie->
+            getEncryptionKey.execute(IdType.SERIALNUMBER, pie.serialNumber)?.apply {
+                unlockedSerialNumbers.add(pie.serialNumber)
+            }
+        }
+
+        model.addAttribute("pageType", "pass")
+        model.addAttribute("passInfo", passes)
+        model.addAttribute("unlockedSerialNumbers", unlockedSerialNumbers)
         model.addAttribute(
             "breadcrumbinfo",
             listOf(
@@ -54,6 +58,9 @@ open class PassController(
                 Breadcrumb("PASS", urlBuilder.passURL, true),
             )
         )
+
+        if (passCommandProcessor.isProcessing)
+            model.addAttribute("refreshPage", true)
 
         return "pass"
     }
@@ -70,17 +77,16 @@ open class PassController(
                 DeletePassCommand(deletePassInfoEnvelope, serialnumber)
             )
             "expire" -> passCommandProcessor.addCommand(
-                ExpirePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
+                ExpirePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "revoke" -> passCommandProcessor.addCommand(
-                RevokePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
+                RevokePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "issue" -> passCommandProcessor.addCommand(
-                IssuePassCommand(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
+                IssuePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)
             )
             "negative" -> passCommandProcessor.addCommand(
                 NegativePassCommand(
-                    getEncryptionKey,
                     notifyAllDevicesWithInstalledSerialNumber,
                     updatePass,
                     serialnumber
@@ -88,14 +94,12 @@ open class PassController(
             )
             "positive" -> passCommandProcessor.addCommand(
                 PositivePassCommand(
-                    getEncryptionKey,
                     notifyAllDevicesWithInstalledSerialNumber,
                     updatePass,
                     serialnumber
                 )
             )
         }
-
 
         return "redirect:/pass"
     }

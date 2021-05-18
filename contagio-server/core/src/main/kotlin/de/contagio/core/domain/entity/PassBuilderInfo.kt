@@ -1,13 +1,13 @@
 package de.contagio.core.domain.entity
 
 import de.brendamour.jpasskit.PKPass
-import java.io.InputStream
 
 
+@Suppress("ArrayInDataClass")
 data class PassSigningInfo(
-    val keystore: InputStream,
+    val keystore: ByteArray,
     val keystorePassword: String,
-    val appleWWDRCA: InputStream
+    val appleWWDRCA: ByteArray
 )
 
 

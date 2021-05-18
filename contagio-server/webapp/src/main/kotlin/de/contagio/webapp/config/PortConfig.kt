@@ -1,15 +1,20 @@
 package de.contagio.webapp.config
 
 import de.contagio.core.domain.entity.EncryptedPayload
+import de.contagio.core.domain.entity.PassSigningInfo
 import de.contagio.core.domain.port.*
+import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.*
 import de.contagio.webapp.service.AuthTokenService
 import de.contagio.webapp.service.PushNotificationService
 import de.contagio.webapp.util.toPageRequest
 import de.contagio.webapp.util.toPagedResult
+import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.Resource
 import java.util.*
 
 private var logger = LoggerFactory.getLogger(PortConfig::class.java)
@@ -256,4 +261,18 @@ open class PortConfig(
                 }
         }
     }
+
+
+    @Value("classpath:certs/pass.p12")
+    private lateinit var passKeystore: Resource
+
+    @Value("classpath:certs/AppleWWDRCA.cer")
+    private lateinit var appleWWDRCA: Resource
+
+    @Bean
+    open fun passSigningInfo(contagioProperties:ContagioProperties) = PassSigningInfo(
+        keystore = IOUtils.toByteArray(passKeystore.inputStream),
+        keystorePassword = contagioProperties.pass.keystorePassword,
+        appleWWDRCA = IOUtils.toByteArray(appleWWDRCA.inputStream)
+    )
 }

@@ -90,8 +90,8 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-6" th:if="${extendedPassInfo.passInfo}">
+      <div class="row" th:if="${extendedPassInfo.passInfo}">
+        <div class="col-6">
           <div class="form-group">
             <label for="passId" th:text="#{field.passid}">PassId</label>
             <input class="form-control" readonly name="passId" id="passId" th:value="${extendedPassInfo.passInfo.passId}">
@@ -99,13 +99,19 @@
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label for="passId" th:text="#{field.version}">Version</label>
-            <input class="form-control" readonly name="version" id="version" th:value="${extendedPassInfo.passInfoEnvelope.version}">
+            <label for="imageId" th:text="#{field.imageid}">ImageId</label>
+            <input class="form-control" readonly name="imageId" id="imageId" th:value="${extendedPassInfo.passInfo.imageId}">
           </div>
         </div>
       </div>
 
       <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="passId" th:text="#{field.version}">Version</label>
+            <input class="form-control" readonly name="version" id="version" th:value="${extendedPassInfo.passInfoEnvelope.version}">
+          </div>
+        </div>
         <div class="col-6">
           <div class="form-group">
             <label for="modified" th:text="#{field.modified}">Geändert am</label>
@@ -130,6 +136,7 @@
           </div>
         </div>
       </div>
+
       <div class="row" th:if="${extendedPassInfo.passInfo}">
         <div class="col-6">
           <div class="form-group">

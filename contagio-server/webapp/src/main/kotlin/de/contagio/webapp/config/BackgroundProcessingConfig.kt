@@ -28,7 +28,6 @@ open class BackgroundProcessingConfig {
         return BackgroundProcessingService(
             passInfoEnvelopeRepository,
             passCommandProcessor,
-            getEncryptionKey,
             notifyAllDevicesWithInstalledSerialNumber,
             updatePass
         )

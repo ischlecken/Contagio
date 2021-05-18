@@ -102,7 +102,7 @@ open class CreatePassController(
                     ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
             }
             "create" -> {
-                val cpr = passService.createPass(
+                passService.createPass(
                     image,
                     firstName, lastName,
                     phoneNo, email,

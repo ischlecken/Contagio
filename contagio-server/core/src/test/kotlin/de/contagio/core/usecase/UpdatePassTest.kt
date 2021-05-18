@@ -100,14 +100,12 @@ class UpdatePassTest {
                     )
                 }
             ),
-            getEncryptionKey = { _, _ ->
-                authToken
-            },
-            urlBuilder = UrlBuilder("https://blafasel.de")
+            urlBuilder = UrlBuilder("https://blafasel.de"),
+            passSigningInfo = CreatePassTest.passSigningInfo()
         )
 
         val result = updatePass.execute(
-            passSigningInfo = CreatePassTest.passSigningInfo(),
+            authToken = authToken,
             serialNumber = "123456",
             testResult = TestResultType.NEGATIVE,
             validUntil = null,

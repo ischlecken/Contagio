@@ -17,6 +17,7 @@ class CreatePassTest {
         var passInfoId: String? = null
 
         val createPass = CreatePass(
+            passSigningInfo = passSigningInfo(),
             savePassInfoEnvelope = { },
             saveEncryptedPayload = { id, _, key ->
                 logger.debug("saveEncryptedPayload() id=$id key=$key")
@@ -65,7 +66,6 @@ class CreatePassTest {
         )
 
         val cpr = createPass.execute(
-            passSigningInfo = passSigningInfo(),
             teamIdentifier = "xx4V27BGKSLA",
             passTypeIdentifier = "pass.de.contagio.til",
             organisationName = "Contagio - TIL",
@@ -109,8 +109,8 @@ class CreatePassTest {
 
     companion object {
         fun passSigningInfo(): PassSigningInfo {
-            val keystore = CreatePassTest::class.java.getResourceAsStream("/certs/pass.p12")
-            val appleca = CreatePassTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
+            val keystore = IOUtils.toByteArray(CreatePassTest::class.java.getResourceAsStream("/certs/pass.p12"))
+            val appleca = IOUtils.toByteArray(CreatePassTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer"))
 
             return PassSigningInfo(
                 keystore = keystore!!,

@@ -57,8 +57,8 @@ class PassBuilderTest {
     @Test
     fun createPass_expectedValuesAndValid() {
         val img = PassBuilderTest::class.java.getResourceAsStream("/testimg.png")
-        val keystore = PassBuilderTest::class.java.getResourceAsStream("/certs/pass.p12")
-        val appleca = PassBuilderTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer")
+        val keystore = IOUtils.toByteArray(PassBuilderTest::class.java.getResourceAsStream("/certs/pass.p12"))
+        val appleca = IOUtils.toByteArray(PassBuilderTest::class.java.getResourceAsStream("/certs/AppleWWDRCA.cer"))
 
         val passBuilderInfo = PassBuilderInfo(
             passSigningInfo = PassSigningInfo(

@@ -12,14 +12,14 @@ class CreatePass(
     private val saveEncryptedPayload: ISaveEncryptedPayload,
     private val saveRawEncryptedPayload: ISaveRawEncryptedPayload,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
-    private val urlBuilder: UrlBuilder
+    private val urlBuilder: UrlBuilder,
+    private val passSigningInfo: PassSigningInfo
 ) {
 
     private val uidGenerator = UIDGenerator()
     private val authTokenGenerator = AuthTokenGenerator()
 
     fun execute(
-        passSigningInfo: PassSigningInfo,
         teamIdentifier: String,
         passTypeIdentifier: String,
         organisationName: String,

@@ -12,6 +12,7 @@ import de.brendamour.jpasskit.signing.PKFileBasedSigningUtil
 import de.brendamour.jpasskit.signing.PKSigningInformationUtil
 import de.contagio.core.domain.entity.*
 import org.slf4j.LoggerFactory
+import java.io.ByteArrayInputStream
 import java.net.URL
 import java.time.Instant
 import java.time.ZoneId
@@ -39,9 +40,9 @@ class PassBuilder(private val passBuilderInfo: PassBuilderInfo, private val urlB
 
                 val pkSigningInformation =
                     PKSigningInformationUtil().loadSigningInformationFromPKCS12AndIntermediateCertificate(
-                        passBuilderInfo.passSigningInfo.keystore,
+                        ByteArrayInputStream(passBuilderInfo.passSigningInfo.keystore),
                         passBuilderInfo.passSigningInfo.keystorePassword,
-                        passBuilderInfo.passSigningInfo.appleWWDRCA
+                        ByteArrayInputStream(passBuilderInfo.passSigningInfo.appleWWDRCA)
                     )
 
                 val pass =

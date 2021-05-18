@@ -2,7 +2,6 @@ package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.ExpirePassCommand
 import de.contagio.core.domain.entity.IssueStatus
-import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
@@ -19,7 +18,6 @@ private const val CHECKINTERVAL_IN_HOURS = 20
 open class BackgroundProcessingService(
     private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
     private val passCommandProcessor: PassCommandProcessor,
-    private val getEncryptionKey: IGetEncryptionKey,
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass
 ) : BackgroundJob() {
@@ -52,7 +50,6 @@ open class BackgroundProcessingService(
 
                 passCommandProcessor.addCommand(
                     ExpirePassCommand(
-                        getEncryptionKey,
                         notifyAllDevicesWithInstalledSerialNumber,
                         updatePass,
                         passInfoEnvelope.serialNumber

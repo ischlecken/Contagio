@@ -2,7 +2,6 @@ package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
-import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.ISetEncryptionKey
 import de.contagio.core.usecase.CreatePass
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
@@ -23,7 +22,6 @@ open class PassService(
     private val contagioProperties: ContagioProperties,
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val setEncryptionKey: ISetEncryptionKey,
-    private val getEncryptionKey: IGetEncryptionKey,
     private val createPass: CreatePass,
     private val updatePass: UpdatePass,
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
@@ -52,7 +50,6 @@ open class PassService(
 
         if (!save)
             return createPass.execute(
-                passSigningInfo = passCommandProcessor.passSigningInfo(),
                 teamIdentifier = contagioProperties.pass.teamIdentifier,
                 passTypeIdentifier = contagioProperties.pass.passTypeId,
                 organisationName = contagioProperties.pass.organisationName,
@@ -107,7 +104,6 @@ open class PassService(
         if (result != null)
             passCommandProcessor.addCommand(
                 UpdatePassCommand(
-                    getEncryptionKey,
                     notifyAllDevicesWithInstalledSerialNumber = notifyAllDevicesWithInstalledSerialNumber,
                     updatePass = updatePass,
                     serialNumber = updatePassRequest.serialNumber,
