@@ -42,7 +42,7 @@ open class PassController(
         )
 
         val unlockedSerialNumbers = mutableListOf<String>()
-        passes.content.forEach {pie->
+        passes.content.forEach { pie ->
             getEncryptionKey.execute(IdType.SERIALNUMBER, pie.serialNumber)?.apply {
                 unlockedSerialNumbers.add(pie.serialNumber)
             }
@@ -74,7 +74,7 @@ open class PassController(
 
         when (command) {
             "delete" -> passCommandProcessor.addCommand(
-                DeletePassCommand(deletePassInfoEnvelope, serialnumber)
+                DeletePassCommand(notifyAllDevicesWithInstalledSerialNumber, deletePassInfoEnvelope, serialnumber)
             )
             "expire" -> passCommandProcessor.addCommand(
                 ExpirePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)

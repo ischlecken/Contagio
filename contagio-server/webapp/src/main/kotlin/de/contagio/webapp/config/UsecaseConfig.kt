@@ -66,10 +66,9 @@ open class UsecaseConfig {
     @Bean
     open fun searchPassesForDevice(
         findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-        findPassInfoEnvelope: IFindPassInfoEnvelope,
-        findEncryptedPayload: IFindEncryptedPayload,
-        getEncryptionKey: IGetEncryptionKey
-    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPassInfoEnvelope, findEncryptedPayload, getEncryptionKey)
+        findPendingSerialNumbers: IFindPendingSerialNumbers,
+        findPassInfoEnvelope: IFindPassInfoEnvelope
+    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPendingSerialNumbers, findPassInfoEnvelope)
 
     @Bean
     open fun urlBuilder(contagioProperties: ContagioProperties): UrlBuilder {

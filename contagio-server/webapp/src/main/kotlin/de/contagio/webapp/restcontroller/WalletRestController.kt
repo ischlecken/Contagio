@@ -68,20 +68,16 @@ open class WalletRestController(
 
         logger.debug("getPasses(deviceLibraryIdentifier=${deviceLibraryIdentifier}, passesUpdatedSince=${passesUpdatedSince})")
 
-        var serialNumbers = searchPassesForDevice.execute(deviceLibraryIdentifier).sortedByDescending {
-            it.updated
-        }
+        val updatedSince = if (passesUpdatedSince != null)
+            Instant.ofEpochSecond(passesUpdatedSince.toLong() + 1)
+        else
+            null
 
-        if (passesUpdatedSince != null) {
-            val updatedSince = Instant.ofEpochSecond(passesUpdatedSince.toLong() + 1)
-            logger.debug("updatedSince=$updatedSince")
-
-            serialNumbers = serialNumbers.filter {
-                logger.debug("  updated=${it.updated}")
-
-                it.updated.isAfter(updatedSince)
+        val serialNumbers = searchPassesForDevice
+            .execute(deviceLibraryIdentifier, updatedSince)
+            .sortedByDescending {
+                it.updated
             }
-        }
 
         return if (serialNumbers.isNotEmpty()) {
             ResponseEntity.ok(

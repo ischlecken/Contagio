@@ -2,6 +2,7 @@ package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.PassCommand
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.usecase.PassSerialNumberWithUpdated
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -32,6 +33,27 @@ open class PassCommandProcessor(
         logger.debug("addCommand($cmd)")
     }
 
+    fun getPendingSerialNumbers(): Collection<PassSerialNumberWithUpdated> {
+        val result = mutableSetOf<PassSerialNumberWithUpdated>()
+
+        runBlocking {
+            mutex.withLock {
+                commands.forEach {
+                    result.add(
+                        PassSerialNumberWithUpdated(
+                            it.serialNumber,
+                            it.created
+                        )
+                    )
+                }
+            }
+        }
+
+        logger.debug("getPendingSerialNumbers(): $result")
+
+        return result
+    }
+
     private suspend fun peekCommand(i: Int): PassCommand? {
         var result: PassCommand? = null
 
@@ -39,8 +61,6 @@ open class PassCommandProcessor(
             if (commands.size > 0 && i < commands.size)
                 result = commands[i]
         }
-
-        logger.debug("peekCommand($i): $result")
 
         return result
     }
@@ -50,8 +70,6 @@ open class PassCommandProcessor(
             if (commands.size > 0 && i < commands.size)
                 commands.removeAt(i)
         }
-
-        logger.debug("removeCommand($i)")
     }
 
     override suspend fun process() {
@@ -63,15 +81,17 @@ open class PassCommandProcessor(
             var i = 0
             do {
                 val cmd = peekCommand(i)
+                if (cmd != null) {
+                    val executionSuccessfull = cmd.execute(getEncryptionKey)
 
-                if (cmd?.execute(getEncryptionKey) == true)
-                    removeCommand(i)
-                else
-                    i++
+                    logger.debug("execute cmd for serialNumber ${cmd.serialNumber}:$executionSuccessfull")
 
+                    if (executionSuccessfull)
+                        removeCommand(i)
+                    else
+                        i++
+                }
             } while (cmd != null)
-
-            logger.debug("CommandProcessor ping {${Thread.currentThread().name}}")
         }
 
         logger.debug("CommandProcessor ends... {${Thread.currentThread().name}}")

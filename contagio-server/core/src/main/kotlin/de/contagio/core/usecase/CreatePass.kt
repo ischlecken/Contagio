@@ -20,6 +20,7 @@ class CreatePass(
     private val authTokenGenerator = AuthTokenGenerator()
 
     fun execute(
+        serialNumber: String,
         teamIdentifier: String,
         passTypeIdentifier: String,
         organisationName: String,
@@ -63,7 +64,7 @@ class CreatePass(
                     teamIdentifier = teamIdentifier,
                     passTypeIdentifier = passTypeIdentifier,
                     organisationName = organisationName,
-                    serialNumber = uidGenerator.generate(),
+                    serialNumber = serialNumber,
                     issueStatus = IssueStatus.CREATED,
                     teststationId = it.teststation.id,
                     testerId = it.tester.id,

@@ -33,10 +33,14 @@
           <tr th:each="p : ${passInfo.content}"
               th:classappend="${unlockedSerialNumbers.contains(p.serialNumber)} ? 'unlocked' : ''"
           >
-            <td>
+            <td th:if="${unlockedSerialNumbers.contains(p.serialNumber)}">
               <a th:title="#{pass.opendetails.title}" title="Passdetails öffnen"
                  th:href="@{/showpass(serialNumber=${p.serialNumber})}" th:text="${p.serialNumber}"></a>
             </td>
+            <td th:unless="${unlockedSerialNumbers.contains(p.serialNumber)}">
+              <span th:text="${p.serialNumber}"></span>
+            </td>
+
             <td th:text="#{issueType.__${p.issueStatus}__}"/>
             <td th:text="#{installationStatus.__${p.passInstallationStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>

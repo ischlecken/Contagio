@@ -66,6 +66,7 @@ class CreatePassTest {
         )
 
         val cpr = createPass.execute(
+            serialNumber = "123-123",
             teamIdentifier = "xx4V27BGKSLA",
             passTypeIdentifier = "pass.de.contagio.til",
             organisationName = "Contagio - TIL",
@@ -103,6 +104,7 @@ class CreatePassTest {
         assertEquals("testType", cpr.pkPass.coupon.headerFields[0].key)
         assertEquals("TESTTYPE_RAPIDTEST", cpr.pkPass.coupon.headerFields[0].value)
 
+        assertEquals("123-123",cpr.passInfoEnvelope.serialNumber)
         assertEquals(cpr.passInfoEnvelope.serialNumber, cpr.pkPass.serialNumber)
         assertEquals(passInfoId, cpr.passInfoEnvelope.passInfoId)
     }

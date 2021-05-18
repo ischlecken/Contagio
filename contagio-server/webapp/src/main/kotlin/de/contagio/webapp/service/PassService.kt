@@ -7,6 +7,7 @@ import de.contagio.core.usecase.CreatePass
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.SignatureBuilder
 import de.contagio.core.usecase.UpdatePass
+import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import org.slf4j.LoggerFactory
@@ -27,6 +28,8 @@ open class PassService(
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
     private val passCommandProcessor: PassCommandProcessor
 ) {
+
+    private val uidGeneration = UIDGenerator()
 
     open fun createPass(
         image: MultipartFile,
@@ -50,6 +53,7 @@ open class PassService(
 
         if (!save)
             return createPass.execute(
+                serialNumber = uidGeneration.generate(),
                 teamIdentifier = contagioProperties.pass.teamIdentifier,
                 passTypeIdentifier = contagioProperties.pass.passTypeId,
                 organisationName = contagioProperties.pass.organisationName,
@@ -74,6 +78,7 @@ open class PassService(
             CreatePassCommand(
                 setEncryptionKey = setEncryptionKey,
                 createPass = createPass,
+                serialNumber = uidGeneration.generate(),
                 teamIdentifier = contagioProperties.pass.teamIdentifier,
                 passTypeIdentifier = contagioProperties.pass.passTypeId,
                 organisationName = contagioProperties.pass.organisationName,

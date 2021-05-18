@@ -15,22 +15,46 @@ import java.time.temporal.ChronoUnit
 private var logger = LoggerFactory.getLogger(PassCommand::class.java)
 
 sealed class PassCommand(
+    val serialNumber: String,
     val created: Instant = Instant.now()
 ) {
+    var notified: Boolean = false
+
+    protected fun getKey(
+        getEncryptionKey: IGetEncryptionKey?,
+        notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber
+    ): String? {
+
+        if (getEncryptionKey == null)
+            return null
+
+        val key = getEncryptionKey.execute(IdType.SERIALNUMBER, serialNumber)
+        if (key == null && !notified) {
+            notified = true
+
+            notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
+        }
+
+        return key
+    }
+
     abstract fun execute(getEncryptionKey: IGetEncryptionKey? = null): Boolean
 }
 
 class DeletePassCommand(
+    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("DeletePassCommand.execute($serialNumber)")
 
-        deletePassInfoEnvelope.execute(serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
+        if (key != null)
+            deletePassInfoEnvelope.execute(serialNumber)
 
-        return true
+        return key != null
     }
 
     override fun toString() =
@@ -40,13 +64,13 @@ class DeletePassCommand(
 class ExpirePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("ExpirePassCommand.execute($serialNumber)")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(
@@ -69,13 +93,13 @@ class ExpirePassCommand(
 class RevokePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("RevokePassCommand.execute()")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(
@@ -98,12 +122,12 @@ class RevokePassCommand(
 class IssuePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("IssuePassCommand.execute()")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(
@@ -126,15 +150,13 @@ class IssuePassCommand(
 class NegativePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String
-) : PassCommand() {
-
-    private var notified: Boolean = false
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("NegativePassCommand.execute($serialNumber)")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(
@@ -146,10 +168,6 @@ class NegativePassCommand(
                 )?.also {
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
-        else if (!notified) {
-            notified = true
-            notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-        }
 
         return key != null
     }
@@ -161,15 +179,13 @@ class NegativePassCommand(
 class PositivePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String
-) : PassCommand() {
-
-    private var notified: Boolean = false
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("PositivePassCommand.execute()")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(
@@ -181,10 +197,6 @@ class PositivePassCommand(
                 )?.also {
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
-        else if (!notified) {
-            notified = true
-            notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-        }
 
         return key != null
     }
@@ -196,8 +208,8 @@ class PositivePassCommand(
 
 class InstalledPassCommand(
     private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("InstalledPassCommand.execute()")
@@ -220,8 +232,8 @@ class InstalledPassCommand(
 
 class RemovedPassCommand(
     private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
-    private val serialNumber: String
-) : PassCommand() {
+    serialNumber: String
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("InstalledPassCommand.execute()")
@@ -245,6 +257,7 @@ class RemovedPassCommand(
 class CreatePassCommand(
     private val setEncryptionKey: ISetEncryptionKey,
     private val createPass: CreatePass,
+    serialNumber: String,
     private val teamIdentifier: String,
     private val passTypeIdentifier: String,
     private val organisationName: String,
@@ -263,12 +276,13 @@ class CreatePassCommand(
     private val foregroundColor: String,
     private val backgroundColor: String,
     private val save: Boolean
-) : PassCommand() {
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("CreatePassCommand.execute()")
 
         createPass.execute(
+            serialNumber = serialNumber,
             teamIdentifier = teamIdentifier,
             passTypeIdentifier = passTypeIdentifier,
             organisationName = organisationName,
@@ -305,16 +319,16 @@ class CreatePassCommand(
 class UpdatePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
-    private val serialNumber: String,
+    serialNumber: String,
     private val issueStatus: IssueStatus,
     private val testResult: TestResultType?,
     private val validUntil: Instant?
-) : PassCommand() {
+) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): Boolean {
         logger.debug("UpdatePassCommand.execute()")
 
-        val key = getEncryptionKey?.execute(IdType.SERIALNUMBER,serialNumber)
+        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
             updatePass
                 .execute(

@@ -1,34 +1,45 @@
 package de.contagio.core.usecase
 
-import de.contagio.core.domain.entity.EncryptedPayload
-import de.contagio.core.domain.entity.PassInfo
-import de.contagio.core.domain.port.*
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.IFindPendingSerialNumbers
+import de.contagio.core.domain.port.IFindRegisteredSerialNumbers
+import org.slf4j.LoggerFactory
 import java.time.Instant
+
+private var logger = LoggerFactory.getLogger(SearchPassesForDevice::class.java)
 
 data class PassSerialNumberWithUpdated(val serialNumber: String, val updated: Instant)
 
 class SearchPassesForDevice(
     private val findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
-    private val findEncryptedPayload: IFindEncryptedPayload,
-    private val getEncryptionKey: IGetEncryptionKey
+    private val findPendingSerialNumbers: IFindPendingSerialNumbers,
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope
 ) {
-    fun execute(deviceLibraryIdentifier: String): Collection<PassSerialNumberWithUpdated> {
-        val result = mutableListOf<PassSerialNumberWithUpdated>()
+    fun execute(deviceLibraryIdentifier: String, updatedSince: Instant?): Collection<PassSerialNumberWithUpdated> {
+        val serialNumbers = mutableListOf<PassSerialNumberWithUpdated>()
 
         findRegisteredSerialNumbers.execute(deviceLibraryIdentifier).forEach {
             findPassInfoEnvelope.execute(it)?.let { passInfoEnvelope ->
-                findEncryptedPayload.execute(passInfoEnvelope.passInfoId)?.let { encryptedPassInfo ->
-                    val key = getEncryptionKey.execute(IdType.SERIALNUMBER, passInfoEnvelope.serialNumber)
-                    val passInfo = encryptedPassInfo.getObject(key, PassInfo::class.java) as? PassInfo
-                    val encryptedPass = findEncryptedPayload.execute(passInfo?.passId) as? EncryptedPayload
-
-                    if (encryptedPass != null)
-                        result.add(PassSerialNumberWithUpdated(passInfoEnvelope.serialNumber, encryptedPass.updated))
-                }
+                serialNumbers.add(
+                    PassSerialNumberWithUpdated(
+                        passInfoEnvelope.serialNumber,
+                        passInfoEnvelope.updated
+                    )
+                )
             }
         }
 
-        return result
+        serialNumbers.addAll(findPendingSerialNumbers.execute())
+
+        return if (updatedSince != null) {
+            logger.debug("updatedSince=$updatedSince")
+
+            serialNumbers.filter {
+                logger.debug("  updated=${it.updated}")
+
+                it.updated.isAfter(updatedSince)
+            }
+        } else
+            serialNumbers
     }
 }
