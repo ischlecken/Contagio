@@ -17,6 +17,7 @@ class UrlBuilder(private val baseUrl: String) {
 
     val homeURL = baseUrl
     val passURL = "$baseUrl/pass"
+    val passUpdateLogURL = "$baseUrl/passupdatelog"
     val showpassURL = "$baseUrl/showpass"
     val createpassURL = "$baseUrl/createpass"
     val testerURL = "$baseUrl/tester"

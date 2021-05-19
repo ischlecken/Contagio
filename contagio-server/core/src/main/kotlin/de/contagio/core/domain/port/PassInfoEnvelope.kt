@@ -1,6 +1,7 @@
 package de.contagio.core.domain.port
 
 import de.contagio.core.domain.entity.PassInfoEnvelope
+import de.contagio.core.domain.entity.PassUpdateLog
 
 fun interface IFindPassInfoEnvelope {
     fun execute(id:String): PassInfoEnvelope?
@@ -16,4 +17,11 @@ fun interface IFindAllPassInfoEnvelope {
 
 fun interface IDeletePassInfoEnvelope {
     fun execute(id:String?)
+}
+
+fun interface IFindAllPassUpdateLog {
+    fun execute(pageRequest: PageRequest): PagedResult<PassUpdateLog>
+}
+fun interface ISavePassUpdateLog {
+    fun execute(passUpdateLog: PassUpdateLog)
 }

@@ -213,8 +213,8 @@ class InstalledPassCommand(
         updateOnlyPassInfoEnvelope
             .execute(serialNumber) {
                 it.copy(
-                    passInstallationStatus = PassInstallationStatus.INSTALLED,
-                    passInstalled = Instant.now(),
+                    deviceInstallationStatus = DeviceInstallationStatus.INSTALLED,
+                    deviceUpdated = Instant.now(),
                 )
             }
 
@@ -237,9 +237,8 @@ class RemovedPassCommand(
         updateOnlyPassInfoEnvelope
             .execute(serialNumber) {
                 it.copy(
-                    passInstallationStatus = PassInstallationStatus.REMOVED,
-                    passInstalled = Instant.now(),
-                    passRemoved = Instant.now()
+                    deviceInstallationStatus = DeviceInstallationStatus.REMOVED,
+                    deviceUpdated = Instant.now()
                 )
             }
 

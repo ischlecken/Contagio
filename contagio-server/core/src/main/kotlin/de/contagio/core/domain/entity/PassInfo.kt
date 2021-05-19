@@ -17,27 +17,10 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED {
-        override fun isActive() = true
-    },
-    ISSUED {
-        override fun isActive() = true
-    },
-    EXPIRED {
-        override fun isActive() = false
-    },
-    REVOKED {
-        override fun isActive() = false
-    },
-    REFUSED {
-        override fun isActive() = false
-    };
-
-    abstract fun isActive(): Boolean
+    CREATED, ISSUED, EXPIRED, REVOKED, REJECTED
 }
 
-
-enum class PassInstallationStatus {
+enum class DeviceInstallationStatus {
     PENDING, INSTALLED, REMOVED
 }
 
@@ -65,12 +48,12 @@ data class PassInfoEnvelope(
     val teststationId: String,
     val testerId: String,
     val issueStatus: IssueStatus,
+    val deviceIssueStatus: IssueStatus? = null,
+    val deviceInstallationStatus: DeviceInstallationStatus = DeviceInstallationStatus.PENDING,
     val version: Int = 0,
     val updated: Instant = Instant.now(),
     val validUntil: Instant? = null,
-    val passInstallationStatus: PassInstallationStatus = PassInstallationStatus.PENDING,
-    val passInstalled: Instant? = null,
-    val passRemoved: Instant? = null
+    val deviceUpdated: Instant? = null
 )
 
 @Suppress("ArrayInDataClass")
@@ -80,4 +63,11 @@ data class ExtendedPassInfo(
     val passInfo: PassInfo? = null,
     val pass: ByteArray? = null,
     val passUpdated: Instant? = null
+)
+
+data class PassUpdateLog(
+    val serialNumber: String,
+    val action: String,
+    val message: String,
+    val created: Instant = Instant.now()
 )

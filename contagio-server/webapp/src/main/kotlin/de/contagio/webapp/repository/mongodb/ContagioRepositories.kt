@@ -10,6 +10,8 @@ interface PassInfoEnvelopeRepository : MongoRepository<PassInfoEnvelope, String>
 
 }
 
+interface PassUpdateLogRepository : MongoRepository<PassUpdateLog, String>
+
 interface EncryptedPayloadRepository : MongoRepository<EncryptedPayload, String>
 interface TesterRepository : MongoRepository<Tester, String>
 interface TeststationRepository : MongoRepository<Teststation, String>

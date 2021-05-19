@@ -47,6 +47,11 @@
             th:classappend="${pageType == 'deviceinfo'} ? 'active' : ''">
           <a class="nav-link" href="/deviceinfo" th:text="#{menu.link.deviceinfo}">Device Info</a>
         </li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')"
+            class="nav-item"
+            th:classappend="${pageType == 'passupdatelog'} ? 'active' : ''">
+          <a class="nav-link" href="/passupdatelog" th:text="#{menu.link.passupdatelog}">Pass Update Log</a>
+        </li>
       </ul>
       <div class="navbar-text userinfo"><i class="fas fa-user"></i><span class="username" sec:authentication="name"></span></div>
     </div>

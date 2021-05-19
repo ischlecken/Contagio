@@ -229,4 +229,17 @@ open class PortConfig(
         appleWWDRCA = IOUtils.toByteArray(appleWWDRCA.inputStream)
     )
 
+
+    @Bean
+    open fun savePassUpdateLog(passUpdateLogRepository: PassUpdateLogRepository) = ISavePassUpdateLog {
+        passUpdateLogRepository.save(it)
+    }
+
+
+    @Bean
+    open fun findAllPassUpdateLog(passUpdateLogRepository: PassUpdateLogRepository) = IFindAllPassUpdateLog {
+        passUpdateLogRepository.findAll(it.toPageRequest()).toPagedResult()
+    }
+
+
 }

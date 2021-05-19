@@ -1,7 +1,9 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.PassCommand
+import de.contagio.core.domain.entity.PassUpdateLog
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.ISavePassUpdateLog
 import de.contagio.core.usecase.PassSerialNumberWithUpdated
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -14,7 +16,8 @@ private var logger = LoggerFactory.getLogger(PassCommandProcessor::class.java)
 
 @Service
 open class PassCommandProcessor(
-    private val getEncryptionKey: IGetEncryptionKey
+    private val getEncryptionKey: IGetEncryptionKey,
+    private val savePassUpdateLog: ISavePassUpdateLog
 ) : BackgroundJob() {
 
     private val mutex = Mutex()
@@ -86,9 +89,17 @@ open class PassCommandProcessor(
 
                     logger.debug("execute cmd for serialNumber ${cmd.serialNumber}:$executionSuccessfull")
 
-                    if (executionSuccessfull)
+                    if (executionSuccessfull) {
+                        savePassUpdateLog.execute(
+                            PassUpdateLog(
+                                serialNumber = cmd.serialNumber,
+                                action = cmd.javaClass.simpleName,
+                                message = "Command executed"
+                            )
+                        )
+
                         removeCommand(i)
-                    else
+                    } else
                         i++
                 }
             } while (cmd != null)

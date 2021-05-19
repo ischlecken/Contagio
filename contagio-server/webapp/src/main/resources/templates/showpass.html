@@ -125,14 +125,14 @@
           <div class="form-group">
             <label for="passInstallationStatus" th:text="#{field.installationstatus}">Status der Installation</label>
             <input class="form-control" readonly name="passInstallationStatus" id="passInstallationStatus"
-                   th:value="#{installationStatus.__${extendedPassInfo.passInfoEnvelope.passInstallationStatus}__}">
+                   th:value="#{installationStatus.__${extendedPassInfo.passInfoEnvelope.deviceInstallationStatus}__}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="passInstalled" th:text="#{field.installed}">Installiert am</label>
             <input class="form-control" readonly name="passInstalled" id="passInstalled"
-                   th:value="${{extendedPassInfo.passInfoEnvelope.passInstalled}}">
+                   th:value="${{extendedPassInfo.passInfoEnvelope.deviceUpdated}}">
           </div>
         </div>
       </div>
