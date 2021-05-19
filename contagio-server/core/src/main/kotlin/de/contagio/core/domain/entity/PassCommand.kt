@@ -1,13 +1,9 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.ISetEncryptionKey
 import de.contagio.core.domain.port.IdType
-import de.contagio.core.usecase.CreatePass
-import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
-import de.contagio.core.usecase.UpdateOnlyPassInfoEnvelope
-import de.contagio.core.usecase.UpdatePass
+import de.contagio.core.usecase.*
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -18,7 +14,7 @@ sealed class PassCommand(
     val serialNumber: String,
     val created: Instant = Instant.now()
 ) {
-    var notified: Boolean = false
+    private var notified: Boolean = false
 
     protected fun getKey(
         getEncryptionKey: IGetEncryptionKey?,
@@ -43,7 +39,7 @@ sealed class PassCommand(
 
 class DeletePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
+    private val deletePass: DeletePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
@@ -52,7 +48,7 @@ class DeletePassCommand(
 
         val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
         if (key != null)
-            deletePassInfoEnvelope.execute(serialNumber)
+            deletePass.execute(key, serialNumber)
 
         return key != null
     }

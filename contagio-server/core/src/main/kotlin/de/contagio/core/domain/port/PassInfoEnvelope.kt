@@ -15,5 +15,5 @@ fun interface IFindAllPassInfoEnvelope {
 }
 
 fun interface IDeletePassInfoEnvelope {
-    fun execute(id:String): PassInfoEnvelope?
+    fun execute(id:String?)
 }

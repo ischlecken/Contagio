@@ -3,10 +3,10 @@
 package de.contagio.webapp.controller
 
 import de.contagio.core.domain.entity.*
-import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.IdType
+import de.contagio.core.usecase.DeletePass
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.core.usecase.UrlBuilder
@@ -28,7 +28,7 @@ open class PassController(
     private val findAllPassInfoEnvelope: IFindAllPassInfoEnvelope,
     private val urlBuilder: UrlBuilder,
     private val getEncryptionKey: IGetEncryptionKey,
-    private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
+    private val deletePass: DeletePass,
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val updatePass: UpdatePass,
     private val passCommandProcessor: PassCommandProcessor
@@ -74,7 +74,7 @@ open class PassController(
 
         when (command) {
             "delete" -> passCommandProcessor.addCommand(
-                DeletePassCommand(notifyAllDevicesWithInstalledSerialNumber, deletePassInfoEnvelope, serialnumber)
+                DeletePassCommand(notifyAllDevicesWithInstalledSerialNumber, deletePass, serialnumber)
             )
             "expire" -> passCommandProcessor.addCommand(
                 ExpirePassCommand(notifyAllDevicesWithInstalledSerialNumber, updatePass, serialnumber)

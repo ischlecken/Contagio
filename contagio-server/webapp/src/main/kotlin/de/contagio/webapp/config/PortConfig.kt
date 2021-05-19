@@ -44,15 +44,8 @@ open class PortConfig(
 
     @Bean
     open fun deletePassInfoEnvelope() = IDeletePassInfoEnvelope { id ->
-        val result = passInfoEnvelopeRepository.findById(id)
-
-        if (result.isPresent)
+        if (id != null)
             passInfoEnvelopeRepository.deleteById(id)
-
-        return@IDeletePassInfoEnvelope if (result.isPresent)
-            result.get()
-        else
-            null
     }
 
 
@@ -75,6 +68,12 @@ open class PortConfig(
             result.get()
         else
             null
+    }
+
+    @Bean
+    open fun deleteEncryptedPayload() = IDeleteEncryptedPayload { id ->
+        if (id != null)
+            encryptedPayloadRepository.deleteById(id)
     }
 
     @Bean

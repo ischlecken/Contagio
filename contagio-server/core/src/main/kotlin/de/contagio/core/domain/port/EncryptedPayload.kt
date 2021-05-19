@@ -12,6 +12,10 @@ fun interface ISaveEncryptedPayload {
 }
 
 
+fun interface IDeleteEncryptedPayload {
+    fun execute(id: String?)
+}
+
 fun interface ISaveRawEncryptedPayload {
     fun execute(id: String, data: ByteArray, key: String): IEncryptedPayload
 }
