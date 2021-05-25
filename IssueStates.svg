@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="671px"
+     height="581px" viewBox="-0.5 -0.5 671 581">
+    <defs/>
+    <g>
+        <ellipse cx="175" cy="110" rx="11" ry="11" fill="#000000" stroke="#ff0000" pointer-events="all"/>
+        <path d="M 175 125 L 175 162.76" fill="none" stroke="#ff0000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 170.5 154.88 L 175 163.88 L 179.5 154.88" fill="none" stroke="#ff0000" stroke-miterlimit="10"
+              pointer-events="all"/>
+        <ellipse cx="175" cy="540" rx="11" ry="11" fill="#000000" stroke="#ff0000" pointer-events="all"/>
+        <ellipse cx="175" cy="540" rx="15" ry="15" fill="none" stroke="#ff0000" pointer-events="all"/>
+        <path d="M 175 205 L 175 238.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 175 243.88 L 171.5 236.88 L 175 238.63 L 178.5 236.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 130 185 L 45 185 L 45 328.63" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 45 333.88 L 41.5 326.88 L 45 328.63 L 48.5 326.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="175" cy="185" rx="45" ry="20" fill="#ffffff" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="175" y="189" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                CREATED
+            </text>
+        </g>
+        <path d="M 220 265 L 305 265 L 305 328.63" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 305 333.88 L 301.5 326.88 L 305 328.63 L 308.5 326.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="175" cy="265" rx="45" ry="20" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="175" y="269" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle"
+                  font-weight="bold">ISSUED
+            </text>
+        </g>
+        <path d="M 175 465 L 175 518.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 175 523.88 L 171.5 516.88 L 175 518.63 L 178.5 516.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="175" cy="445" rx="45" ry="20" fill="#f8cecc" stroke="#b85450" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="175" y="449" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                DELETED
+            </text>
+        </g>
+        <path d="M 305 375 L 305 445 L 226.37 445" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 221.12 445 L 228.12 441.5 L 226.37 445 L 228.12 448.5 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="305" cy="355" rx="45" ry="20" fill="#f8cecc" stroke="#b85450" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="305" y="359" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                REVOKED
+            </text>
+        </g>
+        <path d="M 175 375 L 175 418.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 175 423.88 L 171.5 416.88 L 175 418.63 L 178.5 416.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 220 355 L 206.8 355 L 206.82 285.51" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 206.82 280.26 L 210.32 287.26 L 206.82 285.51 L 203.32 287.26 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 143.18 279.14 L 143.18 334.49" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 143.18 339.74 L 139.68 332.74 L 143.18 334.49 L 146.68 332.74 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="175" cy="355" rx="45" ry="20" fill="#fff2cc" stroke="#d6b656" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="175" y="359" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle"
+                  font-weight="bold">EXPIRED
+            </text>
+        </g>
+        <path d="M 45 375 L 45 445 L 123.63 445" fill="none" stroke="#000000" stroke-miterlimit="10"
+              pointer-events="stroke"/>
+        <path d="M 128.88 445 L 121.88 448.5 L 123.63 445 L 121.88 441.5 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="45" cy="355" rx="45" ry="20" fill="#f8cecc" stroke="#b85450" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="45" y="359" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                REJECTED
+            </text>
+        </g>
+        <path d="M 104 290 L 684 290" fill="none" stroke="#000000" stroke-miterlimit="10"
+              transform="translate(0,290)scale(1,-1)translate(0,-290)rotate(-90,394,290)" pointer-events="all"/>
+        <path d="M 555 205 L 555 238.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 555 243.88 L 551.5 236.88 L 555 238.63 L 558.5 236.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="555" cy="185" rx="45" ry="20" fill="#ffffff" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="555" y="189" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                PENDING
+            </text>
+        </g>
+        <ellipse cx="555" cy="110" rx="11" ry="11" fill="#000000" stroke="#ff0000" pointer-events="all"/>
+        <path d="M 554.5 125 L 554.5 145 Q 554.5 155 554.5 158.88 L 554.5 162.76" fill="none" stroke="#ff0000"
+              stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 550 154.88 L 554.5 163.88 L 559 154.88" fill="none" stroke="#ff0000" stroke-miterlimit="10"
+              pointer-events="all"/>
+        <path d="M 555 285 L 555 328.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 555 333.88 L 551.5 326.88 L 555 328.63 L 558.5 326.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="555" cy="265" rx="45" ry="20" fill="#d5e8d4" stroke="#82b366" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="555" y="269" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                INSTALLED
+            </text>
+        </g>
+        <path d="M 555 375 L 555 518.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 555 523.88 L 551.5 516.88 L 555 518.63 L 558.5 516.88 Z" fill="#000000" stroke="#000000"
+              stroke-miterlimit="10" pointer-events="all"/>
+        <ellipse cx="555" cy="355" rx="45" ry="20" fill="#f8cecc" stroke="#b85450" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="555" y="359" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                REMOVED
+            </text>
+        </g>
+        <ellipse cx="555" cy="540" rx="11" ry="11" fill="#000000" stroke="#ff0000" pointer-events="all"/>
+        <ellipse cx="555" cy="540" rx="15" ry="15" fill="none" stroke="#ff0000" pointer-events="all"/>
+        <rect x="110" y="20" width="130" height="30" fill="none" stroke="none" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="175" y="41" fill="#000000" font-family="Verdana" font-size="20px" text-anchor="middle">Issue
+                State
+            </text>
+        </g>
+        <rect x="410" y="20" width="260" height="30" fill="none" stroke="none" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <text x="540" y="41" fill="#000000" font-family="Verdana" font-size="20px" text-anchor="middle">Device
+                Installation State&#xa;
+            </text>
+        </g>
+    </g>
+</svg>

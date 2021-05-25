@@ -46,6 +46,10 @@ MongoDb in Dockercontainer stoppen und Daten löschen
 docker-compose -p contagio down -v
 ```
 
+# State Diagram
+
+![PassInfo Issue States](IssueStates.svg "Issue State")
+
 # Links
 PKPass Validator
 https://pkpassvalidator.com/
