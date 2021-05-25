@@ -1,16 +1,16 @@
 package de.contagio.core.usecase
 
+import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.port.IDeleteEncryptedPayload
-import de.contagio.core.domain.port.IDeletePassInfoEnvelope
 import de.contagio.core.domain.port.IFindEncryptedPayload
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
 
 class DeletePass(
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
     private val findEncryptedPayload: IFindEncryptedPayload,
-    private val deletePassInfoEnvelope: IDeletePassInfoEnvelope,
-    private val deleteEncryptedPayload: IDeleteEncryptedPayload
+    private val deleteEncryptedPayload: IDeleteEncryptedPayload,
+    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
 ) {
 
     fun execute(authToken: String, serialNumber: String) {
@@ -21,7 +21,10 @@ class DeletePass(
         deleteEncryptedPayload.execute(passInfo?.imageId)
         deleteEncryptedPayload.execute(passInfo?.passId)
         deleteEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
-        deletePassInfoEnvelope.execute(serialNumber)
+
+        updateOnlyPassInfoEnvelope.execute(serialNumber) {
+            it.copy(issueStatus = IssueStatus.DELETED)
+        }
     }
 
 }

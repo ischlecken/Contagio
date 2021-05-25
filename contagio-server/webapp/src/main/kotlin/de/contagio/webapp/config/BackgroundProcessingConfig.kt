@@ -2,6 +2,7 @@ package de.contagio.webapp.config
 
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
+import de.contagio.core.usecase.UpdateOnlyPassInfoEnvelope
 import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import de.contagio.webapp.service.BackgroundProcessingService
@@ -23,13 +24,15 @@ open class BackgroundProcessingConfig {
         passCommandProcessor: PassCommandProcessor,
         getEncryptionKey: IGetEncryptionKey,
         notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-        updatePass: UpdatePass
+        updatePass: UpdatePass,
+        updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
     ): BackgroundProcessingService {
         return BackgroundProcessingService(
             passInfoEnvelopeRepository,
             passCommandProcessor,
             notifyAllDevicesWithInstalledSerialNumber,
-            updatePass
+            updatePass,
+            updateOnlyPassInfoEnvelope
         )
     }
 }

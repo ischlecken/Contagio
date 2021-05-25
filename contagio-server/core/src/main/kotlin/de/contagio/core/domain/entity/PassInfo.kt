@@ -17,7 +17,7 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, ISSUED, EXPIRED, REVOKED, REJECTED
+    CREATED, ISSUED, EXPIRED, REVOKED, REJECTED, DELETED, ZOMBIE
 }
 
 enum class DeviceInstallationStatus {

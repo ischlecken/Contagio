@@ -37,7 +37,6 @@ open class PassUpdateLogController(
             pageable.toPageRequest().copy(sort = defaultSort)
         )
 
-
         model.addAttribute("pageType", "passupdatelog")
         model.addAttribute("passupdatelogs", logs)
 

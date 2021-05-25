@@ -8,6 +8,7 @@ interface PassInfoEnvelopeRepository : MongoRepository<PassInfoEnvelope, String>
     @Query("{issueStatus : {\$ne : ?0}}")
     fun findByIssueStatusNotEqual(issueStatus: IssueStatus): Collection<PassInfoEnvelope>
 
+    fun findByIssueStatus(issueStatus: IssueStatus): Collection<PassInfoEnvelope>
 }
 
 interface PassUpdateLogRepository : MongoRepository<PassUpdateLog, String>

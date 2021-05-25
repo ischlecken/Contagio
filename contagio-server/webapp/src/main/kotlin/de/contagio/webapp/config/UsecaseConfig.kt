@@ -125,19 +125,25 @@ open class UsecaseConfig {
     open fun notifyAllDevicesWithInstalledSerialNumber(
         findRegistrationInfoBySerialNumber: IFindRegistrationInfoBySerialNumber,
         findDeviceInfo: IFindDeviceInfo,
-        notifyDevice: INotifyDevice
-    ) = NotifyAllDevicesWithInstalledSerialNumber(findRegistrationInfoBySerialNumber, findDeviceInfo, notifyDevice)
+        notifyDevice: INotifyDevice,
+        savePassUpdateLog: ISavePassUpdateLog
+    ) = NotifyAllDevicesWithInstalledSerialNumber(
+        findRegistrationInfoBySerialNumber,
+        findDeviceInfo,
+        notifyDevice,
+        savePassUpdateLog
+    )
 
     @Bean
     open fun deletePass(
         findPassInfoEnvelope: IFindPassInfoEnvelope,
         findEncryptedPayload: IFindEncryptedPayload,
-        deletePassInfoEnvelope: IDeletePassInfoEnvelope,
-        deleteEncryptedPayload: IDeleteEncryptedPayload
+        deleteEncryptedPayload: IDeleteEncryptedPayload,
+        updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
     ) = DeletePass(
         findPassInfoEnvelope,
         findEncryptedPayload,
-        deletePassInfoEnvelope,
-        deleteEncryptedPayload
+        deleteEncryptedPayload,
+        updateOnlyPassInfoEnvelope
     )
 }

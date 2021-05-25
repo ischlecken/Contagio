@@ -1,15 +1,18 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.PassCommand
+import de.contagio.core.domain.entity.PassCommandExecutionStatus
 import de.contagio.core.domain.entity.PassUpdateLog
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.ISavePassUpdateLog
+import de.contagio.core.domain.port.PagedResult
 import de.contagio.core.usecase.PassSerialNumberWithUpdated
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 private var logger = LoggerFactory.getLogger(PassCommandProcessor::class.java)
@@ -21,15 +24,30 @@ open class PassCommandProcessor(
 ) : BackgroundJob() {
 
     private val mutex = Mutex()
-    private val commands = mutableListOf<PassCommand>()
+    private val _commands = mutableListOf<PassCommand>()
 
-    val size: Int get() = commands.size
-    val isProcessing: Boolean get() = commands.size > 0
+    val size: Int get() = _commands.size
+    val isProcessing: Boolean get() = _commands.size > 0
+
+    fun getCommands(pageable: Pageable): PagedResult<PassCommand> {
+        val toIndex = if (size < pageable.pageSize) size else pageable.pageSize
+        val content = _commands.subList(0, toIndex)
+
+        return PagedResult(
+            content = content,
+            isFirst = true,
+            isLast = true,
+            pageNo = 0,
+            pageSize = pageable.pageSize,
+            totalPages = 1,
+            totalElements = size
+        )
+    }
 
     fun addCommand(cmd: PassCommand) {
         runBlocking {
             mutex.withLock {
-                commands.add(cmd)
+                _commands.add(cmd)
             }
         }
 
@@ -41,7 +59,7 @@ open class PassCommandProcessor(
 
         runBlocking {
             mutex.withLock {
-                commands.forEach {
+                _commands.forEach {
                     result.add(
                         PassSerialNumberWithUpdated(
                             it.serialNumber,
@@ -61,8 +79,8 @@ open class PassCommandProcessor(
         var result: PassCommand? = null
 
         mutex.withLock {
-            if (commands.size > 0 && i < commands.size)
-                result = commands[i]
+            if (_commands.size > 0 && i < _commands.size)
+                result = _commands[i]
         }
 
         return result
@@ -70,8 +88,8 @@ open class PassCommandProcessor(
 
     private suspend fun removeCommand(i: Int) {
         mutex.withLock {
-            if (commands.size > 0 && i < commands.size)
-                commands.removeAt(i)
+            if (_commands.size > 0 && i < _commands.size)
+                _commands.removeAt(i)
         }
     }
 
@@ -79,28 +97,41 @@ open class PassCommandProcessor(
         logger.debug("CommandProcessor begins... {${Thread.currentThread().name}}")
 
         while (isRunning()) {
-            delay(10000)
+            delay(30000)
 
             var i = 0
             do {
                 val cmd = peekCommand(i)
                 if (cmd != null) {
-                    val executionSuccessfull = cmd.execute(getEncryptionKey)
+                    val executionStatus = cmd.execute(getEncryptionKey)
 
-                    logger.debug("execute cmd for serialNumber ${cmd.serialNumber}:$executionSuccessfull")
+                    logger.debug("execute cmd for serialNumber ${cmd.serialNumber}: $executionStatus")
 
-                    if (executionSuccessfull) {
-                        savePassUpdateLog.execute(
-                            PassUpdateLog(
-                                serialNumber = cmd.serialNumber,
-                                action = cmd.javaClass.simpleName,
-                                message = "Command executed"
+                    when (executionStatus) {
+                        PassCommandExecutionStatus.SUCCESSFUL -> {
+                            savePassUpdateLog.execute(
+                                PassUpdateLog(
+                                    serialNumber = cmd.serialNumber,
+                                    action = cmd.javaClass.simpleName,
+                                    message = cmd.logMessage()
+                                )
                             )
-                        )
 
-                        removeCommand(i)
-                    } else
-                        i++
+                            removeCommand(i)
+                        }
+                        PassCommandExecutionStatus.FAILED -> {
+                            savePassUpdateLog.execute(
+                                PassUpdateLog(
+                                    serialNumber = cmd.serialNumber,
+                                    action = cmd.javaClass.simpleName,
+                                    message = "${cmd.javaClass.simpleName} failed."
+                                )
+                            )
+
+                            removeCommand(i)
+                        }
+                        else -> i++
+                    }
                 }
             } while (cmd != null)
         }

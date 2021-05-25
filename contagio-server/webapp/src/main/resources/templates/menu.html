@@ -52,6 +52,11 @@
             th:classappend="${pageType == 'passupdatelog'} ? 'active' : ''">
           <a class="nav-link" href="/passupdatelog" th:text="#{menu.link.passupdatelog}">Pass Update Log</a>
         </li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')"
+            class="nav-item"
+            th:classappend="${pageType == 'passcommandqueue'} ? 'active' : ''">
+          <a class="nav-link" href="/passcommandqueue" th:text="#{menu.link.passcommandqueue}">Pass Command Queue</a>
+        </li>
       </ul>
       <div class="navbar-text userinfo"><i class="fas fa-user"></i><span class="username" sec:authentication="name"></span></div>
     </div>

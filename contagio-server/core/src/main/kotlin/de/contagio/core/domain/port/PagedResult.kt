@@ -12,7 +12,7 @@ data class PagedResult<T>(
     val hasContent = content.isNotEmpty()
 }
 
-data class PageRequest(val pageNo: Int=0, val pageSize: Int = 10, val sort: Collection<Sorting> = emptyList())
+data class PageRequest(val pageNo: Int = 0, val pageSize: Int = 10, val sort: Collection<Sorting> = emptyList())
 
 @Suppress("EnumEntryName")
 enum class SortDirection {
