@@ -51,10 +51,15 @@ sealed class PassCommand(
     abstract fun execute(getEncryptionKey: IGetEncryptionKey? = null): PassCommandExecutionStatus
 
     fun logMessage(): String = "Command $this executed"
+
+    fun executionStatus(key: PassGetKeyResult) = when (key.status) {
+        PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
+        PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
+        PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
+    }
 }
 
 class DeletePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
     private val deletePass: DeletePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -62,15 +67,9 @@ class DeletePassCommand(
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("DeletePassCommand.execute($serialNumber)")
 
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            deletePass.execute(key.key!!, serialNumber)
+        deletePass.execute(serialNumber)
 
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return PassCommandExecutionStatus.SUCCESSFUL
     }
 
     override fun toString() =
@@ -79,7 +78,6 @@ class DeletePassCommand(
 
 class ExpirePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val updatePass: UpdatePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -100,16 +98,7 @@ class ExpirePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        if (key.status == PassGetKeyStatus.UNREACHABLE)
-            updateOnlyPassInfoEnvelope.execute(serialNumber) {
-                it.copy(issueStatus = IssueStatus.ZOMBIE)
-            }
-
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =
@@ -118,7 +107,6 @@ class ExpirePassCommand(
 
 class RevokePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val updatePass: UpdatePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -139,16 +127,8 @@ class RevokePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        if (key.status == PassGetKeyStatus.UNREACHABLE)
-            updateOnlyPassInfoEnvelope.execute(serialNumber) {
-                it.copy(issueStatus = IssueStatus.ZOMBIE)
-            }
 
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =
@@ -157,7 +137,6 @@ class RevokePassCommand(
 
 class IssuePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val updatePass: UpdatePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -177,16 +156,7 @@ class IssuePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        if (key.status == PassGetKeyStatus.UNREACHABLE)
-            updateOnlyPassInfoEnvelope.execute(serialNumber) {
-                it.copy(issueStatus = IssueStatus.ZOMBIE)
-            }
-
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =
@@ -195,7 +165,6 @@ class IssuePassCommand(
 
 class NegativePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val updatePass: UpdatePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -216,16 +185,7 @@ class NegativePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        if (key.status == PassGetKeyStatus.UNREACHABLE)
-            updateOnlyPassInfoEnvelope.execute(serialNumber) {
-                it.copy(issueStatus = IssueStatus.ZOMBIE)
-            }
-
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =
@@ -234,7 +194,6 @@ class NegativePassCommand(
 
 class PositivePassCommand(
     private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val updatePass: UpdatePass,
     serialNumber: String
 ) : PassCommand(serialNumber) {
@@ -255,16 +214,7 @@ class PositivePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        if (key.status == PassGetKeyStatus.UNREACHABLE)
-            updateOnlyPassInfoEnvelope.execute(serialNumber) {
-                it.copy(issueStatus = IssueStatus.ZOMBIE)
-            }
-
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =
@@ -369,8 +319,8 @@ class CreatePassCommand(
         )?.also {
 
             setEncryptionKey.execute(IdType.SERIALNUMBER, it.passInfoEnvelope.serialNumber, it.authToken)
-            setEncryptionKey.execute(IdType.PASSID, it.passInfo.passId, it.authToken)
-            setEncryptionKey.execute(IdType.IMAGEID, it.passInfo.imageId, it.authToken)
+            setEncryptionKey.execute(IdType.PASSID, it.passInfoEnvelope.passId, it.authToken)
+            setEncryptionKey.execute(IdType.IMAGEID, it.passInfoEnvelope.imageId, it.authToken)
         }
 
         return PassCommandExecutionStatus.SUCCESSFUL
@@ -406,11 +356,7 @@ class UpdatePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        return when (key.status) {
-            PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL
-            PassGetKeyStatus.NOTIFIED -> PassCommandExecutionStatus.PENDING
-            PassGetKeyStatus.UNREACHABLE -> PassCommandExecutionStatus.FAILED
-        }
+        return executionStatus (key)
     }
 
     override fun toString() =

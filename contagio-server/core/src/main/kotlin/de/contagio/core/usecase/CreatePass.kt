@@ -45,8 +45,6 @@ class CreatePass(
 
         val passInfo = PassInfo(
             person = Person(firstName = firstName, lastName = lastName, phoneNo = phoneNo, email = email),
-            imageId = uidGenerator.generate(),
-            passId = uidGenerator.generate(),
             testResult = testResult,
             testType = testType,
             passType = passType,
@@ -69,6 +67,8 @@ class CreatePass(
                     teststationId = it.teststation.id,
                     testerId = it.tester.id,
                     passInfoId = uidGenerator.generate(),
+                    imageId = uidGenerator.generate(),
+                    passId = uidGenerator.generate()
                 )
 
                 val passBuilderInfo = PassBuilderInfo(
@@ -103,8 +103,8 @@ class CreatePass(
 
     private fun save(createPassResponse: CreatePassResponse) {
         with(createPassResponse) {
-            saveRawEncryptedPayload.execute(passInfo.imageId, passImage, authToken)
-            saveRawEncryptedPayload.execute(passInfo.passId, pass, authToken)
+            saveRawEncryptedPayload.execute(passInfoEnvelope.imageId, passImage, authToken)
+            saveRawEncryptedPayload.execute(passInfoEnvelope.passId, pass, authToken)
             saveEncryptedPayload.execute(passInfoEnvelope.passInfoId, passInfo, authToken)
             savePassInfoEnvelope.execute(passInfoEnvelope)
         }

@@ -30,8 +30,6 @@ class PassBuilderTest {
 
     private val passInfoTemplate = PassInfo(
         person = Person(firstName = "Hugo", lastName = "Schlecken"),
-        passId = "123123",
-        imageId = "456",
         testResult = TestResultType.NEGATIVE,
         testType = TestType.RAPIDTEST,
         passType = PassType.GENERIC,
@@ -48,6 +46,8 @@ class PassBuilderTest {
         teststationId = "1",
         testerId = "1",
         passInfoId = "4242",
+        passId = "123123",
+        imageId = "456",
         teamIdentifier = "teamid",
         passTypeIdentifier = "passTypeId",
         organisationName = "bla org"

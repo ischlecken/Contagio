@@ -21,6 +21,8 @@ class UpdatePassTest {
                     passTypeIdentifier = "123",
                     organisationName = "123",
                     passInfoId = "passInfoId123",
+                    imageId = "imageId1",
+                    passId = "passId1",
                     teststationId = "1",
                     testerId = "1",
                     issueStatus = IssueStatus.ISSUED
@@ -40,8 +42,6 @@ class UpdatePassTest {
                                 labelColor = "rgb(255, 255, 255)",
                                 foregroundColor = "rgb(255, 255, 255)",
                                 backgroundColor = "rgb(255, 255, 255)",
-                                imageId = "imageId1",
-                                passId = "passId1",
                             )
                             else -> null
                         }

@@ -11,7 +11,7 @@ import de.contagio.core.usecase.SearchTesterWithTeststation
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.restcontroller.pkpassMediatype
-import de.contagio.webapp.service.PassService
+import de.contagio.webapp.service.PassCommandProcessor
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,7 +26,7 @@ import springfox.documentation.annotations.ApiIgnore
 @ApiIgnore
 @Controller
 open class CreatePassController(
-    private val passService: PassService,
+    private val passCommandProcessor: PassCommandProcessor,
     private val listOfAllTesterInfo: ListOfAllTesterInfo,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val urlBuilder: UrlBuilder
@@ -76,16 +76,16 @@ open class CreatePassController(
             return ResponseEntity(headers, HttpStatus.FOUND)
         }
 
-        val teststationId = searchTesterWithTeststation
+        searchTesterWithTeststation
             .execute(testerId)?.teststation?.id ?: return ResponseEntity.badRequest().build()
 
         return when (command) {
             "preview" -> {
-                val cpr = passService.createPass(
+                val cpr = passCommandProcessor.createPass(
                     image,
                     firstName, lastName,
                     phoneNo, email,
-                    teststationId, testerId,
+                    testerId,
                     testResult, testType,
                     passType,
                     labelColor, foregroundColor, backgroundColor,
@@ -102,11 +102,11 @@ open class CreatePassController(
                     ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
             }
             "create" -> {
-                passService.createPass(
+                passCommandProcessor.createPass(
                     image,
                     firstName, lastName,
                     phoneNo, email,
-                    teststationId, testerId,
+                    testerId,
                     testResult, testType,
                     passType,
                     labelColor, foregroundColor, backgroundColor,

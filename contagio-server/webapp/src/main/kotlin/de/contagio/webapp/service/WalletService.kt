@@ -1,16 +1,12 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.entity.DeviceInfo
-import de.contagio.core.domain.entity.InstalledPassCommand
 import de.contagio.core.domain.entity.RegistrationInfo
-import de.contagio.core.domain.entity.RemovedPassCommand
-import de.contagio.core.usecase.UpdateOnlyPassInfoEnvelope
 import de.contagio.core.util.UIDGenerator
 import de.contagio.webapp.repository.mongodb.DeviceInfoRepository
 import de.contagio.webapp.repository.mongodb.RegistrationInfoRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-
 
 private var logger = LoggerFactory.getLogger(WalletService::class.java)
 
@@ -18,8 +14,7 @@ private var logger = LoggerFactory.getLogger(WalletService::class.java)
 open class WalletService(
     private val deviceInfoRepository: DeviceInfoRepository,
     private val registrationInfoRepository: RegistrationInfoRepository,
-    private val passCommandProcessor: PassCommandProcessor,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
+    private val passCommandProcessor: PassCommandProcessor
 ) {
 
     private val uidGenerator = UIDGenerator()
@@ -40,7 +35,7 @@ open class WalletService(
             )
         )
 
-        passCommandProcessor.addCommand(InstalledPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
+        passCommandProcessor.passInstalled(serialNumber)
     }
 
     open fun unregister(deviceLibraryIdentifier: String, serialNumber: String): Boolean {
@@ -58,7 +53,7 @@ open class WalletService(
                 }
 
             if (registrationInfoRepository.countBySerialNumber(serialNumber) == 0L)
-                passCommandProcessor.addCommand(RemovedPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
+                passCommandProcessor.passRemoved(serialNumber)
         } catch (ex: Exception) {
             logger.error("Exception while unregister $serialNumber", ex)
         }

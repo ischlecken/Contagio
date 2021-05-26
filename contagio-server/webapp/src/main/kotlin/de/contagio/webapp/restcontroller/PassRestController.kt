@@ -12,7 +12,8 @@ import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
-import de.contagio.webapp.service.PassService
+import de.contagio.webapp.service.PassCommandProcessor
+import de.contagio.webapp.service.SignDataService
 import de.contagio.webapp.service.QRCodeGeneratorService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -31,7 +32,8 @@ private var logger = LoggerFactory.getLogger(PassRestController::class.java)
 @RequestMapping(PASS)
 open class PassRestController(
     private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
-    private val passService: PassService,
+    private val passCommandProcessor: PassCommandProcessor,
+    private val signDataService: SignDataService,
     private val searchTesterWithTeststation: SearchTesterWithTeststation,
     private val qrCodeGeneratorService: QRCodeGeneratorService,
     private val urlBuilder: UrlBuilder,
@@ -88,11 +90,10 @@ open class PassRestController(
         }
 
         return searchTesterWithTeststation.execute(testerId)?.let {
-            passService.createPass(
+            passCommandProcessor.createPass(
                 image,
                 firstName, lastName,
                 phoneNo, email,
-                it.teststation.id,
                 it.tester.id,
                 testResult, testType,
                 passType, labelColor, foregroundColor, backgroundColor,
@@ -106,7 +107,7 @@ open class PassRestController(
     @PatchMapping("/info")
     open fun updatePass(@RequestBody updatePassRequest: UpdatePassRequest): ResponseEntity<PassInfoEnvelope> {
 
-        val passInfo = passService.updatePass(updatePassRequest)
+        val passInfo = passCommandProcessor.updatePass(updatePassRequest)
 
         return if (passInfo != null)
             ResponseEntity.ok(passInfo)
@@ -152,7 +153,7 @@ open class PassRestController(
         if (result == null)
             return ResponseEntity.notFound().build()
 
-        val s = passService.sign(result)
+        val s = signDataService.sign(result)
 
         return if (s != null)
             ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(s)

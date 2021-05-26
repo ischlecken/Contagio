@@ -2,11 +2,10 @@
 
 package de.contagio.webapp.controller
 
-import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.IdType
-import de.contagio.core.usecase.*
+import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
 import de.contagio.webapp.service.PassCommandProcessor
 import de.contagio.webapp.util.defaultSort
@@ -25,10 +24,6 @@ open class PassController(
     private val findAllPassInfoEnvelope: IFindAllPassInfoEnvelope,
     private val urlBuilder: UrlBuilder,
     private val getEncryptionKey: IGetEncryptionKey,
-    private val deletePass: DeletePass,
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
     private val passCommandProcessor: PassCommandProcessor
 ) {
 
@@ -40,9 +35,9 @@ open class PassController(
         )
 
         val unlockedSerialNumbers = mutableListOf<String>()
-        passes.content.forEach { pie ->
-            getEncryptionKey.execute(IdType.SERIALNUMBER, pie.serialNumber)?.apply {
-                unlockedSerialNumbers.add(pie.serialNumber)
+        passes.content.forEach { p ->
+            getEncryptionKey.execute(IdType.SERIALNUMBER, p.serialNumber)?.apply {
+                unlockedSerialNumbers.add(p.serialNumber)
             }
         }
 
@@ -71,45 +66,12 @@ open class PassController(
     ): String {
 
         when (command) {
-            "delete" -> passCommandProcessor.addCommand(
-                DeletePassCommand(notifyAllDevicesWithInstalledSerialNumber, deletePass, serialnumber)
-            )
-            "expire" -> passCommandProcessor.addCommand(
-                ExpirePassCommand(
-                    notifyAllDevicesWithInstalledSerialNumber,
-                    updateOnlyPassInfoEnvelope,
-                    updatePass,
-                    serialnumber
-                )
-            )
-            "revoke" -> passCommandProcessor.addCommand(
-                RevokePassCommand(
-                    notifyAllDevicesWithInstalledSerialNumber, updateOnlyPassInfoEnvelope,
-                    updatePass, serialnumber
-                )
-            )
-            "issue" -> passCommandProcessor.addCommand(
-                IssuePassCommand(
-                    notifyAllDevicesWithInstalledSerialNumber, updateOnlyPassInfoEnvelope,
-                    updatePass, serialnumber
-                )
-            )
-            "negative" -> passCommandProcessor.addCommand(
-                NegativePassCommand(
-                    notifyAllDevicesWithInstalledSerialNumber,
-                    updateOnlyPassInfoEnvelope,
-                    updatePass,
-                    serialnumber
-                )
-            )
-            "positive" -> passCommandProcessor.addCommand(
-                PositivePassCommand(
-                    notifyAllDevicesWithInstalledSerialNumber,
-                    updateOnlyPassInfoEnvelope,
-                    updatePass,
-                    serialnumber
-                )
-            )
+            "delete" -> passCommandProcessor.deletePass(serialnumber)
+            "expire" -> passCommandProcessor.expirePass(serialnumber)
+            "revoke" -> passCommandProcessor.revokePass(serialnumber)
+            "issue" -> passCommandProcessor.issuePass(serialnumber)
+            "negative" -> passCommandProcessor.negativeTestresult(serialnumber)
+            "positive" -> passCommandProcessor.positiveTestresult(serialnumber)
         }
 
         return "redirect:/pass"

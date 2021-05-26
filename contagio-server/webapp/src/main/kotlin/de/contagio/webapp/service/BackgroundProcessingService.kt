@@ -1,10 +1,6 @@
 package de.contagio.webapp.service
 
-import de.contagio.core.domain.entity.ExpirePassCommand
 import de.contagio.core.domain.entity.IssueStatus
-import de.contagio.core.usecase.NotifyAllDevicesWithInstalledSerialNumber
-import de.contagio.core.usecase.UpdateOnlyPassInfoEnvelope
-import de.contagio.core.usecase.UpdatePass
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -18,10 +14,7 @@ private const val CHECKINTERVAL_IN_HOURS = 20
 
 open class BackgroundProcessingService(
     private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
-    private val passCommandProcessor: PassCommandProcessor,
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
+    private val passCommandProcessor: PassCommandProcessor
 ) : BackgroundJob() {
 
     private var lastSuccessfullRun: Instant =
@@ -50,14 +43,7 @@ open class BackgroundProcessingService(
 
                 logger.debug("${passInfoEnvelope.serialNumber} is expired...")
 
-                passCommandProcessor.addCommand(
-                    ExpirePassCommand(
-                        notifyAllDevicesWithInstalledSerialNumber,
-                        updateOnlyPassInfoEnvelope,
-                        updatePass,
-                        passInfoEnvelope.serialNumber
-                    )
-                )
+                passCommandProcessor.expirePass(passInfoEnvelope.serialNumber)
             }
         }
 

@@ -27,7 +27,7 @@ class UpdatePass(
         val testerTeststation = searchTesterWithTeststation.execute(passInfoEnvelope?.testerId)
         val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
         val passInfo = encryptedPassInfo?.getObject(authToken, PassInfo::class.java) as? PassInfo
-        val passImageEncrypted = findEncryptedPayload.execute(passInfo?.imageId)
+        val passImageEncrypted = findEncryptedPayload.execute(passInfoEnvelope?.imageId)
         val passImage = passImageEncrypted?.get(authToken)
 
         var updatedPassInfoEnvelope = passInfoEnvelope
@@ -57,7 +57,7 @@ class UpdatePass(
             )
 
             PassBuilder(passBuilderInfo, urlBuilder).build(authToken)?.let {
-                saveRawEncryptedPayload.execute(updatedPassInfo.passId, it.pass, authToken)
+                saveRawEncryptedPayload.execute(updatedPassInfoEnvelope.passId, it.pass, authToken)
                 saveEncryptedPayload.execute(updatedPassInfoEnvelope.passInfoId, updatedPassInfo, authToken)
                 savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
 

@@ -137,12 +137,10 @@ open class UsecaseConfig {
     @Bean
     open fun deletePass(
         findPassInfoEnvelope: IFindPassInfoEnvelope,
-        findEncryptedPayload: IFindEncryptedPayload,
         deleteEncryptedPayload: IDeleteEncryptedPayload,
         updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
     ) = DeletePass(
         findPassInfoEnvelope,
-        findEncryptedPayload,
         deleteEncryptedPayload,
         updateOnlyPassInfoEnvelope
     )

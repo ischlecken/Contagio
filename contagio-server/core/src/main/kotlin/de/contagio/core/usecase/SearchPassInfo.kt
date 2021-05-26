@@ -21,7 +21,7 @@ class SearchPassInfo(
         val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
         val key = getEncryptionKey.execute(IdType.SERIALNUMBER, id)
         val passInfo = encryptedPassInfo?.getObject(key, PassInfo::class.java) as? PassInfo
-        val encryptedPass = findEncryptedPayload.execute(passInfo?.passId) as? EncryptedPayload
+        val encryptedPass = findEncryptedPayload.execute(passInfoEnvelope?.passId) as? EncryptedPayload
         val pass = encryptedPass?.get(key)
 
         return if (passInfoEnvelope != null && testerTeststation != null && encryptedPassInfo != null)

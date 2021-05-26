@@ -140,8 +140,8 @@ open class ValidateAspect(
             return false
 
         setEncryptionKey.execute(IdType.SERIALNUMBER, serialNumber, authToken)
-        setEncryptionKey.execute(IdType.PASSID, passInfo.passId, authToken)
-        setEncryptionKey.execute(IdType.IMAGEID, passInfo.imageId, authToken)
+        setEncryptionKey.execute(IdType.PASSID, passInfoEnvelope.passId, authToken)
+        setEncryptionKey.execute(IdType.IMAGEID, passInfoEnvelope.imageId, authToken)
 
         return true
     }

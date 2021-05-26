@@ -17,7 +17,7 @@ enum class PassType {
 }
 
 enum class IssueStatus {
-    CREATED, ISSUED, EXPIRED, REVOKED, REJECTED, DELETED, ZOMBIE
+    CREATED, ISSUED, EXPIRED, REVOKED, REJECTED, DELETED
 }
 
 enum class DeviceInstallationStatus {
@@ -34,9 +34,7 @@ data class PassInfo(
     val logoText: String,
     val labelColor: String,
     val foregroundColor: String,
-    val backgroundColor: String,
-    val imageId: String,
-    val passId: String
+    val backgroundColor: String
 )
 
 data class PassInfoEnvelope(
@@ -45,6 +43,8 @@ data class PassInfoEnvelope(
     val passTypeIdentifier: String,
     val organisationName: String,
     val passInfoId: String,
+    val imageId: String,
+    val passId: String,
     val teststationId: String,
     val testerId: String,
     val issueStatus: IssueStatus,

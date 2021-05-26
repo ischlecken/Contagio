@@ -10,7 +10,7 @@
   <!--/*@thymesVar id="extendedPassInfo" type="de.contagio.core.domain.entity.ExtendedPassInfo"*/-->
 
   <h1><span th:if="${extendedPassInfo.passInfo}" th:text="#{showpass.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
-    <a class="addtowallet" th:if="${extendedPassInfo.passInfo}" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfo.passId})}"></a>
+    <a class="addtowallet" th:if="${extendedPassInfo.passInfo}" th:href="@{/co_v1/pass/{id}(id=${extendedPassInfo.passInfoEnvelope.passId})}"></a>
     <small class="serialno text-muted" th:text="${extendedPassInfo.passInfoEnvelope.serialNumber}">serial no</small>
   </h1>
   <div class="row">
@@ -90,17 +90,17 @@
         </div>
       </div>
 
-      <div class="row" th:if="${extendedPassInfo.passInfo}">
+      <div class="row">
         <div class="col-6">
           <div class="form-group">
             <label for="passId" th:text="#{field.passid}">PassId</label>
-            <input class="form-control" readonly name="passId" id="passId" th:value="${extendedPassInfo.passInfo.passId}">
+            <input class="form-control" readonly name="passId" id="passId" th:value="${extendedPassInfo.passInfoEnvelope.passId}">
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
             <label for="imageId" th:text="#{field.imageid}">ImageId</label>
-            <input class="form-control" readonly name="imageId" id="imageId" th:value="${extendedPassInfo.passInfo.imageId}">
+            <input class="form-control" readonly name="imageId" id="imageId" th:value="${extendedPassInfo.passInfoEnvelope.imageId}">
           </div>
         </div>
       </div>
@@ -157,8 +157,8 @@
     </div>
 
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage" th:if="${extendedPassInfo.passInfo}">
-      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
-      <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfo.passId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfoEnvelope.imageId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/{id}/qrcode(id=${extendedPassInfo.passInfoEnvelope.passId})}">
     </div>
   </div>
 </div>
