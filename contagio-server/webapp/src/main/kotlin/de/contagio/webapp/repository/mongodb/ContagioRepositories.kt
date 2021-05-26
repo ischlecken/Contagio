@@ -2,13 +2,11 @@ package de.contagio.webapp.repository.mongodb
 
 import de.contagio.core.domain.entity.*
 import org.springframework.data.mongodb.repository.MongoRepository
-import org.springframework.data.mongodb.repository.Query
 
 interface PassInfoEnvelopeRepository : MongoRepository<PassInfoEnvelope, String> {
-    @Query("{issueStatus : {\$ne : ?0}}")
-    fun findByIssueStatusNotEqual(issueStatus: IssueStatus): Collection<PassInfoEnvelope>
-
     fun findByIssueStatus(issueStatus: IssueStatus): Collection<PassInfoEnvelope>
+
+    fun findByDeviceInstallationStatus(deviceInstallationStatus: DeviceInstallationStatus): Collection<PassInfoEnvelope>
 }
 
 interface PassUpdateLogRepository : MongoRepository<PassUpdateLog, String>

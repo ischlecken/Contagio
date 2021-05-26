@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
 val defaultSort = listOf(Sorting("updated", SortDirection.desc))
+val createdSort = listOf(Sorting("created", SortDirection.desc))
 
 fun PageRequest.toPageRequest(): org.springframework.data.domain.PageRequest {
     val sort = mutableListOf<Sort.Order>()

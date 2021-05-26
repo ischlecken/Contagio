@@ -12,7 +12,7 @@ abstract class BackgroundJob {
 
     abstract suspend fun process()
 
-    fun start(backgroundJobStopped: () -> Unit) {
+    fun start(backgroundJobStopped: (() -> Unit)? = null) {
         if (job == null) {
             job = GlobalScope.launch {
                 try {
@@ -20,7 +20,10 @@ abstract class BackgroundJob {
                 } catch (ex: CancellationException) {
                     logger.debug(ex.message)
                 } finally {
-                    backgroundJobStopped()
+                    if (backgroundJobStopped != null)
+                        backgroundJobStopped()
+
+                    job = null
                 }
             }
         }

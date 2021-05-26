@@ -31,6 +31,8 @@ data class UserProperties(
 @ConfigurationProperties(prefix = "contagio")
 data class ContagioProperties(
     val baseUrl: String,
+    val authTokenValidInMinutes: Int,
+    val purgeAfterMinutes: Int,
     val pass: PassProperties,
     val sign: SignProperties,
     val users: List<UserProperties>

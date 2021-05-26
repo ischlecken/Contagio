@@ -89,7 +89,7 @@
     </div>
 
     <div class="col-12 col-lg-4 order-1 order-lg-2 passimage" th:if="${extendedPassInfo.passInfo}">
-      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfo.imageId})}">
+      <img class="passimg" th:src="@{/co_v1/pass/image/{id}(id=${extendedPassInfo.passInfoEnvelope.imageId})}">
     </div>
   </div>
 </div>

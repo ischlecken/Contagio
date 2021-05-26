@@ -32,6 +32,7 @@
           </thead>
           <tbody>
           <tr th:each="p : ${passInfo.content}"
+              th:class="${p.issueStatus}"
               th:classappend="${unlockedSerialNumbers.contains(p.serialNumber)} ? 'unlocked' : ''"
           >
             <td th:if="${unlockedSerialNumbers.contains(p.serialNumber)}">
@@ -49,7 +50,7 @@
             <td th:text="${{p.deviceUpdated}}"/>
 
             <td>
-              <form method="post" id="commandform">
+              <form method="post" id="commandform" th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).DELETED}">
                 <input type="hidden" name="serialnumber" th:value="${p.serialNumber}"/>
 
                 <div class="btn-group">

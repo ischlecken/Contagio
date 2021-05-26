@@ -1,6 +1,10 @@
 package de.contagio.webapp.service
 
+import de.contagio.core.domain.entity.DeviceInstallationStatus
 import de.contagio.core.domain.entity.IssueStatus
+import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.IdType
+import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -13,8 +17,10 @@ private const val CHECKINTERVAL_IN_HOURS = 20
 
 
 open class BackgroundProcessingService(
+    private val contagioProperties: ContagioProperties,
     private val passInfoEnvelopeRepository: PassInfoEnvelopeRepository,
-    private val passCommandProcessor: PassCommandProcessor
+    private val passCommandProcessor: PassCommandProcessor,
+    private val getEncryptionKey: IGetEncryptionKey
 ) : BackgroundJob() {
 
     private var lastSuccessfullRun: Instant =
@@ -25,30 +31,45 @@ open class BackgroundProcessingService(
         fixedDelayString = "\${contagio.scheduler.fixedDelayInMilliseconds}"
     )
     open fun scheduledStart() {
-        logger.debug("scheduledStart(): {${Thread.currentThread().name}}")
-        start {
-            logger.debug("BackgroundProcessingService stopped. {${Thread.currentThread().name}}")
-        }
+        start()
     }
 
 
     override suspend fun process() {
         logger.debug("BackgroundProcessingService begins... {${Thread.currentThread().name}}")
-
         val now = Instant.now()
-        val passInfos = passInfoEnvelopeRepository.findByIssueStatus(IssueStatus.ISSUED)
 
-        passInfos.forEach { passInfoEnvelope ->
-            if (passInfoEnvelope.validUntil?.isBefore(now) == true) {
-
-                logger.debug("${passInfoEnvelope.serialNumber} is expired...")
-
-                passCommandProcessor.expirePass(passInfoEnvelope.serialNumber)
+        passInfoEnvelopeRepository
+            .findByIssueStatus(IssueStatus.ISSUED)
+            .forEach { pie ->
+                if (pie.validUntil?.isBefore(now) == true) {
+                    passCommandProcessor.expirePass(pie.serialNumber)
+                }
             }
-        }
+
+        passInfoEnvelopeRepository
+            .findByDeviceInstallationStatus(DeviceInstallationStatus.PENDING)
+            .forEach { pie ->
+                if (pie.issueStatus != IssueStatus.DELETED &&
+                    getEncryptionKey.execute(IdType.SERIALNUMBER, pie.serialNumber) == null
+                ) {
+                    passCommandProcessor.deletePass(pie.serialNumber)
+                }
+            }
+
+        passInfoEnvelopeRepository
+            .findByIssueStatus(IssueStatus.DELETED)
+            .forEach { pie ->
+                if (pie.updated
+                        .plusMillis(contagioProperties.purgeAfterMinutes.toLong() * 60 * 1000)
+                        .isBefore(now)
+                ) {
+                    logger.debug("purge ${pie.serialNumber}...")
+                    passInfoEnvelopeRepository.deleteById(pie.serialNumber)
+                }
+            }
 
         lastSuccessfullRun = Instant.now()
-
         logger.debug("BackgroundProcessingService ends... {${Thread.currentThread().name}}")
     }
 

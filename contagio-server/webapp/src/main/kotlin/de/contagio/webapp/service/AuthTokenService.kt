@@ -1,6 +1,7 @@
 package de.contagio.webapp.service
 
 import de.contagio.core.domain.port.IdType
+import de.contagio.webapp.model.properties.ContagioProperties
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -17,7 +18,9 @@ data class AuthTokenData(
 )
 
 @Service
-open class AuthTokenService {
+open class AuthTokenService(
+    private val contagioProperties: ContagioProperties
+) {
 
     private var authTokens = mutableMapOf<String, AuthTokenData>()
 
@@ -43,7 +46,10 @@ open class AuthTokenService {
         val newTokenMap = mutableMapOf<String, AuthTokenData>()
 
         authTokens.forEach {
-            if (it.value.created.plusMillis(10 * 60 * 1000).isAfter(Instant.now())) {
+            if (it.value.created
+                    .plusMillis(contagioProperties.authTokenValidInMinutes.toLong() * 60 * 1000)
+                    .isAfter(Instant.now())
+            ) {
                 newTokenMap[it.key] = it.value
             }
         }
@@ -51,7 +57,8 @@ open class AuthTokenService {
         val newCount = newTokenMap.size
         authTokens = newTokenMap
 
-        logger.debug("AuthTokenService.flush() $oldCount -> $newCount")
+        if (oldCount != newCount)
+            logger.debug("AuthTokenService.flush() $oldCount -> $newCount")
 
     }
 }

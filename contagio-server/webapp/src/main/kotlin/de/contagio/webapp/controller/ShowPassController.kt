@@ -26,6 +26,7 @@ open class ShowPassController(
     ) = searchPassInfo
         .execute(serialNumber)?.let {
             model.addAttribute("pageType", "verify")
+            model.addAttribute("refreshPage", true)
             model.addAttribute("extendedPassInfo", it)
             model.addAttribute("showDetails", showDetails ?: false)
 

@@ -41,6 +41,8 @@ spring:
 
 contagio:
   baseUrl: "https://www.contagio.de"
+  authTokenValidInMinutes: "10"
+  purgeAfterMinutes: "60"
 
   pass:
     teamIdentifier: 4V27BGKSLA
@@ -75,5 +77,5 @@ contagio:
 
   scheduler:
     enabled: true
-    initialDelayInMilliseconds: 20000
-    fixedDelayInMilliseconds: 60000
+    initialDelayInMilliseconds: 10000
+    fixedDelayInMilliseconds: 20000

@@ -50,7 +50,7 @@ sealed class PassCommand(
 
     abstract fun execute(getEncryptionKey: IGetEncryptionKey? = null): PassCommandExecutionStatus
 
-    fun logMessage(): String = "Command $this executed"
+    fun logMessage(): String = "$this executed"
 
     fun executionStatus(key: PassGetKeyResult) = when (key.status) {
         PassGetKeyStatus.FOUND -> PassCommandExecutionStatus.SUCCESSFUL

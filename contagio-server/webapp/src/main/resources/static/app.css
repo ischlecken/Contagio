@@ -210,6 +210,11 @@ a.btn i {
     margin-right: .4rem;
 }
 
+
+tr.DELETED {
+    color: #ccc;
+}
+
 tr.unlocked {
     background-color: #ade0ad !important;
 }

@@ -12,3 +12,5 @@ spring:
 
 contagio:
   baseUrl: "https://efeu.local:13013"
+  authTokenValidInMinutes: "2"
+  purgeAfterMinutes: "5"
