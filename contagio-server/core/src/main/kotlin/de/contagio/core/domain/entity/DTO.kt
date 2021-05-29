@@ -1,7 +1,9 @@
 package de.contagio.core.domain.entity
 
 import de.brendamour.jpasskit.PKPass
+import org.springframework.data.annotation.Id
 import java.io.Serializable
+import java.time.Instant
 
 
 data class CreateTeststationDTO(
@@ -57,4 +59,17 @@ data class UpdatePassResponse(
     val passInfo: PassInfo,
     val pkPass: PKPass,
     val pass: ByteArray
+)
+
+data class UpdatePassRequest(
+    @Id val serialNumber: String,
+    val testResult: TestResultType?,
+    val issueStatus: IssueStatus?,
+    val validUntil: Instant?,
+    val created: Instant = Instant.now()
+)
+
+data class PassSerialNumberWithUpdated(
+    val serialNumber: String,
+    val updated: Instant
 )

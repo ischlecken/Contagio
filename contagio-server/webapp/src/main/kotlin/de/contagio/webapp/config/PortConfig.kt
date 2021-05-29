@@ -6,7 +6,6 @@ import de.contagio.core.domain.port.*
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.*
 import de.contagio.webapp.service.AuthTokenService
-import de.contagio.webapp.service.PassCommandProcessor
 import de.contagio.webapp.service.PushNotificationService
 import de.contagio.webapp.util.toPageRequest
 import de.contagio.webapp.util.toPagedResult
@@ -210,12 +209,6 @@ open class PortConfig(
                 }
         }
 
-    @Bean
-    open fun findPendingSerialNumbers(passCommandProcessor: PassCommandProcessor) =
-        IFindPendingSerialNumbers {
-            passCommandProcessor.getPendingSerialNumbers()
-        }
-
     @Value("classpath:certs/pass.p12")
     private lateinit var passKeystore: Resource
 
@@ -242,4 +235,19 @@ open class PortConfig(
     }
 
 
+    @Bean
+    open fun findUpdatePassRequest(updatePassRequestRepository: UpdatePassRequestRepository) =
+        IFindUpdatePassRequest { serialNumber ->
+            val result = updatePassRequestRepository.findById(serialNumber)
+
+            return@IFindUpdatePassRequest if (result.isPresent)
+                result.get()
+            else
+                null
+        }
+
+    @Bean
+    open fun saveUpdatePassRequest(updatePassRequestRepository: UpdatePassRequestRepository) = ISaveUpdatePassRequest {
+        updatePassRequestRepository.save(it)
+    }
 }

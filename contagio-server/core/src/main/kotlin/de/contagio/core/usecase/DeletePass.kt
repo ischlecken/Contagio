@@ -7,7 +7,7 @@ import de.contagio.core.domain.port.IFindPassInfoEnvelope
 class DeletePass(
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
     private val deleteEncryptedPayload: IDeleteEncryptedPayload,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
+    private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
 ) {
 
     fun execute(serialNumber: String) {
@@ -17,7 +17,7 @@ class DeletePass(
         deleteEncryptedPayload.execute(passInfoEnvelope?.passId)
         deleteEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
 
-        updateOnlyPassInfoEnvelope.execute(serialNumber) {
+        updatePassInfoEnvelope.execute(serialNumber) {
             it.copy(issueStatus = IssueStatus.DELETED)
         }
     }

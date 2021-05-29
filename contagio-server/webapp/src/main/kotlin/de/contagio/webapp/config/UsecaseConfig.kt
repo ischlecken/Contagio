@@ -66,9 +66,9 @@ open class UsecaseConfig {
     @Bean
     open fun searchPassesForDevice(
         findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-        findPendingSerialNumbers: IFindPendingSerialNumbers,
-        findPassInfoEnvelope: IFindPassInfoEnvelope
-    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPendingSerialNumbers, findPassInfoEnvelope)
+        findPassInfoEnvelope: IFindPassInfoEnvelope,
+        findUpdatePassRequest: IFindUpdatePassRequest
+    ) = SearchPassesForDevice(findRegisteredSerialNumbers, findPassInfoEnvelope, findUpdatePassRequest)
 
     @Bean
     open fun urlBuilder(contagioProperties: ContagioProperties): UrlBuilder {
@@ -119,7 +119,7 @@ open class UsecaseConfig {
     open fun updateOnlyPassInfoEnvelope(
         findPassInfoEnvelope: IFindPassInfoEnvelope,
         savePassInfoEnvelope: ISavePassInfoEnvelope
-    ) = UpdateOnlyPassInfoEnvelope(findPassInfoEnvelope, savePassInfoEnvelope)
+    ) = UpdatePassInfoEnvelope(findPassInfoEnvelope, savePassInfoEnvelope)
 
     @Bean
     open fun notifyAllDevicesWithInstalledSerialNumber(
@@ -138,10 +138,10 @@ open class UsecaseConfig {
     open fun deletePass(
         findPassInfoEnvelope: IFindPassInfoEnvelope,
         deleteEncryptedPayload: IDeleteEncryptedPayload,
-        updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
+        updatePassInfoEnvelope: UpdatePassInfoEnvelope
     ) = DeletePass(
         findPassInfoEnvelope,
         deleteEncryptedPayload,
-        updateOnlyPassInfoEnvelope
+        updatePassInfoEnvelope
     )
 }

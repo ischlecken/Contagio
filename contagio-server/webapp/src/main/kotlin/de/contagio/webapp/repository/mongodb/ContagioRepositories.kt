@@ -28,3 +28,5 @@ interface RegistrationInfoRepository : MongoRepository<RegistrationInfo, String>
 
     fun countBySerialNumber(serialNumber: String): Long
 }
+
+interface UpdatePassRequestRepository : MongoRepository<UpdatePassRequest, String>

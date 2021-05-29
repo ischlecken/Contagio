@@ -4,8 +4,6 @@ import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.IdType
 import org.apache.commons.io.IOUtils
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -94,90 +92,4 @@ class PassBuilderTest {
         assertEquals(0, validationErrors?.size)
     }
 
-    @Test
-    fun updatePassInfoEnvelopeWithoutEncryption_isExpected() {
-        val validUntil = LocalDateTime.of(2021, 5, 30, 22, 22, 42).toInstant(ZoneOffset.UTC)
-
-        val encryptedPayload = object : IEncryptedPayload {
-            override fun getObject(key: String?, cls: Class<*>): Any {
-                return passInfoTemplate
-            }
-
-            override fun get(key: String?): ByteArray {
-                return byteArrayOf()
-            }
-        }
-
-        var savedPassInfo: PassInfo? = null
-        val updatePassInfoEnvelope = UpdatePassInfoEnvelope(
-            findEncryptedPayload = { encryptedPayload },
-            savePassInfoEnvelope = { },
-            saveEncryptedPayload = { _, obj, _ ->
-                savedPassInfo = obj as PassInfo
-
-                object : IEncryptedPayload {
-                    override fun getObject(key: String?, cls: Class<*>): Any {
-                        return obj
-                    }
-
-                    override fun get(key: String?): ByteArray {
-                        return byteArrayOf()
-                    }
-                }
-            },
-            getEncryptionKey = getEncryptionKey
-        )
-
-        val updatedPassInfoEnvelope = updatePassInfoEnvelope.execute(
-            passInfoEnvelope = passInfoEnvelopeTemplate,
-            testResult = TestResultType.POSITIVE,
-            issueStatus = IssueStatus.ISSUED,
-            validUntil = validUntil
-        )
-
-        assertEquals("123", updatedPassInfoEnvelope?.serialNumber)
-        assertEquals("4242", updatedPassInfoEnvelope?.passInfoId)
-        assertEquals(validUntil, updatedPassInfoEnvelope?.validUntil)
-        assertEquals(TestResultType.POSITIVE, savedPassInfo?.testResult)
-    }
-
-    @Test
-    fun updatePassInfoEnvelopeWithEncryption_isExpected() {
-        val validUntil = LocalDateTime.of(2021, 5, 30, 23, 23, 42).toInstant(ZoneOffset.UTC)
-
-        val encryptedPayload = EncryptedPayload
-            .toEncryptedJsonPayload(
-                passInfoEnvelopeTemplate.serialNumber,
-                passInfoTemplate,
-                key
-            )
-
-        var savedEncryptedPassInfo: EncryptedPayload? = null
-        val updatePassInfoEnvelope = UpdatePassInfoEnvelope(
-            findEncryptedPayload = { encryptedPayload },
-            savePassInfoEnvelope = { },
-            saveEncryptedPayload = { id, obj, key ->
-                val result = EncryptedPayload.toEncryptedJsonPayload(id, obj, key)
-                savedEncryptedPassInfo = result
-
-                result
-            },
-            getEncryptionKey = getEncryptionKey
-        )
-
-        val updatedPassInfoEnvelope = updatePassInfoEnvelope.execute(
-            passInfoEnvelope = passInfoEnvelopeTemplate,
-            testResult = TestResultType.POSITIVE,
-            issueStatus = IssueStatus.ISSUED,
-            validUntil = validUntil
-        )
-
-        assertEquals("123", updatedPassInfoEnvelope?.serialNumber)
-        assertEquals("4242", updatedPassInfoEnvelope?.passInfoId)
-        assertEquals(validUntil, updatedPassInfoEnvelope?.validUntil)
-
-        assertEquals("4242", savedEncryptedPassInfo?.id)
-        val decryptedPassInfo = savedEncryptedPassInfo?.getObject(key, PassInfo::class.java) as PassInfo
-        assertEquals(TestResultType.POSITIVE, decryptedPassInfo.testResult)
-    }
 }

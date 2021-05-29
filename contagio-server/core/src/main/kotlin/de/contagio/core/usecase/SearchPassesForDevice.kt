@@ -1,19 +1,19 @@
 package de.contagio.core.usecase
 
+import de.contagio.core.domain.entity.PassSerialNumberWithUpdated
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
-import de.contagio.core.domain.port.IFindPendingSerialNumbers
 import de.contagio.core.domain.port.IFindRegisteredSerialNumbers
+import de.contagio.core.domain.port.IFindUpdatePassRequest
+import de.contagio.core.lastModifiedDateTime
 import org.slf4j.LoggerFactory
 import java.time.Instant
 
 private var logger = LoggerFactory.getLogger(SearchPassesForDevice::class.java)
 
-data class PassSerialNumberWithUpdated(val serialNumber: String, val updated: Instant)
-
 class SearchPassesForDevice(
     private val findRegisteredSerialNumbers: IFindRegisteredSerialNumbers,
-    private val findPendingSerialNumbers: IFindPendingSerialNumbers,
-    private val findPassInfoEnvelope: IFindPassInfoEnvelope
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val findUpdatePassRequest: IFindUpdatePassRequest
 ) {
     fun execute(deviceLibraryIdentifier: String, updatedSince: Instant?): Collection<PassSerialNumberWithUpdated> {
         val serialNumbers = mutableListOf<PassSerialNumberWithUpdated>()
@@ -29,15 +29,22 @@ class SearchPassesForDevice(
             }
         }
 
-        serialNumbers.addAll(findPendingSerialNumbers.execute())
+        val result = mutableListOf<PassSerialNumberWithUpdated>()
+        serialNumbers.forEach { s ->
+            result.add(
+                findUpdatePassRequest.execute(s.serialNumber)?.let {
+                    PassSerialNumberWithUpdated(serialNumber = s.serialNumber, updated = it.created)
+                } ?: s
+            )
+        }
 
         return if (updatedSince != null) {
-            logger.debug("updatedSince=$updatedSince")
+            logger.debug("  updatedSince=${updatedSince.lastModifiedDateTime()}")
 
-            serialNumbers.filter {
-                logger.debug("  updated=${it.updated}")
+            result.filter { s ->
+                logger.debug("    updated=${s.updated.lastModifiedDateTime()}")
 
-                it.updated.isAfter(updatedSince)
+                s.updated.isAfter(updatedSince)
             }
         } else
             serialNumbers

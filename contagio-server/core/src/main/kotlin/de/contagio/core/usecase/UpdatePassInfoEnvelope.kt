@@ -1,55 +1,25 @@
 package de.contagio.core.usecase
 
-import de.contagio.core.domain.entity.*
-import de.contagio.core.domain.port.*
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import de.contagio.core.domain.entity.PassInfoEnvelope
+import de.contagio.core.domain.port.IFindPassInfoEnvelope
+import de.contagio.core.domain.port.ISavePassInfoEnvelope
 
 class UpdatePassInfoEnvelope(
-    private val findEncryptedPayload: IFindEncryptedPayload,
-    private val savePassInfoEnvelope: ISavePassInfoEnvelope,
-    private val saveEncryptedPayload: ISaveEncryptedPayload,
-    private val getEncryptionKey: IGetEncryptionKey
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val savePassInfoEnvelope: ISavePassInfoEnvelope
 ) {
 
     fun execute(
-        passInfoEnvelope: PassInfoEnvelope,
-        testResult: TestResultType,
-        issueStatus: IssueStatus,
-        validUntil: Instant? = null
+        id: String,
+        update: (PassInfoEnvelope) -> PassInfoEnvelope
     ): PassInfoEnvelope? {
 
-        return getEncryptionKey.execute(IdType.SERIALNUMBER, passInfoEnvelope.serialNumber)?.let { authToken ->
-            findEncryptedPayload.execute(passInfoEnvelope.passInfoId)?.let { encryptedPayload ->
-                val passInfo = encryptedPayload.getObject(authToken, PassInfo::class.java) as PassInfo
+        return findPassInfoEnvelope.execute(id)?.let { passInfoEnvelope ->
+            val updatedPassInfoEnvelope = update(passInfoEnvelope)
 
-                var newValidUntil: Instant?
-                val updatedPassInfo = passInfo.let {
-                    newValidUntil = when {
-                        issueStatus == IssueStatus.EXPIRED -> passInfoEnvelope.validUntil
-                        validUntil != null -> validUntil
-                        else -> Instant.now()
-                            .plus(if (it.testType == TestType.VACCINATION) 24 * 364 else 1, ChronoUnit.DAYS)
-                    }
+            savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
 
-                    it.copy(
-                        testResult = testResult,
-                    )
-                }
-
-                saveEncryptedPayload.execute(passInfoEnvelope.passInfoId, updatedPassInfo, authToken)
-
-                val updatedPassInfoEnvelope = passInfoEnvelope.copy(
-                    issueStatus = issueStatus,
-                    updated = Instant.now(),
-                    validUntil = newValidUntil,
-                    version = passInfoEnvelope.version + 1
-                )
-
-                savePassInfoEnvelope.execute(updatedPassInfoEnvelope)
-
-                updatedPassInfoEnvelope
-            }
+            updatedPassInfoEnvelope
         }
     }
 }

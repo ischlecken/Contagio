@@ -20,6 +20,8 @@
 
 	<logger name="de.contagio" level="DEBUG" />
 	<logger name="de.contagio.core.usecase.ContagioPassTemplate" level="OFF" />
-
+	<logger name="de.contagio.webapp.service.BackgroundProcessingService" level="OFF" />
+	<logger name="de.contagio.webapp.service.AppStartupRunner" level="OFF" />
+	<logger name="de.contagio.webapp.config" level="OFF" />
 </configuration>
 

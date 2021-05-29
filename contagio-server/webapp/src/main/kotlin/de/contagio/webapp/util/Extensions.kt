@@ -6,6 +6,10 @@ import de.contagio.core.domain.port.SortDirection
 import de.contagio.core.domain.port.Sorting
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 val defaultSort = listOf(Sorting("updated", SortDirection.desc))
 val createdSort = listOf(Sorting("created", SortDirection.desc))
@@ -35,7 +39,7 @@ fun Pageable.toPageRequest(): PageRequest {
         sort.add(
             Sorting(
                 column = it.property,
-                direction = when( it.direction) {
+                direction = when (it.direction) {
                     Sort.Direction.DESC -> SortDirection.desc
                     Sort.Direction.ASC -> SortDirection.asc
                     else -> SortDirection.asc
@@ -62,3 +66,4 @@ fun <T> org.springframework.data.domain.Page<T>.toPagedResult(): PagedResult<T> 
         totalPages = this.totalPages
     )
 }
+

@@ -1,6 +1,7 @@
 package de.contagio.core.domain.entity
 
 import de.contagio.core.domain.port.IGetEncryptionKey
+import de.contagio.core.domain.port.ISaveUpdatePassRequest
 import de.contagio.core.domain.port.ISetEncryptionKey
 import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.*
@@ -98,7 +99,7 @@ class ExpirePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        return executionStatus (key)
+        return executionStatus(key)
     }
 
     override fun toString() =
@@ -128,7 +129,7 @@ class RevokePassCommand(
                 }
 
 
-        return executionStatus (key)
+        return executionStatus(key)
     }
 
     override fun toString() =
@@ -156,7 +157,7 @@ class IssuePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        return executionStatus (key)
+        return executionStatus(key)
     }
 
     override fun toString() =
@@ -164,28 +165,26 @@ class IssuePassCommand(
 }
 
 class NegativePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
+    private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
+    private val saveUpdatePassRequest: ISaveUpdatePassRequest,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("NegativePassCommand.execute($serialNumber)")
 
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            updatePass
-                .execute(
-                    authToken = key.key!!,
-                    serialNumber = serialNumber,
-                    issueStatus = IssueStatus.ISSUED,
-                    testResult = TestResultType.NEGATIVE,
-                    validUntil = Instant.now().plus(3, ChronoUnit.DAYS)
-                )?.also {
-                    notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-                }
+        notifyAllDevices.execute(serialNumber)
 
-        return executionStatus (key)
+        saveUpdatePassRequest.execute(
+            UpdatePassRequest(
+                serialNumber = serialNumber,
+                issueStatus = IssueStatus.ISSUED,
+                testResult = TestResultType.NEGATIVE,
+                validUntil = Instant.now().plus(3, ChronoUnit.DAYS)
+            )
+        )
+
+        return PassCommandExecutionStatus.SUCCESSFUL
     }
 
     override fun toString() =
@@ -193,28 +192,26 @@ class NegativePassCommand(
 }
 
 class PositivePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
+    private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
+    private val saveUpdatePassRequest: ISaveUpdatePassRequest,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("PositivePassCommand.execute()")
 
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            updatePass
-                .execute(
-                    authToken = key.key!!,
-                    serialNumber = serialNumber,
-                    issueStatus = IssueStatus.ISSUED,
-                    testResult = TestResultType.POSITIVE,
-                    validUntil = Instant.now().plus(30, ChronoUnit.DAYS)
-                )?.also {
-                    notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-                }
+        notifyAllDevices.execute(serialNumber)
 
-        return executionStatus (key)
+        saveUpdatePassRequest.execute(
+            UpdatePassRequest(
+                serialNumber = serialNumber,
+                issueStatus = IssueStatus.ISSUED,
+                testResult = TestResultType.POSITIVE,
+                validUntil = Instant.now().plus(30, ChronoUnit.DAYS)
+            )
+        )
+
+        return PassCommandExecutionStatus.SUCCESSFUL
     }
 
     override fun toString() =
@@ -223,14 +220,14 @@ class PositivePassCommand(
 
 
 class InstalledPassCommand(
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
+    private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("InstalledPassCommand.execute()")
 
-        updateOnlyPassInfoEnvelope
+        updatePassInfoEnvelope
             .execute(serialNumber) {
                 it.copy(
                     deviceInstallationStatus = DeviceInstallationStatus.INSTALLED,
@@ -247,14 +244,14 @@ class InstalledPassCommand(
 
 
 class RemovedPassCommand(
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope,
+    private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("InstalledPassCommand.execute()")
 
-        updateOnlyPassInfoEnvelope
+        updatePassInfoEnvelope
             .execute(serialNumber) {
                 it.copy(
                     deviceInstallationStatus = DeviceInstallationStatus.REMOVED,
@@ -356,7 +353,7 @@ class UpdatePassCommand(
                     notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
                 }
 
-        return executionStatus (key)
+        return executionStatus(key)
     }
 
     override fun toString() =

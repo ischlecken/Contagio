@@ -2,6 +2,7 @@ package de.contagio.webapp.restcontroller
 
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
 import de.contagio.core.domain.port.IFindRegistrationInfo
+import de.contagio.core.lastModifiedDateTime
 import de.contagio.core.usecase.SearchPassInfo
 import de.contagio.core.usecase.SearchPassesForDevice
 import de.contagio.webapp.model.WalletLog
@@ -15,9 +16,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
@@ -33,9 +31,6 @@ open class WalletRestController(
     private val searchPassesForDevice: SearchPassesForDevice
 ) {
 
-    private val lastModifiedDateTimeFormatter =
-        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH)
-
     @ValidateApplePass
     @GetMapping("/passes/{passTypeIdentifier}/{serialNumber}")
     open fun getPass(
@@ -46,7 +41,7 @@ open class WalletRestController(
         logger.debug("getPass(serialNumber=${serialNumber})")
 
         return searchPassInfo.execute(serialNumber)?.let {
-            val lastModified = lastModifiedDateTimeFormatter.format(it.passUpdated?.atZone(ZoneId.of("GMT")))
+            val lastModified = it.passUpdated.lastModifiedDateTime()
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")
 
@@ -63,15 +58,12 @@ open class WalletRestController(
     open fun getPasses(
         @PathVariable deviceLibraryIdentifier: String,
         @PathVariable passTypeIdentifier: String,
-        @RequestParam passesUpdatedSince: String?
+        @RequestParam(required = false) passesUpdatedSince: String?
     ): ResponseEntity<WalletPasses> {
 
-        logger.debug("getPasses(deviceLibraryIdentifier=${deviceLibraryIdentifier}, passesUpdatedSince=${passesUpdatedSince})")
+        val updatedSince = passesUpdatedSince?.let { Instant.ofEpochSecond(it.toLong()) }
 
-        val updatedSince = if (passesUpdatedSince != null)
-            Instant.ofEpochSecond(passesUpdatedSince.toLong() + 1)
-        else
-            null
+        logger.debug("getPasses(${deviceLibraryIdentifier}, updatedSince=${updatedSince.lastModifiedDateTime()})")
 
         val serialNumbers = searchPassesForDevice
             .execute(deviceLibraryIdentifier, updatedSince)
@@ -80,10 +72,15 @@ open class WalletRestController(
             }
 
         return if (serialNumbers.isNotEmpty()) {
+            val lastUpdated = serialNumbers.first().updated
+            val serialNumberList = serialNumbers.map { it.serialNumber }
+
+            logger.debug("  lastUpdated=${lastUpdated.lastModifiedDateTime()}/${lastUpdated.epochSecond} serialNumbers=$serialNumberList")
+
             ResponseEntity.ok(
                 WalletPasses(
-                    lastUpdated = serialNumbers.first().updated.epochSecond.toString(),
-                    serialNumbers = serialNumbers.map { it.serialNumber }
+                    lastUpdated = lastUpdated.epochSecond.toString(),
+                    serialNumbers = serialNumberList
                 )
             )
         } else

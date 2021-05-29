@@ -28,9 +28,10 @@ open class PassCommandProcessor(
     private val updatePass: UpdatePass,
     private val deletePass: DeletePass,
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
-    private val updateOnlyPassInfoEnvelope: UpdateOnlyPassInfoEnvelope
+    private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
+    private val saveUpdatePassRequest: ISaveUpdatePassRequest
 
-    ) : BackgroundJob() {
+) : BackgroundJob() {
 
 
     private val uidGeneration = UIDGenerator()
@@ -53,11 +54,11 @@ open class PassCommandProcessor(
     }
 
     fun negativeTestresult(serialNumber: String) {
-        addCommand(NegativePassCommand(notifyDevices, updatePass, serialNumber))
+        addCommand(NegativePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
     }
 
     fun positiveTestresult(serialNumber: String) {
-        addCommand(PositivePassCommand(notifyDevices, updatePass, serialNumber))
+        addCommand(PositivePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
     }
 
     fun deletePass(serialNumber: String) {
@@ -65,11 +66,11 @@ open class PassCommandProcessor(
     }
 
     fun passInstalled(serialNumber: String) {
-        addCommand(InstalledPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
+        addCommand(InstalledPassCommand(updatePassInfoEnvelope, serialNumber))
     }
 
     fun passRemoved(serialNumber: String) {
-        addCommand(RemovedPassCommand(updateOnlyPassInfoEnvelope, serialNumber))
+        addCommand(RemovedPassCommand(updatePassInfoEnvelope, serialNumber))
     }
 
     fun createPass(
