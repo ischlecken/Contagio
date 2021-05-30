@@ -11,6 +11,20 @@ docker-compose -p contagio up -d
 
 # Contagio Server
 
+## create docker image
+```
+cd contagio-server
+docker build -t contagio_server:<tag> .
+docker tag contagio_server:<tag> ghcr.io/ischlecken/contagio:<tag>
+docker push ghcr.io/ischlecken/contagio:<tag>
+```
+
+## recreate on sloppy
+```
+sloppy delete contagio
+sloppy start sloppy.json
+```
+
 ##
 Beschreibung fehlt, wie man an das passende Zertifikat kommt zum Signieren des Passes
 
