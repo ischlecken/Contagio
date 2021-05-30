@@ -1,5 +1,6 @@
 package de.contagio.webapp.service.validate
 
+import de.contagio.core.domain.entity.IssueStatus
 import de.contagio.core.domain.entity.PassInfo
 import de.contagio.core.domain.entity.Tester
 import de.contagio.core.domain.entity.Teststation
@@ -39,8 +40,15 @@ open class ValidateAspect(
                 val authorization = it.getHeader("Authorization")
                 val passTypeIdentifier = pjp.getParameterWithName<String>("passTypeIdentifier")
                 val serialNumber = pjp.getParameterWithName<String>("serialNumber")
+                val isDeleted = findPassInfoEnvelope.execute(serialNumber)?.let { pie ->
+                    pie.issueStatus == IssueStatus.DELETED
+                }
 
-                if (passTypeIdentifier != null &&
+                logger.debug(" serialNumber=$serialNumber isDeleted=$isDeleted")
+
+                if (isDeleted == true)
+                    ResponseEntity<Any>(HttpStatus.GONE)
+                else if (passTypeIdentifier != null &&
                     serialNumber != null &&
                     authorization != null &&
                     isAuthorized(

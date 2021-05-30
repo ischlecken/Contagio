@@ -5,7 +5,7 @@ import de.contagio.core.domain.entity.PassUpdateLog
 import de.contagio.core.domain.entity.UpdatePassRequest
 
 fun interface IFindPassInfoEnvelope {
-    fun execute(id: String): PassInfoEnvelope?
+    fun execute(serialNumber: String?): PassInfoEnvelope?
 }
 
 fun interface ISavePassInfoEnvelope {
@@ -35,4 +35,9 @@ fun interface IFindUpdatePassRequest {
 
 fun interface ISaveUpdatePassRequest {
     fun execute(updatePassRequest: UpdatePassRequest)
+}
+
+
+fun interface IDeleteUpdatePassRequest {
+    fun execute(serialNumber: String)
 }

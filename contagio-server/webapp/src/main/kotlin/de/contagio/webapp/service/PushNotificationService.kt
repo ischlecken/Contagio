@@ -54,7 +54,7 @@ open class PushNotificationService(
     }
 
     open fun sendPushNotificationAsync(pushtoken: String): PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>>? {
-        logger.debug("Sending Push notification for key: $pushtoken")
+        logger.debug("sending push notification for pushtoken $pushtoken ...")
 
         val payloadBuilder = SimpleApnsPayloadBuilder()
         payloadBuilder.setAlertBody("{}")
@@ -69,7 +69,7 @@ open class PushNotificationService(
             }
         }
         val pushNotification = SimpleApnsPushNotification(token, topic, payload)
-        logger.debug("Send Push notification for key: $pushtoken")
+        logger.debug("push notification for pushtoken $pushtoken send.")
 
         return client?.sendNotification(pushNotification)
     }

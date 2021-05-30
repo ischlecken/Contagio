@@ -31,8 +31,11 @@ open class PortConfig(
 ) {
 
     @Bean
-    open fun findPassInfoEnvelope() = IFindPassInfoEnvelope { id ->
-        val result = passInfoEnvelopeRepository.findById(id)
+    open fun findPassInfoEnvelope() = IFindPassInfoEnvelope { serialNumber ->
+        val result = if (serialNumber != null)
+            passInfoEnvelopeRepository.findById(serialNumber)
+        else
+            Optional.empty()
 
         return@IFindPassInfoEnvelope if (result.isPresent)
             result.get()
@@ -250,4 +253,11 @@ open class PortConfig(
     open fun saveUpdatePassRequest(updatePassRequestRepository: UpdatePassRequestRepository) = ISaveUpdatePassRequest {
         updatePassRequestRepository.save(it)
     }
+
+
+    @Bean
+    open fun deleteUpdatePassRequest(updatePassRequestRepository: UpdatePassRequestRepository) =
+        IDeleteUpdatePassRequest {
+            updatePassRequestRepository.deleteById(it)
+        }
 }

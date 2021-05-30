@@ -1,9 +1,6 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IGetEncryptionKey
-import de.contagio.core.domain.port.ISaveUpdatePassRequest
-import de.contagio.core.domain.port.ISetEncryptionKey
-import de.contagio.core.domain.port.IdType
+import de.contagio.core.domain.port.*
 import de.contagio.core.usecase.*
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -77,92 +74,33 @@ class DeletePassCommand(
         "DeletePassCommand($serialNumber)"
 }
 
-class ExpirePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
-    serialNumber: String
-) : PassCommand(serialNumber) {
-
-    override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
-        logger.debug("ExpirePassCommand.execute($serialNumber)")
-
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            updatePass
-                .execute(
-                    authToken = key.key!!,
-                    serialNumber = serialNumber,
-                    issueStatus = IssueStatus.EXPIRED,
-                    testResult = null,
-                    validUntil = null
-                )?.also {
-                    notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-                }
-
-        return executionStatus(key)
-    }
-
-    override fun toString() =
-        "ExpirePassCommand($serialNumber)"
-}
 
 class RevokePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
+    private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
+    private val saveUpdatePassRequest: ISaveUpdatePassRequest,
     serialNumber: String
 ) : PassCommand(serialNumber) {
 
     override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
         logger.debug("RevokePassCommand.execute()")
 
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            updatePass
-                .execute(
-                    authToken = key.key!!,
-                    serialNumber = serialNumber,
-                    issueStatus = IssueStatus.REVOKED,
-                    testResult = null,
-                    validUntil = null
-                )?.also {
-                    notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-                }
+        notifyAllDevices.execute(serialNumber)
+        saveUpdatePassRequest.execute(
+            UpdatePassRequest(
+                serialNumber = serialNumber,
+                issueStatus = IssueStatus.REVOKED,
+                testResult = null,
+                validUntil = null
+            )
+        )
 
-
-        return executionStatus(key)
+        return  PassCommandExecutionStatus.SUCCESSFUL
     }
 
     override fun toString() =
         "RevokePassCommand($serialNumber)"
 }
 
-class IssuePassCommand(
-    private val notifyAllDevicesWithInstalledSerialNumber: NotifyAllDevicesWithInstalledSerialNumber,
-    private val updatePass: UpdatePass,
-    serialNumber: String
-) : PassCommand(serialNumber) {
-    override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
-        logger.debug("IssuePassCommand.execute()")
-
-        val key = getKey(getEncryptionKey, notifyAllDevicesWithInstalledSerialNumber)
-        if (key.status == PassGetKeyStatus.FOUND)
-            updatePass
-                .execute(
-                    authToken = key.key!!,
-                    serialNumber = serialNumber,
-                    issueStatus = IssueStatus.ISSUED,
-                    testResult = null,
-                    validUntil = null
-                )?.also {
-                    notifyAllDevicesWithInstalledSerialNumber.execute(serialNumber)
-                }
-
-        return executionStatus(key)
-    }
-
-    override fun toString() =
-        "IssuePassCommand($serialNumber)"
-}
 
 class NegativePassCommand(
     private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
@@ -174,7 +112,6 @@ class NegativePassCommand(
         logger.debug("NegativePassCommand.execute($serialNumber)")
 
         notifyAllDevices.execute(serialNumber)
-
         saveUpdatePassRequest.execute(
             UpdatePassRequest(
                 serialNumber = serialNumber,
@@ -201,7 +138,6 @@ class PositivePassCommand(
         logger.debug("PositivePassCommand.execute()")
 
         notifyAllDevices.execute(serialNumber)
-
         saveUpdatePassRequest.execute(
             UpdatePassRequest(
                 serialNumber = serialNumber,
@@ -218,6 +154,45 @@ class PositivePassCommand(
         "PositivePassCommand($serialNumber)"
 }
 
+class ExpirePassCommand(
+    private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
+    private val saveUpdatePassRequest: ISaveUpdatePassRequest,
+    private val findPassInfoEnvelope: IFindPassInfoEnvelope,
+    private val findUpdatePassRequest: IFindUpdatePassRequest,
+    serialNumber: String
+) : PassCommand(serialNumber) {
+
+    override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
+        logger.debug("ExpirePassCommand.execute($serialNumber)")
+
+        val isExpired = findPassInfoEnvelope.execute(serialNumber)?.let { it.issueStatus == IssueStatus.EXPIRED }
+
+        if (isExpired == true)
+            return PassCommandExecutionStatus.SUCCESSFUL
+
+        val expireUpdateRequest = findUpdatePassRequest.execute(serialNumber)?.let {
+            it.issueStatus == IssueStatus.EXPIRED
+        }
+
+        if (expireUpdateRequest == true)
+            return PassCommandExecutionStatus.PENDING
+
+        notifyAllDevices.execute(serialNumber)
+        saveUpdatePassRequest.execute(
+            UpdatePassRequest(
+                serialNumber = serialNumber,
+                issueStatus = IssueStatus.EXPIRED,
+                testResult = null,
+                validUntil = null
+            )
+        )
+
+        return PassCommandExecutionStatus.PENDING
+    }
+
+    override fun toString() =
+        "ExpirePassCommand($serialNumber)"
+}
 
 class InstalledPassCommand(
     private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
@@ -231,7 +206,7 @@ class InstalledPassCommand(
             .execute(serialNumber) {
                 it.copy(
                     deviceInstallationStatus = DeviceInstallationStatus.INSTALLED,
-                    deviceUpdated = Instant.now(),
+                    passInstalled = Instant.now(),
                 )
             }
 
@@ -255,7 +230,7 @@ class RemovedPassCommand(
             .execute(serialNumber) {
                 it.copy(
                     deviceInstallationStatus = DeviceInstallationStatus.REMOVED,
-                    deviceUpdated = Instant.now()
+                    passInstalled = null
                 )
             }
 

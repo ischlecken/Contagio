@@ -3,6 +3,7 @@
 package de.contagio.webapp.controller
 
 import de.contagio.core.domain.port.IFindAllPassInfoEnvelope
+import de.contagio.core.domain.port.IFindUpdatePassRequest
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.IdType
 import de.contagio.core.usecase.UrlBuilder
@@ -22,6 +23,7 @@ import springfox.documentation.annotations.ApiIgnore
 @Controller
 open class PassController(
     private val findAllPassInfoEnvelope: IFindAllPassInfoEnvelope,
+    private val findUpdatePassRequest: IFindUpdatePassRequest,
     private val urlBuilder: UrlBuilder,
     private val getEncryptionKey: IGetEncryptionKey,
     private val passCommandProcessor: PassCommandProcessor
@@ -35,15 +37,30 @@ open class PassController(
         )
 
         val unlockedSerialNumbers = mutableListOf<String>()
+        val pendingUpdates = mutableListOf<String>()
+        val cssClasses = mutableMapOf<String,String>()
         passes.content.forEach { p ->
+            var cssClass = ""
             getEncryptionKey.execute(IdType.SERIALNUMBER, p.serialNumber)?.apply {
                 unlockedSerialNumbers.add(p.serialNumber)
+
+                cssClass += " unlocked"
             }
+
+            findUpdatePassRequest.execute(p.serialNumber)?.apply {
+                pendingUpdates.add(p.serialNumber)
+
+                cssClass += " pending"
+            }
+
+            cssClasses[p.serialNumber] = cssClass
         }
 
         model.addAttribute("pageType", "pass")
         model.addAttribute("passInfo", passes)
         model.addAttribute("unlockedSerialNumbers", unlockedSerialNumbers)
+        model.addAttribute("pendingUpdates", pendingUpdates)
+        model.addAttribute("cssClasses", cssClasses)
         model.addAttribute(
             "breadcrumbinfo",
             listOf(
@@ -69,7 +86,6 @@ open class PassController(
             "delete" -> passCommandProcessor.deletePass(serialnumber)
             "expire" -> passCommandProcessor.expirePass(serialnumber)
             "revoke" -> passCommandProcessor.revokePass(serialnumber)
-            "issue" -> passCommandProcessor.issuePass(serialnumber)
             "negative" -> passCommandProcessor.negativeTestresult(serialnumber)
             "positive" -> passCommandProcessor.positiveTestresult(serialnumber)
         }

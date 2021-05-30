@@ -3,7 +3,7 @@ package de.contagio.webapp.restcontroller
 import de.contagio.core.domain.port.IFindPassInfoEnvelope
 import de.contagio.core.domain.port.IFindRegistrationInfo
 import de.contagio.core.lastModifiedDateTime
-import de.contagio.core.usecase.SearchPassInfo
+import de.contagio.core.usecase.LazyUpdatePassInfo
 import de.contagio.core.usecase.SearchPassesForDevice
 import de.contagio.webapp.model.WalletLog
 import de.contagio.webapp.model.WalletPasses
@@ -26,7 +26,7 @@ private var logger = LoggerFactory.getLogger(WalletRestController::class.java)
 open class WalletRestController(
     private val findRegistrationInfo: IFindRegistrationInfo,
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
-    private val searchPassInfo: SearchPassInfo,
+    private val lazyUpdatePassInfo: LazyUpdatePassInfo,
     private val walletService: WalletService,
     private val searchPassesForDevice: SearchPassesForDevice
 ) {
@@ -40,7 +40,7 @@ open class WalletRestController(
     ): ResponseEntity<ByteArray> {
         logger.debug("getPass(serialNumber=${serialNumber})")
 
-        return searchPassInfo.execute(serialNumber)?.let {
+        return lazyUpdatePassInfo.execute(serialNumber)?.let {
             val lastModified = it.passUpdated.lastModifiedDateTime()
 
             logger.debug("getPass(serialNumber=${serialNumber}): lastModified=$lastModified")

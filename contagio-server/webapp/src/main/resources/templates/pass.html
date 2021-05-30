@@ -26,14 +26,14 @@
             <th th:text="#{field.installationstatus}">Installationstatus</th>
             <th th:text="#{field.validuntil}">Gültig bis</th>
             <th th:text="#{field.updated}">Geändert am</th>
-            <th th:text="#{field.deviceupdated}">Deviceänderung</th>
+            <th th:text="#{field.passinstalled}">Deviceänderung</th>
             <th th:text="#{field.commands}">Befehle</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="p : ${passInfo.content}"
               th:class="${p.issueStatus}"
-              th:classappend="${unlockedSerialNumbers.contains(p.serialNumber)} ? 'unlocked' : ''"
+              th:classappend="${cssClasses.get(p.serialNumber)}"
           >
             <td th:if="${unlockedSerialNumbers.contains(p.serialNumber)}">
               <a th:title="#{pass.opendetails.title}" title="Passdetails öffnen"
@@ -47,36 +47,38 @@
             <td th:text="#{installationStatus.__${p.deviceInstallationStatus}__}"/>
             <td th:text="${{p.validUntil}}"/>
             <td th:text="${{p.updated}}"/>
-            <td th:text="${{p.deviceUpdated}}"/>
+            <td th:text="${{p.passInstalled}}"/>
 
             <td>
               <form method="post" id="commandform" th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).DELETED}">
                 <input type="hidden" name="serialnumber" th:value="${p.serialNumber}"/>
 
                 <div class="btn-group">
-                  <button class="btn btn-danger deletecommand"><span th:title="#{command.delete}"><i
+                  <button th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).DELETED}"
+                          class="btn btn-danger deletecommand"><span th:title="#{command.delete}"><i
                     class="fas fa-trash-alt"></i></span>
                   </button>
+
                   <th:block
-                    th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED && p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).EXPIRED}">
-                    <button class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i
+                    th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).DELETED}">
+                    <button th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED}"
+                            class="btn btn-danger" name="command" value="revoke" type="submit"><span th:title="#{command.revoke}"><i
                       class="fas fa-undo"></i></span>
                     </button>
-                    <button class="btn btn-danger" name="command" value="expire" type="submit"><span th:title="#{command.expire}"><i
+                    <button
+                      th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED && p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).EXPIRED}"
+                      class="btn btn-danger" name="command" value="expire" type="submit"><span th:title="#{command.expire}"><i
                       class="fas fa-clock"></i></span>
                     </button>
-                    <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i
-                      class="fas fa-user-minus"></i></span>
-                    </button>
-                    <button class="btn btn-warning" name="command" value="positive" type="submit"><span th:title="#{command.positive}"><i
-                      class="fas fa-user-plus"></i></span>
-                    </button>
-                  </th:block>
-                  <th:block
-                    th:if="${p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).REVOKED || p.issueStatus == T(de.contagio.core.domain.entity.IssueStatus).EXPIRED}">
-                    <button class="btn btn-danger" name="command" value="issue" type="submit"><span th:title="#{command.issue}"><i
-                      class="fas fa-arrow-right"></i></span>
-                    </button>
+                    <th:block
+                      th:if="${p.issueStatus != T(de.contagio.core.domain.entity.IssueStatus).REVOKED}">
+                      <button class="btn btn-warning" name="command" value="negative" type="submit"><span th:title="#{command.negative}"><i
+                        class="fas fa-user-minus"></i></span>
+                      </button>
+                      <button class="btn btn-warning" name="command" value="positive" type="submit"><span th:title="#{command.positive}"><i
+                        class="fas fa-user-plus"></i></span>
+                      </button>
+                    </th:block>
                   </th:block>
                 </div>
               </form>

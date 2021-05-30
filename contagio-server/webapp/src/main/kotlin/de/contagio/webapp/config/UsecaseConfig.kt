@@ -144,4 +144,19 @@ open class UsecaseConfig {
         deleteEncryptedPayload,
         updatePassInfoEnvelope
     )
+
+    @Bean
+    open fun lazyUpdatePassInfo(
+        getEncryptionKey: IGetEncryptionKey,
+        findUpdatePassRequest: IFindUpdatePassRequest,
+        deleteUpdatePassRequest: IDeleteUpdatePassRequest,
+        updatePass: UpdatePass,
+        searchPassInfo: SearchPassInfo
+    ) = LazyUpdatePassInfo(
+        getEncryptionKey,
+        findUpdatePassRequest,
+        deleteUpdatePassRequest,
+        updatePass,
+        searchPassInfo
+    )
 }

@@ -16,7 +16,7 @@ class UpdatePassTest {
         val updatePass = UpdatePass(
             findPassInfoEnvelope = {
                 PassInfoEnvelope(
-                    serialNumber = it,
+                    serialNumber = it!!,
                     teamIdentifier = "123",
                     passTypeIdentifier = "123",
                     organisationName = "123",

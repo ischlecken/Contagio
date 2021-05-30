@@ -15,11 +15,11 @@ class SearchPassInfo(
     private val searchTesterWithTeststation: SearchTesterWithTeststation
 ) {
 
-    fun execute(id: String): ExtendedPassInfo? {
-        val passInfoEnvelope = findPassInfoEnvelope.execute(id)
+    fun execute(serialNumber: String): ExtendedPassInfo? {
+        val passInfoEnvelope = findPassInfoEnvelope.execute(serialNumber)
         val testerTeststation = searchTesterWithTeststation.execute(passInfoEnvelope?.testerId)
         val encryptedPassInfo = findEncryptedPayload.execute(passInfoEnvelope?.passInfoId)
-        val key = getEncryptionKey.execute(IdType.SERIALNUMBER, id)
+        val key = getEncryptionKey.execute(IdType.SERIALNUMBER, serialNumber)
         val passInfo = encryptedPassInfo?.getObject(key, PassInfo::class.java) as? PassInfo
         val encryptedPass = findEncryptedPayload.execute(passInfoEnvelope?.passId) as? EncryptedPayload
         val pass = encryptedPass?.get(key)

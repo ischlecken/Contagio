@@ -29,6 +29,7 @@ open class PassCommandProcessor(
     private val deletePass: DeletePass,
     private val findPassInfoEnvelope: IFindPassInfoEnvelope,
     private val updatePassInfoEnvelope: UpdatePassInfoEnvelope,
+    private val findUpdatePassRequest: IFindUpdatePassRequest,
     private val saveUpdatePassRequest: ISaveUpdatePassRequest
 
 ) : BackgroundJob() {
@@ -41,36 +42,48 @@ open class PassCommandProcessor(
     val size: Int get() = _commands.size
     val isProcessing: Boolean get() = _commands.size > 0
 
-    fun expirePass(serialNumber: String) {
-        addCommand(ExpirePassCommand(notifyDevices, updatePass, serialNumber))
-    }
 
     fun revokePass(serialNumber: String) {
-        addCommand(RevokePassCommand(notifyDevices, updatePass, serialNumber))
-    }
-
-    fun issuePass(serialNumber: String) {
-        addCommand(IssuePassCommand(notifyDevices, updatePass, serialNumber))
+        if (!commandExists(serialNumber, RevokePassCommand::class.java))
+            addCommand(RevokePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
     }
 
     fun negativeTestresult(serialNumber: String) {
-        addCommand(NegativePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
+        if (!commandExists(serialNumber, NegativePassCommand::class.java))
+            addCommand(NegativePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
     }
 
     fun positiveTestresult(serialNumber: String) {
-        addCommand(PositivePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
+        if (!commandExists(serialNumber, PositivePassCommand::class.java))
+            addCommand(PositivePassCommand(notifyDevices, saveUpdatePassRequest, serialNumber))
+    }
+
+    fun expirePass(serialNumber: String) {
+        if (!commandExists(serialNumber, ExpirePassCommand::class.java))
+            addCommand(
+                ExpirePassCommand(
+                    notifyDevices,
+                    saveUpdatePassRequest,
+                    findPassInfoEnvelope,
+                    findUpdatePassRequest,
+                    serialNumber
+                )
+            )
     }
 
     fun deletePass(serialNumber: String) {
-        addCommand(DeletePassCommand(deletePass, serialNumber))
+        if (!commandExists(serialNumber, DeletePassCommand::class.java))
+            addCommand(DeletePassCommand(deletePass, serialNumber))
     }
 
     fun passInstalled(serialNumber: String) {
-        addCommand(InstalledPassCommand(updatePassInfoEnvelope, serialNumber))
+        if (!commandExists(serialNumber, InstalledPassCommand::class.java))
+            addCommand(InstalledPassCommand(updatePassInfoEnvelope, serialNumber))
     }
 
     fun passRemoved(serialNumber: String) {
-        addCommand(RemovedPassCommand(updatePassInfoEnvelope, serialNumber))
+        if (!commandExists(serialNumber, RemovedPassCommand::class.java))
+            addCommand(RemovedPassCommand(updatePassInfoEnvelope, serialNumber))
     }
 
     fun createPass(
@@ -177,29 +190,6 @@ open class PassCommandProcessor(
         )
     }
 
-
-    fun getPendingSerialNumbers(): Collection<PassSerialNumberWithUpdated> {
-        val result = mutableSetOf<PassSerialNumberWithUpdated>()
-
-        runBlocking {
-            mutex.withLock {
-                _commands.forEach {
-                    result.add(
-                        PassSerialNumberWithUpdated(
-                            it.serialNumber,
-                            it.created
-                        )
-                    )
-                }
-            }
-        }
-
-        logger.debug("getPendingSerialNumbers(): $result")
-
-        return result
-    }
-
-
     private fun addCommand(cmd: PassCommand) {
         runBlocking {
             mutex.withLock {
@@ -209,6 +199,10 @@ open class PassCommandProcessor(
 
         logger.debug("addCommand($cmd)")
     }
+
+
+    private fun commandExists(serialNumber: String, cmdClass: Class<*>) =
+        _commands.firstOrNull { it.serialNumber == serialNumber && it::class.java == cmdClass } != null
 
     private suspend fun peekCommand(i: Int): PassCommand? {
         var result: PassCommand? = null

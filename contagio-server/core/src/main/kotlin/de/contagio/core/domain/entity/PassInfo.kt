@@ -53,7 +53,7 @@ data class PassInfoEnvelope(
     val version: Int = 0,
     val updated: Instant = Instant.now(),
     val validUntil: Instant? = null,
-    val deviceUpdated: Instant? = null
+    val passInstalled: Instant? = null
 )
 
 @Suppress("ArrayInDataClass")

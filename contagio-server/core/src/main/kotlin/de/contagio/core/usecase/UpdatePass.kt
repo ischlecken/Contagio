@@ -20,7 +20,8 @@ class UpdatePass(
         serialNumber: String,
         testResult: TestResultType?,
         issueStatus: IssueStatus?,
-        validUntil: Instant?
+        validUntil: Instant?,
+        updated: Instant = Instant.now()
     ): UpdatePassResponse? {
 
         val passInfoEnvelope = findPassInfoEnvelope.execute(serialNumber)
@@ -30,7 +31,7 @@ class UpdatePass(
         val passImageEncrypted = findEncryptedPayload.execute(passInfoEnvelope?.imageId)
         val passImage = passImageEncrypted?.get(authToken)
 
-        var updatedPassInfoEnvelope = passInfoEnvelope
+        var updatedPassInfoEnvelope = passInfoEnvelope?.copy(updated = updated)
         if (issueStatus != null)
             updatedPassInfoEnvelope = updatedPassInfoEnvelope?.copy(issueStatus = issueStatus)
         if (validUntil != null)

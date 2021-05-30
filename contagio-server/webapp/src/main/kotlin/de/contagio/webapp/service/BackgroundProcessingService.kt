@@ -58,6 +58,14 @@ open class BackgroundProcessingService(
             }
 
         passInfoEnvelopeRepository
+            .findByDeviceInstallationStatus(DeviceInstallationStatus.REMOVED)
+            .forEach { pie ->
+                if (pie.issueStatus != IssueStatus.DELETED ) {
+                    passCommandProcessor.deletePass(pie.serialNumber)
+                }
+            }
+
+        passInfoEnvelopeRepository
             .findByIssueStatus(IssueStatus.DELETED)
             .forEach { pie ->
                 if (pie.updated

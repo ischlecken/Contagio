@@ -218,3 +218,7 @@ tr.DELETED {
 tr.unlocked {
     background-color: #ade0ad !important;
 }
+
+tr.pending {
+    font-style: italic;
+}
