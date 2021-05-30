@@ -1,14 +1,17 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head th:replace="~{header :: header(pagetype=${pageType})}"><title></title></head>
-<body th:classappend="${pageType}">
+<body th:classappend="${bodyCssClass}">
+
 <nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
 
 <!--/*@thymesVar id="extendedPassInfo" type="de.contagio.core.domain.entity.ExtendedPassInfo"*/-->
 
-<div class="container showpass main" th:if="${extendedPassInfo.passInfo}">
-  <h1><span th:utext="#{verify.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
+<div class="container showpass main" th:if="${extendedPassInfo.passInfoEnvelope}">
+  <h1 th:if="${extendedPassInfo.passInfo}"><span
+    th:utext="#{verify.title(${extendedPassInfo.passInfo.person.fullName})}">Pass für Member</span>
   </h1>
+  <h1 th:unless="${extendedPassInfo.passInfo}"><span th:text="#{verify.loading}">Passinfo wird geladen</span></h1>
   <div class="row">
     <div class="col-12 col-lg-8 order-2 order-lg-1">
 
@@ -26,12 +29,13 @@
         <div class="col-6">
           <div class="form-group">
             <label for="validUntil" th:text="#{field.validuntil}">Gültig bis</label>
-            <input class="form-control" readonly name="validUntil" id="validUntil" th:value="${{extendedPassInfo.passInfoEnvelope.validUntil}}">
+            <input class="form-control" readonly name="validUntil" id="validUntil"
+                   th:value="${{extendedPassInfo.passInfoEnvelope.validUntil}}">
           </div>
         </div>
       </div>
 
-      <div class="row" th:if="${extendedPassInfo.passInfo}" >
+      <div class="row" th:if="${extendedPassInfo.passInfo}">
         <div class="col-6">
           <div class="form-group">
             <label for="testType" th:text="#{field.testtype}">Testtyp</label>

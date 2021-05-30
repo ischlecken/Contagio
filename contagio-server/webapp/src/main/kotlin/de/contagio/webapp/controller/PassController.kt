@@ -88,6 +88,7 @@ open class PassController(
             "revoke" -> passCommandProcessor.revokePass(serialnumber)
             "negative" -> passCommandProcessor.negativeTestresult(serialnumber)
             "positive" -> passCommandProcessor.positiveTestresult(serialnumber)
+            "verify" -> return "redirect:/verify?serialNumber=$serialnumber"
         }
 
         return "redirect:/pass"

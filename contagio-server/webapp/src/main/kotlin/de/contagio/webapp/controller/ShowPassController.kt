@@ -5,6 +5,7 @@ package de.contagio.webapp.controller
 import de.contagio.core.usecase.SearchPassInfo
 import de.contagio.core.usecase.UrlBuilder
 import de.contagio.webapp.model.Breadcrumb
+import de.contagio.webapp.service.PassCommandProcessor
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,20 +16,29 @@ import springfox.documentation.annotations.ApiIgnore
 @Controller
 open class ShowPassController(
     private val searchPassInfo: SearchPassInfo,
-    private val urlBuilder: UrlBuilder
+    private val urlBuilder: UrlBuilder,
+    private val passCommandProcessor: PassCommandProcessor
 ) {
 
     @GetMapping("/verify")
     open fun verify(
         model: Model,
-        @RequestParam serialNumber: String,
-        @RequestParam showDetails: Boolean?
+        @RequestParam serialNumber: String
     ) = searchPassInfo
         .execute(serialNumber)?.let {
+
+            var bodyCssClass = "verify ${it.passInfoEnvelope.issueStatus}"
+            if( it.passInfo!=null )
+                bodyCssClass += " ${it.passInfo!!.testResult}"
+
+            model.addAttribute("bodyCssClass", bodyCssClass)
             model.addAttribute("pageType", "verify")
-            model.addAttribute("refreshPage", true)
+            model.addAttribute("refreshPage", it.passInfo == null)
             model.addAttribute("extendedPassInfo", it)
-            model.addAttribute("showDetails", showDetails ?: false)
+
+            if( it.passInfo==null ) {
+                passCommandProcessor.verifyPass(serialNumber)
+            }
 
             "verify"
         } ?: "redirect:/pass"

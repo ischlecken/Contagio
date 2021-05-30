@@ -54,8 +54,17 @@ body.verify {
     color: white;
 }
 
+body.verify.NEGATIVE {
+    background: #076f28;
+}
+
 body.verify .form-control {
     background: #FF5E3B;
+    color: white;
+}
+
+body.verify.NEGATIVE .form-control {
+    background: #088433;
     color: white;
 }
 
@@ -115,6 +124,10 @@ footer p.version {
 
 .navbar.verify {
     background: linear-gradient(0deg, #d02600 0%, #FF5E3B 100%);
+}
+
+body.verify.NEGATIVE .navbar.verify {
+    background: linear-gradient(0deg, #076f28 0%, #088433 100%);
 }
 
 .navbar-brand {

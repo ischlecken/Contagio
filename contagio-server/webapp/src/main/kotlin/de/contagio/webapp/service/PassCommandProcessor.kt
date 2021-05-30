@@ -86,6 +86,11 @@ open class PassCommandProcessor(
             addCommand(RemovedPassCommand(updatePassInfoEnvelope, serialNumber))
     }
 
+    fun verifyPass(serialNumber: String) {
+        if (!commandExists(serialNumber, VerifyPassCommand::class.java))
+            addCommand(VerifyPassCommand(notifyDevices, serialNumber))
+    }
+
     fun createPass(
         image: MultipartFile,
         firstName: String,

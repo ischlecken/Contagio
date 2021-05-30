@@ -154,6 +154,24 @@ class PositivePassCommand(
         "PositivePassCommand($serialNumber)"
 }
 
+
+class VerifyPassCommand(
+    private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
+    serialNumber: String
+) : PassCommand(serialNumber) {
+
+    override fun execute(getEncryptionKey: IGetEncryptionKey?): PassCommandExecutionStatus {
+        logger.debug("VerifyPassCommand.execute()")
+
+        notifyAllDevices.execute(serialNumber)
+
+        return PassCommandExecutionStatus.SUCCESSFUL
+    }
+
+    override fun toString() =
+        "VerifyPassCommand($serialNumber)"
+}
+
 class ExpirePassCommand(
     private val notifyAllDevices: NotifyAllDevicesWithInstalledSerialNumber,
     private val saveUpdatePassRequest: ISaveUpdatePassRequest,
