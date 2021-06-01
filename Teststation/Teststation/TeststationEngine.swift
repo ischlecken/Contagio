@@ -44,7 +44,7 @@ class TeststationEngine {
                             return
                         }
                         
-                        cert.updateIssueStatus(issueStatus: .refused)
+                        cert.updateIssueStatus(issueStatus: .rejected)
                         context.saveContext()
                     }
                 
@@ -108,7 +108,7 @@ class TeststationEngine {
                             return
                         }
                         
-                        cert.updateIssueStatus(issueStatus: .refused)
+                        cert.updateIssueStatus(issueStatus: .rejected)
                         context.saveContext()
                     }
                 

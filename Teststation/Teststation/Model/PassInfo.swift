@@ -54,7 +54,8 @@ enum IssueStatus: String, CaseIterable, Codable {
     case ISSUED = "ISSUED"
     case EXPIRED = "EXPIRED"
     case REVOKED = "REVOKED"
-    case REFUSED = "REFUSED"
+    case REJECTED = "REJECTED"
+    case DELETED = "DELETED"
     case UNKNOWN = "UNKNOWN"
     
     static func fromCertificateIssueStatus(issueStatus: CertificateIssueStatus) -> IssueStatus {
@@ -63,12 +64,14 @@ enum IssueStatus: String, CaseIterable, Codable {
             return .CREATED
         case .issued:
             return .ISSUED
-        case .refused:
-            return .REFUSED
+        case .rejected:
+            return .REJECTED
         case .revoked:
             return .REVOKED
         case .expired:
             return .EXPIRED
+        case .deleted:
+            return .DELETED
         case .unknown:
             return .UNKNOWN
         }
@@ -80,12 +83,14 @@ enum IssueStatus: String, CaseIterable, Codable {
             return .created
         case .ISSUED:
             return .issued
-        case .REFUSED:
-            return .refused
+        case .REJECTED:
+            return .rejected
         case .REVOKED:
             return .revoked
         case .EXPIRED:
             return .expired
+        case .DELETED:
+            return .deleted
         case .UNKNOWN:
             return .unknown
         }
