@@ -7,11 +7,25 @@ class TeststationEngine {
     static let shared = TeststationEngine()
     
     var contagioAPISubscription : AnyCancellable?
+    var contagioAPISubscription1 : AnyCancellable?
     var passInfo: [PassInfo]?
     var error: TeststationError?
     
     init() {
         print("TeststationEngine()")
+    }
+    
+    func refreshCertificateStatus() {
+        print("refreshCertificateStatus()")
+        let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
+        
+        persistentContainer.performBackgroundTask{ context in
+            print("update certificate status()")
+            
+            let pendingCerts = context.getPendingCertificateSerialnumbers()
+            
+            print("  pendingCerts=\(pendingCerts)")
+        }
     }
     
     func startIssueOfCertificate(mcr: ModifyCertificateResponse,
@@ -29,7 +43,7 @@ class TeststationEngine {
         )
         
         contagioAPISubscription = try? ContagioAPI
-            .updatePass(updatePassRequest: updatePassRequest)
+            .updatePassInfo(updatePassRequest: updatePassRequest)
             .sink(
                 receiveCompletion: { [unowned self] completion in
                     switch completion {
@@ -93,7 +107,7 @@ class TeststationEngine {
         )
         
         contagioAPISubscription = try? ContagioAPI
-            .createPass(createPassRequest: createPassRequest)
+            .createPassInfo(createPassRequest: createPassRequest)
             .sink(
                 receiveCompletion: { [unowned self] completion in
                     switch completion {
@@ -122,13 +136,8 @@ class TeststationEngine {
                     
                     print("result=\(result)")
                     
-                    sleep(4)
-                    
-                    cert.validuntil = result.validUntil
-                    cert.passid = result.passId
                     cert.serialnumber = result.serialNumber
-                    cert.updateStatus(status: result.testResult.toCertificateStatus())
-                    cert.updateIssueStatus(issueStatus: result.issueStatus.toCertificateIssueStatus())
+                    cert.updateIssueStatus(issueStatus: CertificateIssueStatus.created)
                     context.saveContext()
                 }
             )

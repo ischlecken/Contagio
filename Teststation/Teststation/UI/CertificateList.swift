@@ -54,6 +54,7 @@ struct CertificateList: View {
                     }
                 }
             }
+            
             .sheet(isPresented: $isPresented) {
                 AddCertificate { acr in
                     let cert = managedObjectContext.addCertificate(acr: acr)
@@ -80,6 +81,7 @@ struct CertificateList: View {
             }
             .navigationTitle("certificatelist_title")
             .navigationBarItems(
+                leading: Button(action: refreshList) {Image(systemName: "arrow.uturn.backward.square.fill") },
                 trailing: Button(action: { isPresented.toggle() }) {Image(systemName: "plus") }
             )
         }
@@ -96,7 +98,10 @@ struct CertificateList: View {
             
             deletedOffsets = nil
         }
-        
+    }
+    
+    func refreshList() {
+        TeststationEngine.shared.refreshCertificateStatus()
     }
 }
 

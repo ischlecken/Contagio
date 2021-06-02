@@ -178,3 +178,8 @@ struct PassInfo: Decodable {
     var validUntil: Date?
     var version: Int
 }
+
+
+struct CreatePassResponse: Decodable {
+    var serialNumber: String
+}

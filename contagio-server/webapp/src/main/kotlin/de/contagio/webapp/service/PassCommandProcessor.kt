@@ -91,6 +91,48 @@ open class PassCommandProcessor(
             addCommand(VerifyPassCommand(notifyDevices, serialNumber))
     }
 
+    fun createPassPreview(
+        image: MultipartFile,
+        firstName: String,
+        lastName: String,
+        phoneNo: String,
+        email: String?,
+        testerId: String,
+        testResult: TestResultType,
+        testType: TestType,
+        passType: PassType,
+        labelColor: String,
+        foregroundColor: String,
+        backgroundColor: String
+    ): CreatePassResponse? {
+
+        logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
+        logger.debug("  image.size=${image.size}")
+
+        return createPass.execute(
+            serialNumber = uidGeneration.generate(),
+            teamIdentifier = contagioProperties.pass.teamIdentifier,
+            passTypeIdentifier = contagioProperties.pass.passTypeId,
+            organisationName = contagioProperties.pass.organisationName,
+            description = contagioProperties.pass.description,
+            logoText = contagioProperties.pass.logoText,
+            image = image.bytes,
+            firstName = firstName,
+            lastName = lastName,
+            phoneNo = phoneNo,
+            email = email,
+            testerId = testerId,
+            testResult = testResult,
+            testType = testType,
+            passType = passType,
+            labelColor = labelColor,
+            foregroundColor = foregroundColor,
+            backgroundColor = backgroundColor,
+            save = false
+        )
+    }
+
+
     fun createPass(
         image: MultipartFile,
         firstName: String,
@@ -103,63 +145,39 @@ open class PassCommandProcessor(
         passType: PassType,
         labelColor: String,
         foregroundColor: String,
-        backgroundColor: String,
-        save: Boolean = false
-    ): CreatePassResponse? {
+        backgroundColor: String
+    ): CreatePassCommand {
 
         logger.debug("createPass(firstName=$firstName, lastName=$lastName, testResult=$testResult)")
         logger.debug("  image.size=${image.size}")
 
-        if (!save)
-            return createPass.execute(
-                serialNumber = uidGeneration.generate(),
-                teamIdentifier = contagioProperties.pass.teamIdentifier,
-                passTypeIdentifier = contagioProperties.pass.passTypeId,
-                organisationName = contagioProperties.pass.organisationName,
-                description = contagioProperties.pass.description,
-                logoText = contagioProperties.pass.logoText,
-                image = image.bytes,
-                firstName = firstName,
-                lastName = lastName,
-                phoneNo = phoneNo,
-                email = email,
-                testerId = testerId,
-                testResult = testResult,
-                testType = testType,
-                passType = passType,
-                labelColor = labelColor,
-                foregroundColor = foregroundColor,
-                backgroundColor = backgroundColor,
-                save = false
-            )
-
-        addCommand(
-            CreatePassCommand(
-                setEncryptionKey = setEncryptionKey,
-                createPass = createPass,
-                serialNumber = uidGeneration.generate(),
-                teamIdentifier = contagioProperties.pass.teamIdentifier,
-                passTypeIdentifier = contagioProperties.pass.passTypeId,
-                organisationName = contagioProperties.pass.organisationName,
-                description = contagioProperties.pass.description,
-                logoText = contagioProperties.pass.logoText,
-                image = image.bytes,
-                firstName = firstName,
-                lastName = lastName,
-                phoneNo = phoneNo,
-                email = email,
-                testerId = testerId,
-                testResult = testResult,
-                testType = testType,
-                passType = passType,
-                labelColor = labelColor,
-                foregroundColor = foregroundColor,
-                backgroundColor = backgroundColor,
-                save = true
-            )
+        val result = CreatePassCommand(
+            setEncryptionKey = setEncryptionKey,
+            createPass = createPass,
+            serialNumber = uidGeneration.generate(),
+            teamIdentifier = contagioProperties.pass.teamIdentifier,
+            passTypeIdentifier = contagioProperties.pass.passTypeId,
+            organisationName = contagioProperties.pass.organisationName,
+            description = contagioProperties.pass.description,
+            logoText = contagioProperties.pass.logoText,
+            image = image.bytes,
+            firstName = firstName,
+            lastName = lastName,
+            phoneNo = phoneNo,
+            email = email,
+            testerId = testerId,
+            testResult = testResult,
+            testType = testType,
+            passType = passType,
+            labelColor = labelColor,
+            foregroundColor = foregroundColor,
+            backgroundColor = backgroundColor,
+            save = true
         )
 
-        return null
+        addCommand(result)
+
+        return result
     }
 
     fun updatePass(updatePassRequest: UpdatePassRequest): PassInfoEnvelope? {

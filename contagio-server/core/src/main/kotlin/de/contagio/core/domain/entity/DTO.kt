@@ -51,6 +51,9 @@ data class CreatePassResponse(
     val pass: ByteArray
 )
 
+data class CreatePassRequestResponse(
+    val serialNumber: String
+)
 
 @Suppress("ArrayInDataClass")
 data class UpdatePassResponse(

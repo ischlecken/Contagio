@@ -81,15 +81,14 @@ open class CreatePassController(
 
         return when (command) {
             "preview" -> {
-                val cpr = passCommandProcessor.createPass(
+                val cpr = passCommandProcessor.createPassPreview(
                     image,
                     firstName, lastName,
                     phoneNo, email,
                     testerId,
                     testResult, testType,
                     passType,
-                    labelColor, foregroundColor, backgroundColor,
-                    save = false
+                    labelColor, foregroundColor, backgroundColor
                 )
 
                 if (cpr?.pass?.isNotEmpty() == true)
@@ -109,8 +108,7 @@ open class CreatePassController(
                     testerId,
                     testResult, testType,
                     passType,
-                    labelColor, foregroundColor, backgroundColor,
-                    save = true
+                    labelColor, foregroundColor, backgroundColor
                 )
 
                 val headers = HttpHeaders()

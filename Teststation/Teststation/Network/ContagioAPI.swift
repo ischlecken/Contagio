@@ -62,7 +62,49 @@ enum ContagioAPI {
     }
     
     
-    static func createPass(createPassRequest: CreatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
+    static func getPass(passId: String) throws -> AnyPublisher<Data, TeststationError> {
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/\(passId)")!
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: createURLRequest(url:url))
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                
+                sleep(1)
+                
+                return response.data
+            }
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    
+    static func getPassInfo(serialNumber: String) throws -> AnyPublisher<PassInfo, TeststationError> {
+        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/info/\(serialNumber)")!
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: createURLRequest(url:url))
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                
+                return response.data
+            }
+            .decode(type: PassInfo.self, decoder: createJsonDecoder())
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    static func createPassInfo(createPassRequest: CreatePassRequest) throws -> AnyPublisher<CreatePassResponse, TeststationError> {
         let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/info")!
         
         var urlRequest = createURLRequest(url:url)
@@ -89,12 +131,12 @@ enum ContagioAPI {
                 
                 return response.data
             }
-            .decode(type: PassInfo.self, decoder: createJsonDecoder())
+            .decode(type: CreatePassResponse.self, decoder: createJsonDecoder())
             .mapError { TeststationError.map($0) }
             .eraseToAnyPublisher()
     }
     
-    static func updatePass(updatePassRequest: UpdatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
+    static func updatePassInfo(updatePassRequest: UpdatePassRequest) throws -> AnyPublisher<PassInfo, TeststationError> {
         let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/info")!
         
         var urlRequest = createURLRequest(url:url)
@@ -124,26 +166,6 @@ enum ContagioAPI {
             .eraseToAnyPublisher()
     }
     
-    static func getPass(passId: String) throws -> AnyPublisher<Data, TeststationError> {
-        let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/pass/\(passId)")!
-        
-        return createUrlSession()
-            .dataTaskPublisher(for: createURLRequest(url:url))
-            .tryMap { response -> Data in
-                guard
-                    let httpURLResponse = response.response as? HTTPURLResponse,
-                    httpURLResponse.statusCode == 200
-                else {
-                    throw TeststationError.statusCode
-                }
-                
-                sleep(2)
-                
-                return response.data
-            }
-            .mapError { TeststationError.map($0) }
-            .eraseToAnyPublisher()
-    }
     
     private static func createUrlSession() -> URLSession {
         let config = URLSessionConfiguration.default

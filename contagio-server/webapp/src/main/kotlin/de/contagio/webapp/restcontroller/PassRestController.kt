@@ -1,9 +1,6 @@
 package de.contagio.webapp.restcontroller
 
-import de.contagio.core.domain.entity.PassInfoEnvelope
-import de.contagio.core.domain.entity.PassType
-import de.contagio.core.domain.entity.TestResultType
-import de.contagio.core.domain.entity.TestType
+import de.contagio.core.domain.entity.*
 import de.contagio.core.domain.port.IFindEncryptedPayload
 import de.contagio.core.domain.port.IGetEncryptionKey
 import de.contagio.core.domain.port.IdType
@@ -13,8 +10,8 @@ import de.contagio.webapp.model.UpdatePassRequest
 import de.contagio.webapp.model.properties.ContagioProperties
 import de.contagio.webapp.repository.mongodb.PassInfoEnvelopeRepository
 import de.contagio.webapp.service.PassCommandProcessor
-import de.contagio.webapp.service.SignDataService
 import de.contagio.webapp.service.QRCodeGeneratorService
+import de.contagio.webapp.service.SignDataService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -72,7 +69,7 @@ open class PassRestController(
         @RequestParam testerId: String,
         @RequestParam testResult: TestResultType,
         @RequestParam testType: TestType
-    ): ResponseEntity<PassInfoEnvelope> {
+    ): ResponseEntity<CreatePassRequestResponse> {
 
         val passType = when (testType) {
             TestType.VACCINATION -> PassType.COUPON
@@ -96,10 +93,11 @@ open class PassRestController(
                 phoneNo, email,
                 it.tester.id,
                 testResult, testType,
-                passType, labelColor, foregroundColor, backgroundColor,
-                save = true
-            ).let { cpr ->
-                ResponseEntity.status(HttpStatus.CREATED).body(cpr?.passInfoEnvelope)
+                passType, labelColor, foregroundColor, backgroundColor
+            ).let { createPassCommand ->
+                ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(CreatePassRequestResponse(createPassCommand.serialNumber))
             } ?: ResponseEntity.badRequest().build()
         } ?: ResponseEntity.badRequest().build()
     }

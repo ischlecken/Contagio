@@ -57,7 +57,7 @@ final class TeststationState : ObservableObject {
     
     func login(user:String, password:String) {
         
-        if let tester0 = allTester?.first(where: {$0.id == user}) {
+        if let tester0 = allTester?.first(where: {$0.person.lastName == user}) {
             print("found tester: \(tester0)")
             
             if let teststation0 = allTeststations?.first(where: { $0.id == tester0.teststationId }) {

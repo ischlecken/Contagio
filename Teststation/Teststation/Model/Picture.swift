@@ -3,9 +3,7 @@ import CoreData
 
 extension NSManagedObjectContext {
     
-    func createPicture(
-        image: UIImage) -> Picture {
-        
+    func createPicture(image: UIImage) -> Picture {
         let result = Picture(context: self)
         
         result.id = UUID().uuidString
@@ -37,10 +35,12 @@ extension NSManagedObjectContext {
                 }
                 catch let error as NSError {
                     print("could not fetch \(error), \(error.userInfo)")
-                }}
+                }
+            }
         }
         
         return newCertPhotos
     }
+    
 }
 
