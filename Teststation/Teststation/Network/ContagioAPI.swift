@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-enum ContagioAPI {
+public enum ContagioAPI {
     
     static func getTeststations() -> AnyPublisher<[Teststation], TeststationError> {
         let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/teststations")!
@@ -91,10 +91,9 @@ enum ContagioAPI {
             .dataTaskPublisher(for: createURLRequest(url:url))
             .tryMap { response -> Data in
                 guard
-                    let httpURLResponse = response.response as? HTTPURLResponse,
-                    httpURLResponse.statusCode == 200
+                    let httpURLResponse = response.response as? HTTPURLResponse, httpURLResponse.statusCode == 200
                 else {
-                    throw TeststationError.statusCode
+                    throw TeststationError.map(response.response)
                 }
                 
                 return response.data

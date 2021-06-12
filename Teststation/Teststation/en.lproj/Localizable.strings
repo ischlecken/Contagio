@@ -7,6 +7,7 @@
 "certificateissuestatus_2" = "refused";
 "certificateissuestatus_3" = "revoked";
 "certificateissuestatus_4" = "expired";
+"certificateissuestatus_5" = "deleted";
 
 "certificatetype_0" = "Rapid Test";
 "certificatetype_1" = "PCR Test";

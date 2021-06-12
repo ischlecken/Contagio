@@ -7,7 +7,7 @@ class TeststationEngine {
     static let shared = TeststationEngine()
     
     var contagioAPISubscription : AnyCancellable?
-    var contagioAPISubscription1 : AnyCancellable?
+    var refreshSubscriptions = Set<AnyCancellable>()
     var passInfo: [PassInfo]?
     var error: TeststationError?
     
@@ -17,6 +17,9 @@ class TeststationEngine {
     
     func refreshCertificateStatus() {
         print("refreshCertificateStatus()")
+        
+        refreshSubscriptions.removeAll()
+        
         let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
         
         persistentContainer.performBackgroundTask{ context in
@@ -24,7 +27,36 @@ class TeststationEngine {
             
             let pendingCerts = context.getPendingCertificateSerialnumbers()
             
-            print("  pendingCerts=\(pendingCerts)")
+            pendingCerts.forEach { cert in
+                
+                print("  pendingCert=\(cert.serialnumber!)")
+                try? ContagioAPI
+                    .getPassInfo(serialNumber: cert.serialnumber!)
+                    .sink(
+                        receiveCompletion: {completion in
+                            switch completion {
+                            case .finished:
+                                break
+                            case .failure(let error):
+                                switch error {
+                                case .notFound:
+                                    cert.updateIssueStatus(issueStatus: .deleted)
+                                    context.saveContext()
+                                    break
+                                default:
+                                    break
+                                }
+                            }
+                        },
+                        receiveValue: { passInfo in
+                            print("passInfo=\(passInfo)")
+                            
+                            cert.updateIssueStatus(issueStatus: passInfo.issueStatus.toCertificateIssueStatus())
+                            cert.validuntil = passInfo.validUntil
+                            context.saveContext()
+                        })
+                    .store(in: &self.refreshSubscriptions)
+            }
         }
     }
     
@@ -61,7 +93,7 @@ class TeststationEngine {
                         cert.updateIssueStatus(issueStatus: .rejected)
                         context.saveContext()
                     }
-                
+                    
                     contagioAPISubscription = nil
                 },
                 receiveValue: { result in
@@ -76,8 +108,7 @@ class TeststationEngine {
                     
                     cert.validuntil = result.validUntil
                     cert.passid = result.passId
-                    cert.modifyts = result.modified
-                    cert.updateStatus(status: result.testResult.toCertificateStatus())
+                    cert.modifyts = result.updated
                     cert.updateIssueStatus(issueStatus: result.issueStatus.toCertificateIssueStatus())
                     context.saveContext()
                 }
@@ -125,7 +156,7 @@ class TeststationEngine {
                         cert.updateIssueStatus(issueStatus: .rejected)
                         context.saveContext()
                     }
-                
+                    
                     contagioAPISubscription = nil
                 },
                 receiveValue: { result in

@@ -164,19 +164,15 @@ struct Tester: Decodable {
 
 struct PassInfo: Decodable {
     var serialNumber: String
-    var person: Person
+    var passInfoId: String
     var imageId: String
+    var passId: String?
     var teststationId: String
     var testerId: String
-    var authToken: String
-    var testResult: TestResultType
-    var testType: TestType
     var issueStatus: IssueStatus
-    var created: Date
-    var modified: Date?
-    var passId: String?
-    var validUntil: Date?
     var version: Int
+    var updated: Date
+    var validUntil: Date?
 }
 
 

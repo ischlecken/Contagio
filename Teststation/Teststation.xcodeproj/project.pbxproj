@@ -11,14 +11,14 @@
 		3C126906261B7840006B1009 /* event.pkpass in Resources */ = {isa = PBXBuildFile; fileRef = 3C126904261B7840006B1009 /* event.pkpass */; };
 		3C12690F261B7BE5006B1009 /* PassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12690E261B7BE5006B1009 /* PassView.swift */; };
 		3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C126916261BBCCE006B1009 /* ModifyCertificate.swift */; };
+		3C2AC9F42674DC2A00906705 /* TeststationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2AC9F32674DC2A00906705 /* TeststationError.swift */; };
+		3C2AC9FD2674DC4900906705 /* PassInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2AC9FC2674DC4900906705 /* PassInfo.swift */; };
 		3C462E222641B61A00D02821 /* ShowQRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C462E212641B61A00D02821 /* ShowQRView.swift */; };
 		3C56B72C2621889B0051E1CB /* TeststationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B72B2621889B0051E1CB /* TeststationSettings.swift */; };
 		3C56B73126218A020051E1CB /* TeststationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73026218A020051E1CB /* TeststationState.swift */; };
 		3C56B73726218AD40051E1CB /* CertificateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73526218AD40051E1CB /* CertificateList.swift */; };
 		3C56B73826218AD40051E1CB /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73626218AD40051E1CB /* LoginView.swift */; };
-		3C56B73D2621BAA20051E1CB /* TeststationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B73C2621BAA20051E1CB /* TeststationError.swift */; };
 		3C56B7432621BD7C0051E1CB /* ContagioAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B7422621BD7C0051E1CB /* ContagioAPI.swift */; };
-		3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B74A2621BEA60051E1CB /* PassInfo.swift */; };
 		3C56B7502621CF270051E1CB /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */; };
 		3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B7542621DE450051E1CB /* CreatePassRequest.swift */; };
 		3C62596A261A6A8600098A9A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C62596C261A6A8600098A9A /* InfoPlist.strings */; };
@@ -70,14 +70,15 @@
 		3C126904261B7840006B1009 /* event.pkpass */ = {isa = PBXFileReference; lastKnownFileType = file; path = event.pkpass; sourceTree = "<group>"; };
 		3C12690E261B7BE5006B1009 /* PassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassView.swift; sourceTree = "<group>"; };
 		3C126916261BBCCE006B1009 /* ModifyCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifyCertificate.swift; sourceTree = "<group>"; };
+		3C2AC9E52674D84700906705 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = ../MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		3C2AC9F32674DC2A00906705 /* TeststationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationError.swift; sourceTree = "<group>"; };
+		3C2AC9FC2674DC4900906705 /* PassInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassInfo.swift; sourceTree = "<group>"; };
 		3C462E212641B61A00D02821 /* ShowQRView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowQRView.swift; sourceTree = "<group>"; };
 		3C56B72B2621889B0051E1CB /* TeststationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationSettings.swift; sourceTree = "<group>"; };
 		3C56B73026218A020051E1CB /* TeststationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationState.swift; sourceTree = "<group>"; };
 		3C56B73526218AD40051E1CB /* CertificateList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateList.swift; sourceTree = "<group>"; };
 		3C56B73626218AD40051E1CB /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		3C56B73C2621BAA20051E1CB /* TeststationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationError.swift; sourceTree = "<group>"; };
 		3C56B7422621BD7C0051E1CB /* ContagioAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContagioAPI.swift; sourceTree = "<group>"; };
-		3C56B74A2621BEA60051E1CB /* PassInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassInfo.swift; sourceTree = "<group>"; };
 		3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
 		3C56B7542621DE450051E1CB /* CreatePassRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePassRequest.swift; sourceTree = "<group>"; };
 		3C62595B261A66DB00098A9A /* Teststation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teststation.entitlements; sourceTree = "<group>"; };
@@ -175,6 +176,7 @@
 		3C92CF582617018B002B5284 = {
 			isa = PBXGroup;
 			children = (
+				3C2AC9E52674D84700906705 /* MyPlayground.playground */,
 				3C92CF632617018B002B5284 /* Teststation */,
 				3C92CF7D2617018C002B5284 /* TeststationTests */,
 				3C92CF882617018C002B5284 /* TeststationUITests */,
@@ -244,6 +246,8 @@
 		3C92CFF726185B76002B5284 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3C2AC9FC2674DC4900906705 /* PassInfo.swift */,
+				3C2AC9F32674DC2A00906705 /* TeststationError.swift */,
 				3C92CF6A2617018B002B5284 /* Teststation.xcdatamodeld */,
 				3C92CFEA261734FF002B5284 /* Certificate.swift */,
 				3CC20906261B3CD30012520B /* Picture.swift */,
@@ -251,8 +255,6 @@
 				3CB2FE60261E5599002F87B5 /* ViewModels.swift */,
 				3C56B72B2621889B0051E1CB /* TeststationSettings.swift */,
 				3C56B73026218A020051E1CB /* TeststationState.swift */,
-				3C56B73C2621BAA20051E1CB /* TeststationError.swift */,
-				3C56B74A2621BEA60051E1CB /* PassInfo.swift */,
 				3C56B7542621DE450051E1CB /* CreatePassRequest.swift */,
 				3CE47195262CD92900C3E97C /* UpdatePassRequest.swift */,
 			);
@@ -437,17 +439,17 @@
 				3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */,
 				3CE47196262CD92900C3E97C /* UpdatePassRequest.swift in Sources */,
 				3C12690F261B7BE5006B1009 /* PassView.swift in Sources */,
+				3C2AC9FD2674DC4900906705 /* PassInfo.swift in Sources */,
 				3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */,
-				3C56B74B2621BEA60051E1CB /* PassInfo.swift in Sources */,
 				3C92CFF32618581E002B5284 /* CertificateRow.swift in Sources */,
 				3C56B73126218A020051E1CB /* TeststationState.swift in Sources */,
 				3C462E222641B61A00D02821 /* ShowQRView.swift in Sources */,
 				3C9FEA0E262C8BC9007F7121 /* MessageView.swift in Sources */,
+				3C2AC9F42674DC2A00906705 /* TeststationError.swift in Sources */,
 				3C7DB458261B366B00DA85C2 /* UIImage+Extension.swift in Sources */,
 				3CB2FE61261E5599002F87B5 /* ViewModels.swift in Sources */,
 				3C56B73826218AD40051E1CB /* LoginView.swift in Sources */,
 				3C56B7432621BD7C0051E1CB /* ContagioAPI.swift in Sources */,
-				3C56B73D2621BAA20051E1CB /* TeststationError.swift in Sources */,
 				3CE47191262CCF1800C3E97C /* PassLoaderService.swift in Sources */,
 				3C92CF692617018B002B5284 /* ContentView.swift in Sources */,
 				3C92CFEB261734FF002B5284 /* Certificate.swift in Sources */,

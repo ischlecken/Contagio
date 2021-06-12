@@ -7,7 +7,7 @@
 "certificateissuestatus_2" = "abgelehnt";
 "certificateissuestatus_3" = "zurückgezogen";
 "certificateissuestatus_4" = "ausgelaufen";
-
+"certificateissuestatus_5" = "gelöscht";
 
 "certificatetype_0" = "Schnelltest";
 "certificatetype_1" = "PCR-Test";

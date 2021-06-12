@@ -156,16 +156,16 @@ extension NSManagedObjectContext {
         }
     }
     
-    func getPendingCertificateSerialnumbers() -> [String] {
-        var result = [String]()
+    func getPendingCertificateSerialnumbers() -> [Certificate] {
+        var result = [Certificate]()
         let fetchRequest = NSFetchRequest<Certificate>(entityName: "Certificate")
-        fetchRequest.predicate = NSPredicate(format: "issuestatus == %d", CertificateIssueStatus.created.rawValue)
+        //fetchRequest.predicate = NSPredicate(format: "issuestatus == %d", CertificateIssueStatus.created.rawValue)
         
         do {
             let certificates = try self.fetch(fetchRequest)
             
             for c in certificates {
-                result.append(c.serialnumber!)
+                result.append(c)
             }
         }
         catch let error as NSError {
