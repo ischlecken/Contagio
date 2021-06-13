@@ -68,6 +68,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Failed to register: \(error)")
     }
     
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        guard let aps = userInfo["aps"] as? [String: AnyObject] else {
+            completionHandler(.failed)
+            return
+        }
+        
+        print("didReceiveRemoteNotification() userInfo=\(userInfo)")
+        if aps["content-available"] as? Int == 1 {
+            
+            TeststationEngine.shared.refreshCertificateStatus()
+            completionHandler(.noData)
+        }
+        
+        completionHandler(.noData)
+    }
+    
     func registerForPushNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert]) { [weak self] granted, _ in
             print("Permission granted: \(granted)")

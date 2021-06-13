@@ -45,8 +45,11 @@ open class WebSecurityConfig(private val contagioProperties: ContagioProperties)
             .antMatchers(
                 "/",
                 "/mcwj/**",
+                "/apps/**",
                 "/mcstatic/**",
+                "/images/**",
                 "/verify",
+                "/downloads/**",
                 "/co_v1/pass/*",
                 "/co_v1/pass/*/qrcode",
                 "/co_v1/pass/image/*",

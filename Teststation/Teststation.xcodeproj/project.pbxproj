@@ -22,6 +22,7 @@
 		3C56B7502621CF270051E1CB /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */; };
 		3C56B7552621DE450051E1CB /* CreatePassRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C56B7542621DE450051E1CB /* CreatePassRequest.swift */; };
 		3C62596A261A6A8600098A9A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3C62596C261A6A8600098A9A /* InfoPlist.strings */; };
+		3C74207126762807007A8F9B /* silent.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C74207026762807007A8F9B /* silent.json */; };
 		3C7DB458261B366B00DA85C2 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7DB457261B366B00DA85C2 /* UIImage+Extension.swift */; };
 		3C92CF652617018B002B5284 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF642617018B002B5284 /* AppDelegate.swift */; };
 		3C92CF672617018B002B5284 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C92CF662617018B002B5284 /* SceneDelegate.swift */; };
@@ -84,6 +85,7 @@
 		3C62595B261A66DB00098A9A /* Teststation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Teststation.entitlements; sourceTree = "<group>"; };
 		3C62596B261A6A8600098A9A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3C625970261A6A8F00098A9A /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3C74207026762807007A8F9B /* silent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = silent.json; sourceTree = "<group>"; };
 		3C7DB457261B366B00DA85C2 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		3C92CF612617018B002B5284 /* Teststation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teststation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C92CF642617018B002B5284 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				3C23A8C12675FBE2002F1BBA /* push1.json */,
+				3C74207026762807007A8F9B /* silent.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -392,6 +395,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C74207126762807007A8F9B /* silent.json in Resources */,
 				3C92CF742617018C002B5284 /* LaunchScreen.storyboard in Resources */,
 				3C23A8C22675FBE2002F1BBA /* push1.json in Resources */,
 				3C9507382618755E00662EB1 /* Localizable.strings in Resources */,

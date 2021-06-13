@@ -1,5 +1,7 @@
 {
   "aps": {
     "alert": "neue Zertifikate ausgestellt"
-  }
+  },
+  "acme1" : "cell",
+  "acme2" : 42
 }

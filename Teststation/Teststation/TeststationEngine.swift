@@ -6,10 +6,10 @@ class TeststationEngine {
     
     static let shared = TeststationEngine()
     
-    var contagioAPISubscription : AnyCancellable?
-    var refreshSubscriptions = Set<AnyCancellable>()
-    var passInfo: [PassInfo]?
-    var error: TeststationError?
+    private var contagioAPISubscription : AnyCancellable?
+    private var refreshSubscriptions = Set<AnyCancellable>()
+    private var passInfo: [PassInfo]?
+    private var error: TeststationError?
     
     init() {
         print("TeststationEngine()")

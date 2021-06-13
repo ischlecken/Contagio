@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{header :: header(pagetype=${pageType})}"><title></title></head>
+<body class="homeimage">
+<nav th:replace="~{menu :: menu(pagetype=${pageType})}"></nav>
+
+<div class="container download main">
+  <div class="row">
+    <div class="col col-lg-4">
+      <div class="card">
+        <div class="card-header" th:text="#{download.title}">iOS Apps zum Runterladen...</div>
+        <div class="card-body">
+          <h5 class="card-title" th:text="#{download.teststation.title}">Teststation</h5>
+          <p class="card-text" th:text="#{download.teststation.description}">Mehr Information finden Sie hier...</p>
+          <a href="itms-services://?action=download-manifest&url=https://efeu.local:13013/apps/teststation/manifest.plist" class="btn btn-primary" th:text="#{download.teststation.download}">Zur Übersicht</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{footer :: footer(pagetype=${pageType})}"></footer>
+</body>
+</html>

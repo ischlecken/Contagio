@@ -75,6 +75,11 @@ open class WebMvcConfig(
                 )
         )
 
+        registerResourceHandlerWithCachePeriod(
+            registry
+                .addResourceHandler("/apps/**")
+                .addResourceLocations("classpath:/apps/")
+        )
     }
 
     private fun registerResourceHandlerWithCachePeriod(

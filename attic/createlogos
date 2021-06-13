@@ -8,6 +8,7 @@ $BATIK -w 80 -h 80 -d virus-80x80.png virus.svg
 $BATIK -w 40 -h 40 -d virus-40x40.png virus.svg
 $BATIK -w 20 -h 20 -d virus-20x20.png virus.svg
 $BATIK -w 60 -h 60 -d virus-60x60.png virus.svg
+$BATIK -w 57 -h 57 -d virus-57x57.png virus.svg
 $BATIK -w 58 -h 58 -d virus-58x58.png virus.svg
 $BATIK -w 87 -h 87 -d virus-87x87.png virus.svg
 $BATIK -w 29 -h 29 -d virus-29x29.png virus.svg
@@ -16,6 +17,7 @@ $BATIK -w 152 -h 152 -d virus-152x152.png virus.svg
 $BATIK -w 167 -h 167 -d virus-167x167.png virus.svg
 $BATIK -w 50 -h 50 -d logo.png virus.svg
 $BATIK -w 100 -h 100 -d logo@2x.png virus.svg
+$BATIK -w 512 -h 512 -d virus-512x512.png virus.svg
 $BATIK -w 1024 -h 1024 -d virus-1024x1024.png virus.svg
 
 $BATIK -w 29 -h 29 -d icon.png virus.svg
