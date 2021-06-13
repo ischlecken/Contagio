@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C126905261B7840006B1009 /* ds.pkpass in Resources */ = {isa = PBXBuildFile; fileRef = 3C126903261B7840006B1009 /* ds.pkpass */; };
-		3C126906261B7840006B1009 /* event.pkpass in Resources */ = {isa = PBXBuildFile; fileRef = 3C126904261B7840006B1009 /* event.pkpass */; };
 		3C12690F261B7BE5006B1009 /* PassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C12690E261B7BE5006B1009 /* PassView.swift */; };
 		3C126917261BBCCE006B1009 /* ModifyCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C126916261BBCCE006B1009 /* ModifyCertificate.swift */; };
+		3C23A8B92675F677002F1BBA /* PKPass+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C23A8B82675F677002F1BBA /* PKPass+Extension.swift */; };
+		3C23A8C22675FBE2002F1BBA /* push1.json in Resources */ = {isa = PBXBuildFile; fileRef = 3C23A8C12675FBE2002F1BBA /* push1.json */; };
 		3C2AC9F42674DC2A00906705 /* TeststationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2AC9F32674DC2A00906705 /* TeststationError.swift */; };
 		3C2AC9FD2674DC4900906705 /* PassInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2AC9FC2674DC4900906705 /* PassInfo.swift */; };
 		3C462E222641B61A00D02821 /* ShowQRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C462E212641B61A00D02821 /* ShowQRView.swift */; };
@@ -66,10 +66,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3C126903261B7840006B1009 /* ds.pkpass */ = {isa = PBXFileReference; lastKnownFileType = file; path = ds.pkpass; sourceTree = "<group>"; };
-		3C126904261B7840006B1009 /* event.pkpass */ = {isa = PBXFileReference; lastKnownFileType = file; path = event.pkpass; sourceTree = "<group>"; };
 		3C12690E261B7BE5006B1009 /* PassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassView.swift; sourceTree = "<group>"; };
 		3C126916261BBCCE006B1009 /* ModifyCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifyCertificate.swift; sourceTree = "<group>"; };
+		3C23A8B82675F677002F1BBA /* PKPass+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PKPass+Extension.swift"; sourceTree = "<group>"; };
+		3C23A8C12675FBE2002F1BBA /* push1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = push1.json; sourceTree = "<group>"; };
 		3C2AC9E52674D84700906705 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = ../MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		3C2AC9F32674DC2A00906705 /* TeststationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeststationError.swift; sourceTree = "<group>"; };
 		3C2AC9FC2674DC4900906705 /* PassInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassInfo.swift; sourceTree = "<group>"; };
@@ -145,13 +145,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3C12690A261B7866006B1009 /* Resources */ = {
+		3C23A8C02675FB6C002F1BBA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3C126903261B7840006B1009 /* ds.pkpass */,
-				3C126904261B7840006B1009 /* event.pkpass */,
+				3C23A8C12675FBE2002F1BBA /* push1.json */,
 			);
-			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		3C56B7412621BD540051E1CB /* Network */ = {
@@ -169,6 +168,7 @@
 				3C7DB457261B366B00DA85C2 /* UIImage+Extension.swift */,
 				3C56B74F2621CF270051E1CB /* DateFormatter+Extension.swift */,
 				3CAD0E77262762BE00F74719 /* String+Extension.swift */,
+				3C23A8B82675F677002F1BBA /* PKPass+Extension.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -197,9 +197,9 @@
 		3C92CF632617018B002B5284 /* Teststation */ = {
 			isa = PBXGroup;
 			children = (
+				3C23A8C02675FB6C002F1BBA /* Resources */,
 				3CB3461A263729B20004CB87 /* Config */,
 				3C56B7412621BD540051E1CB /* Network */,
-				3C12690A261B7866006B1009 /* Resources */,
 				3C7DB456261B364D00DA85C2 /* Util */,
 				3C62595B261A66DB00098A9A /* Teststation.entitlements */,
 				3C92CFF826185B8F002B5284 /* UI */,
@@ -393,9 +393,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C92CF742617018C002B5284 /* LaunchScreen.storyboard in Resources */,
+				3C23A8C22675FBE2002F1BBA /* push1.json in Resources */,
 				3C9507382618755E00662EB1 /* Localizable.strings in Resources */,
-				3C126905261B7840006B1009 /* ds.pkpass in Resources */,
-				3C126906261B7840006B1009 /* event.pkpass in Resources */,
 				3C92CF712617018C002B5284 /* Preview Assets.xcassets in Resources */,
 				3C92CF6E2617018C002B5284 /* Assets.xcassets in Resources */,
 				3C62596A261A6A8600098A9A /* InfoPlist.strings in Resources */,
@@ -428,6 +427,7 @@
 				3CB3463526372C1E0004CB87 /* EnvConfig.swift in Sources */,
 				3CCAF195261D073400B9136F /* TeststationEngine.swift in Sources */,
 				3C92CF6C2617018B002B5284 /* Teststation.xcdatamodeld in Sources */,
+				3C23A8B92675F677002F1BBA /* PKPass+Extension.swift in Sources */,
 				3CC20907261B3CD30012520B /* Picture.swift in Sources */,
 				3CB2FE5C261E529F002F87B5 /* NSManagedObjectContext+Extension.swift in Sources */,
 				3C56B7502621CF270051E1CB /* DateFormatter+Extension.swift in Sources */,
@@ -652,7 +652,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 210530.0;
+				MARKETING_VERSION = 210613.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.contagio.Teststation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -676,7 +676,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 210530.0;
+				MARKETING_VERSION = 210613.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.contagio.Teststation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -846,7 +846,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 210530.0;
+				MARKETING_VERSION = 210613.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.contagio.Teststation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -968,7 +968,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 210530.0;
+				MARKETING_VERSION = 210613.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.contagio.Teststation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
