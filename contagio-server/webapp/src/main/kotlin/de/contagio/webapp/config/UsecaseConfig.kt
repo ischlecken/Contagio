@@ -159,4 +159,10 @@ open class UsecaseConfig {
         updatePass,
         searchPassInfo
     )
+
+    @Bean
+    open fun registerDeviceToken(
+        saveDeviceToken: ISaveDeviceToken,
+        deleteDeviceToken: IDeleteDeviceToken
+    ) = RegisterDeviceToken(saveDeviceToken, deleteDeviceToken)
 }

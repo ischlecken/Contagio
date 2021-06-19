@@ -1,11 +1,7 @@
 package de.contagio.core.domain.entity
 
-import de.contagio.core.domain.port.IUIDGenerator
 import org.springframework.data.annotation.Id
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
 
 data class DeviceInfo(
     @Id val deviceLibraryIdentifier: String,

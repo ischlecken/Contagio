@@ -28,10 +28,10 @@
 "ISSUESTATUS_REVOKED" = "zurückgezogen";
 "ISSUESTATUS_REFUSED" = "abgelehnt";
 
-"LOGO_TESTTYPE" = "TIL - Pass";
-"LOGO_TESTTYPE_RAPIDTEST" = "TIL - Pass";
-"LOGO_TESTTYPE_PCRTEST" = "TIL - Pass";
-"LOGO_TESTTYPE_VACCINATION" = "TIL - Pass";
+"LOGO_TESTTYPE" = "Contagio - Pass";
+"LOGO_TESTTYPE_RAPIDTEST" = "Contagio - Pass";
+"LOGO_TESTTYPE_PCRTEST" = "Contagio - Pass";
+"LOGO_TESTTYPE_VACCINATION" = "Contagio - Pass";
 
 "TERMSCONDITIONS" = "Allgemeine Geschäftsbedingungen";
 "TERMSCONDITIONS_VALUE" = "Bleiben Sie gesund. Und verzweifeln Sie ruhig, aber zweifeln Sie nicht.";

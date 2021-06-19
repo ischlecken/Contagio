@@ -260,4 +260,28 @@ open class PortConfig(
         IDeleteUpdatePassRequest {
             updatePassRequestRepository.deleteById(it)
         }
+
+
+    @Bean
+    open fun findDeviceToken(deviceTokenRepository: DeviceTokenRepository) = IFindDeviceToken {
+        deviceTokenRepository.findByDeviceToken(it)
+    }
+
+    @Bean
+    open fun saveDeviceToken(deviceTokenRepository: DeviceTokenRepository) = ISaveDeviceToken {
+        deviceTokenRepository.save(it)
+    }
+
+    @Bean
+    open fun deleteDeviceToken(deviceTokenRepository: DeviceTokenRepository) = IDeleteDeviceToken {
+        val deviceTokens = deviceTokenRepository.findByDeviceToken(it)
+
+        deviceTokenRepository.deleteAll(deviceTokens)
+    }
+
+    @Bean
+    open fun findDeviceTokensForSerialnumber(deviceTokenRepository: DeviceTokenRepository) =
+        IFindDeviceTokensForSerialnumber {
+            deviceTokenRepository.findBySerialNumber(it).map { it.deviceToken }
+        }
 }

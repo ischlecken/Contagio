@@ -8,5 +8,6 @@ const val PASS = "$BASE_RESTAPI_1/pass"
 const val TESTSTATION = "$BASE_RESTAPI_1/teststations"
 const val TESTER = "$BASE_RESTAPI_1/tester"
 const val WALLET = "$BASE_RESTAPI_1/wallet"
+const val APPS = "$BASE_RESTAPI_1/apps"
 
 val pkpassMediatype = MediaType("application", "vnd.apple.pkpass")

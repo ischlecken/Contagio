@@ -181,6 +181,5 @@ open class PassRestController(
             ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(qrCode)
         else
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
-
     }
 }

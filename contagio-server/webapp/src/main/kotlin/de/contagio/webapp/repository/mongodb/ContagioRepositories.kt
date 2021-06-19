@@ -30,3 +30,9 @@ interface RegistrationInfoRepository : MongoRepository<RegistrationInfo, String>
 }
 
 interface UpdatePassRequestRepository : MongoRepository<UpdatePassRequest, String>
+
+interface DeviceTokenRepository : MongoRepository<DeviceToken, String> {
+    fun findByDeviceToken(deviceToken: String): Collection<DeviceToken>
+
+    fun findBySerialNumber(serialNumber: String): Collection<DeviceToken>
+}
