@@ -11,12 +11,13 @@ class RegisterDeviceToken(
 
     fun execute(
         deviceToken: String,
+        bundleId: String,
         serialNumbers: Collection<String>
     ) {
         deleteDeviceToken.execute(deviceToken)
 
         serialNumbers.forEach {
-            saveDeviceToken.execute(DeviceToken(deviceToken, it))
+            saveDeviceToken.execute(DeviceToken(deviceToken, bundleId, it))
         }
     }
 }

@@ -4,6 +4,7 @@ import java.time.Instant
 
 data class DeviceToken(
     val deviceToken: String,
+    val bundleId: String,
     val serialNumber: String,
     val created: Instant = Instant.now(),
     val lastUsed: Instant? = null,

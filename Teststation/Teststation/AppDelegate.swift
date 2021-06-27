@@ -11,6 +11,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         
+        print("didFinishLaunchingWithOptions \(String(describing: launchOptions))")
+        
         let notificationOption = launchOptions?[.remoteNotification]
         if
             let notification = notificationOption as? [String: AnyObject],
@@ -59,6 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = tokenParts.joined()
         
         print("Device Token: \(token)")
+        
+        TeststationEngine.shared.registerAPNS(deviceToken: token, bundleId: Bundle.main.bundleIdentifier!)
     }
     
     func application(
@@ -66,6 +70,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         print("Failed to register: \(error)")
+        
+#if targetEnvironment(simulator)
+        let token = "simulator:123"
+        
+        TeststationEngine.shared.registerAPNS(deviceToken: token, bundleId: Bundle.main.bundleIdentifier!)
+#endif
     }
     
     func application(

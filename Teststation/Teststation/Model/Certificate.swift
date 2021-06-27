@@ -156,10 +156,46 @@ extension NSManagedObjectContext {
         }
     }
     
-    func getPendingCertificateSerialnumbers() -> [Certificate] {
+    func getAllCertificates() -> [Certificate] {
         var result = [Certificate]()
         let fetchRequest = NSFetchRequest<Certificate>(entityName: "Certificate")
-        //fetchRequest.predicate = NSPredicate(format: "issuestatus == %d", CertificateIssueStatus.created.rawValue)
+        
+        do {
+            let certificates = try self.fetch(fetchRequest)
+            
+            for c in certificates {
+                result.append(c)
+            }
+        }
+        catch let error as NSError {
+            print("could not fetch \(error), \(error.userInfo)")
+        }
+        
+        return result
+    }
+    
+    func getAllCertificateSerialNumbers() -> [String] {
+        var result = [String]()
+        let fetchRequest = NSFetchRequest<Certificate>(entityName: "Certificate")
+        
+        do {
+            let certificates = try self.fetch(fetchRequest)
+            
+            for c in certificates {
+                result.append(c.serialnumber!)
+            }
+        }
+        catch let error as NSError {
+            print("could not fetch \(error), \(error.userInfo)")
+        }
+        
+        return result
+    }
+    
+    func getPendingCertificates() -> [Certificate] {
+        var result = [Certificate]()
+        let fetchRequest = NSFetchRequest<Certificate>(entityName: "Certificate")
+        fetchRequest.predicate = NSPredicate(format: "issuestatus == %d", CertificateIssueStatus.created.rawValue)
         
         do {
             let certificates = try self.fetch(fetchRequest)

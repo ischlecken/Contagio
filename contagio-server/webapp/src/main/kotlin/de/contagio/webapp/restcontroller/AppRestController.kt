@@ -9,7 +9,7 @@ private var logger = LoggerFactory.getLogger(AppRestController::class.java)
 
 @CrossOrigin
 @RestController
-@RequestMapping("$APPS/v1")
+@RequestMapping("$APPS")
 open class AppRestController(
     private val registerDeviceToken: RegisterDeviceToken,
     private val deleteDeviceToken: IDeleteDeviceToken
@@ -21,9 +21,9 @@ open class AppRestController(
         @PathVariable bundleId: String,
         @PathVariable deviceToken: String
     ) {
-        logger.debug("registerDeviceToken(deviceToken=${deviceToken})")
+        logger.debug("registerDeviceToken(deviceToken=${deviceToken},bundleId=${bundleId}):${serialNumbers}")
 
-        registerDeviceToken.execute(deviceToken, serialNumbers)
+        registerDeviceToken.execute(deviceToken, bundleId, serialNumbers)
     }
 
     @DeleteMapping("/registration/{bundleId}/{deviceToken}")

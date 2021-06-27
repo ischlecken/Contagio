@@ -166,6 +166,36 @@ public enum ContagioAPI {
     }
     
     
+    static func registerDevice(deviceToken:String, bundleId:String, serialNumbers:[String]) throws -> AnyPublisher<Data, TeststationError> {
+       let url = URL(string: "\(EnvConfig.contagioapiBaseURL)/apps/registration/\(bundleId)/\(deviceToken)")!
+        
+        var urlRequest = createURLRequest(url:url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let payload = try createJsonEncoder().encode(serialNumbers)
+        
+        print("registerDevice() payload=\(String(decoding: payload, as: UTF8.self))")
+        urlRequest.httpBody = payload
+        
+        return createUrlSession()
+            .dataTaskPublisher(for: urlRequest)
+            .tryMap { response -> Data in
+                guard
+                    let httpURLResponse = response.response as? HTTPURLResponse,
+                    httpURLResponse.statusCode == 200
+                else {
+                    throw TeststationError.statusCode
+                }
+                
+                print("registerDevice() response.data=\(String(decoding: response.data, as: UTF8.self))")
+                
+                return response.data
+            }
+            .mapError { TeststationError.map($0) }
+            .eraseToAnyPublisher()
+    }
+    
+    
     private static func createUrlSession() -> URLSession {
         let config = URLSessionConfiguration.default
         config.requestCachePolicy = .reloadIgnoringLocalCacheData

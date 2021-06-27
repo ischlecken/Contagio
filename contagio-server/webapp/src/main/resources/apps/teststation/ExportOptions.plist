@@ -6,15 +6,6 @@
 	<true/>
 	<key>destination</key>
 	<string>export</string>
-	<key>manifest</key>
-	<dict>
-		<key>appURL</key>
-		<string>https://efeu.local/downloads/teststation.ipa</string>
-		<key>displayImageURL</key>
-		<string>https://efeu.local/images/teststation-57x57.png</string>
-		<key>fullSizeImageURL</key>
-		<string>https://efeu.local/images/teststation-512x512.png</string>
-	</dict>
 	<key>method</key>
 	<string>ad-hoc</string>
 	<key>signingStyle</key>

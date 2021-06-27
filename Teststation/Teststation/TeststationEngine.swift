@@ -21,13 +21,11 @@ class TeststationEngine {
         refreshSubscriptions.removeAll()
         
         let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
-        
         persistentContainer.performBackgroundTask{ context in
             print("update certificate status()")
             
-            let pendingCerts = context.getPendingCertificateSerialnumbers()
-            
-            pendingCerts.forEach { cert in
+            let certs = context.getAllCertificates()
+            certs.forEach { cert in
                 
                 print("  pendingCert=\(cert.serialnumber!)")
                 try? ContagioAPI
@@ -174,4 +172,30 @@ class TeststationEngine {
             )
     }
     
+    
+    func registerAPNS(deviceToken:String, bundleId:String) {
+        print("registerAPNS()")
+        
+        let persistentContainer = (UIApplication.shared.delegate as!AppDelegate).persistentContainer
+        persistentContainer.performBackgroundTask{ context in
+            let serialNumbers = context.getAllCertificateSerialNumbers()
+            print("registerAPNS() serialNumbers=\(serialNumbers)")
+            
+            try? ContagioAPI
+                .registerDevice(deviceToken: deviceToken,bundleId: bundleId,serialNumbers: serialNumbers)
+                .sink(
+                    receiveCompletion: {completion in
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(_):
+                            break
+                        }
+                    },
+                    receiveValue: { data in
+                        print("data=\(data)")
+                    })
+                .store(in: &self.refreshSubscriptions)
+        }
+    }
 }
