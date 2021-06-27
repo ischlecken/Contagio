@@ -43,6 +43,7 @@ contagio:
   baseUrl: "https://www.contagio.de"
   authTokenValidInMinutes: "10"
   purgeAfterMinutes: "60"
+  apnserver: "api.push.apple.com"
 
   pass:
     teamIdentifier: 4V27BGKSLA
@@ -58,6 +59,11 @@ contagio:
   sign:
     keyname: "contagiosign"
     password: "contagio"
+
+  teststation:
+    bundleid: "de.contagio.Teststation"
+    teamid: "4V27BGKSLA"
+    keyid: "8F55355FW2"
 
   users:
     - name: conuser

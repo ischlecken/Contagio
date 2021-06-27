@@ -3,6 +3,7 @@ package de.contagio.webapp.service
 import com.eatthepath.pushy.apns.ApnsClient
 import com.eatthepath.pushy.apns.ApnsClientBuilder
 import com.eatthepath.pushy.apns.PushNotificationResponse
+import com.eatthepath.pushy.apns.auth.ApnsSigningKey
 import com.eatthepath.pushy.apns.util.SimpleApnsPayloadBuilder
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification
 import com.eatthepath.pushy.apns.util.TokenUtil
@@ -24,12 +25,29 @@ open class PushNotificationService(
     private val contagioProperties: ContagioProperties
 ) {
 
+    private val poolSize = 2
+
     @Value("classpath:certs/pass.p12")
     private lateinit var passKeystore: Resource
 
-    private var client: ApnsClient? = null
+    private var walletClient: ApnsClient? = null
     private var topics: Set<String>? = null
-    private val poolSize = 10
+
+    @Value("\${contagio.apnserver}")
+    private lateinit var apnServer: String
+
+    @Value("\${contagio.teststation.bundleid}")
+    private lateinit var teststationTopic: String
+
+    @Value("\${contagio.teststation.teamid}")
+    private lateinit var teamid: String
+
+    @Value("\${contagio.teststation.keyid}")
+    private lateinit var keyid: String
+
+    @Value("classpath:certs/teststation.p8")
+    private lateinit var teststationKey: Resource
+    private var teststationClient: ApnsClient? = null
 
     @PostConstruct
     open fun afterInit() {
@@ -38,23 +56,29 @@ open class PushNotificationService(
             val keyStore = CertUtils.toKeyStore(passKeystore.inputStream, keystorePassword)
             val certificate = CertUtils.extractCertificateWithKey(keyStore, keystorePassword)
 
-            this.client = ApnsClientBuilder()
-                .setApnsServer("api.push.apple.com", 443)
+            this.walletClient = ApnsClientBuilder()
+                .setApnsServer(apnServer, 443)
                 .setClientCredentials(
-                    certificate.right,
-                    certificate.left,
+                    certificate.right, certificate.left,
                     contagioProperties.pass.keystorePassword
                 )
                 .setConcurrentConnections(poolSize)
                 .build()
             this.topics = CertUtils.extractApnsTopics(certificate.right)
+
+            this.teststationClient = ApnsClientBuilder()
+                .setApnsServer(apnServer, 443)
+                .setSigningKey(ApnsSigningKey.loadFromInputStream(teststationKey.inputStream, teamid, keyid))
+                .setConcurrentConnections(poolSize)
+                .build()
+
         } catch (ex: CertificateException) {
             logger.error("failed to init PushNotificationService", ex)
         }
     }
 
-    open fun sendPushNotificationAsync(pushtoken: String): PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>>? {
-        logger.debug("sending push notification for pushtoken $pushtoken ...")
+    open fun send2WalletAsync(pushtoken: String): PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>>? {
+        logger.debug("notify wallets using pushtoken $pushtoken ...")
 
         val payloadBuilder = SimpleApnsPayloadBuilder()
         payloadBuilder.setAlertBody("{}")
@@ -69,8 +93,28 @@ open class PushNotificationService(
             }
         }
         val pushNotification = SimpleApnsPushNotification(token, topic, payload)
-        logger.debug("push notification for pushtoken $pushtoken send.")
+        logger.debug("wallets with pushtoken $pushtoken notified.")
 
-        return client?.sendNotification(pushNotification)
+        return walletClient?.sendNotification(pushNotification)
+    }
+
+    open fun send2TeststationAsync(
+        serialNumber: String,
+        deviceToken: String
+    ): PushNotificationFuture<SimpleApnsPushNotification, PushNotificationResponse<SimpleApnsPushNotification>>? {
+        logger.debug("notify teststation app using deviceToken $deviceToken ...")
+
+        val payloadBuilder = SimpleApnsPayloadBuilder()
+        payloadBuilder.setAlertBody("certificate $serialNumber changed.")
+        payloadBuilder.addCustomProperty("serialNumber", serialNumber)
+        payloadBuilder.addCustomProperty("action", "updated")
+
+        val payload = payloadBuilder.build()
+        logger.debug("sending payload $payload to topic $teststationTopic")
+
+        val pushNotification = SimpleApnsPushNotification(deviceToken, teststationTopic, payload)
+        logger.debug("teststation app with deviceToken $deviceToken notified.")
+
+        return teststationClient?.sendNotification(pushNotification)
     }
 }

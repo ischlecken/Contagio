@@ -126,11 +126,15 @@ open class UsecaseConfig {
         findRegistrationInfoBySerialNumber: IFindRegistrationInfoBySerialNumber,
         findDeviceInfo: IFindDeviceInfo,
         notifyDevice: INotifyDevice,
+        findDeviceTokenBySerialNumber: IFindDeviceTokenBySerialNumber,
+        notifyTeststation: INotifyTeststation,
         savePassUpdateLog: ISavePassUpdateLog
     ) = NotifyAllDevicesWithInstalledSerialNumber(
         findRegistrationInfoBySerialNumber,
         findDeviceInfo,
         notifyDevice,
+        findDeviceTokenBySerialNumber,
+        notifyTeststation,
         savePassUpdateLog
     )
 

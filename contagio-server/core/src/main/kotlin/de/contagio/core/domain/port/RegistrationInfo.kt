@@ -1,6 +1,7 @@
 package de.contagio.core.domain.port
 
 import de.contagio.core.domain.entity.DeviceInfo
+import de.contagio.core.domain.entity.DeviceToken
 import de.contagio.core.domain.entity.RegistrationInfo
 
 fun interface IFindRegistrationInfo {
@@ -28,4 +29,12 @@ fun interface IFindDeviceInfo {
 
 fun interface INotifyDevice {
     fun execute(serialNumber:String, deviceInfo: DeviceInfo)
+}
+
+fun interface IFindDeviceTokenBySerialNumber {
+    fun execute(serialNumber: String): Collection<DeviceToken>
+}
+
+fun interface INotifyTeststation {
+    fun execute(serialNumber:String, deviceToken: DeviceToken)
 }

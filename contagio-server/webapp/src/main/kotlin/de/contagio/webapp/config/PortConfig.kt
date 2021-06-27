@@ -27,6 +27,7 @@ open class PortConfig(
     private val teststationRepository: TeststationRepository,
     private val registrationInfoRepository: RegistrationInfoRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val deviceTokenRepository: DeviceTokenRepository,
     private val authTokenService: AuthTokenService,
 ) {
 
@@ -171,6 +172,11 @@ open class PortConfig(
     }
 
     @Bean
+    open fun findDeviceTokenBySerialNumber() = IFindDeviceTokenBySerialNumber { serialNumber ->
+        deviceTokenRepository.findBySerialNumber(serialNumber)
+    }
+
+    @Bean
     open fun findAllRegistrationInfo() = IFindAllRegistrationInfo {
         registrationInfoRepository.findAll(it.toPageRequest()).toPagedResult()
     }
@@ -201,14 +207,29 @@ open class PortConfig(
     open fun notifyDevice(pushNotificationService: PushNotificationService) =
         INotifyDevice { serialNumber, deviceInfo ->
 
-            logger.debug("found push token ${deviceInfo.pushToken} for serialnumber $serialNumber...")
+            logger.debug("notifyDevice() found push token ${deviceInfo.pushToken} for serialnumber $serialNumber...")
 
             pushNotificationService
-                .sendPushNotificationAsync(deviceInfo.pushToken)
+                .send2WalletAsync(deviceInfo.pushToken)
                 ?.thenApply {
-                    logger.debug("  apns-id=${it.apnsId}")
-                    logger.debug("  isAccepted=${it.isAccepted}")
-                    logger.debug("  rejectionReason=${it.rejectionReason}")
+                    logger.debug("  notifyDevice(): apns-id=${it.apnsId}")
+                    logger.debug("  notifyDevice(): isAccepted=${it.isAccepted}")
+                    logger.debug("  notifyDevice(): rejectionReason=${it.rejectionReason}")
+                }
+        }
+
+    @Bean
+    open fun notifyTeststation(pushNotificationService: PushNotificationService) =
+        INotifyTeststation { serialNumber, deviceToken ->
+
+            logger.debug("notifyTeststation(): found deviceToken ${deviceToken.deviceToken} for serialnumber $serialNumber...")
+
+            pushNotificationService
+                .send2TeststationAsync(serialNumber,deviceToken.deviceToken)
+                ?.thenApply {
+                    logger.debug("  notifyTeststation(): apns-id=${it.apnsId}")
+                    logger.debug("  notifyTeststation(): isAccepted=${it.isAccepted}")
+                    logger.debug("  notifyTeststation(): rejectionReason=${it.rejectionReason}")
                 }
         }
 
